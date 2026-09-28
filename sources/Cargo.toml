@@ -1,78 +1,171 @@
 [workspace]
+resolver = "1"
 members = [
-    "api/apiserver",
-    "api/apiclient",
-    "api/bootstrap-containers",
-    "api/bork",
-    "api/certdog",
-    "api/corndog",
     "api/datastore",
-    "api/early-boot-config",
-    "api/ecs-settings-applier",
-    "api/netdog",
-    "api/sundog",
-    "api/schnauzer",
-    "api/pluto",
-    "api/servicedog",
-    "api/host-containers",
-    "api/static-pods",
-    "api/storewolf",
-    "api/thar-be-settings",
-    "api/thar-be-updates",
-    "api/settings-committer",
-    "api/migration/migrator",
     "api/migration/migration-helpers",
-    "api/shibaken",
-
-    # "api/migration/migrations/vX.Y.Z/..."
-    "api/migration/migrations/v1.3.0/etc-hosts-service",
-    "api/migration/migrations/v1.3.0/hostname-affects-etc-hosts",
-    "api/migration/migrations/v1.3.0/control-container-v0-5-2",
-    "api/migration/migrations/v1.4.0/registry-mirror-representation",
-    "api/migration/migrations/v1.4.2/admin-container-v0-7-3",
-    "api/migration/migrations/v1.4.2/control-container-v0-5-3",
-    "api/migration/migrations/v1.5.0/oci-hooks-setting",
-    "api/migration/migrations/v1.5.0/oci-hooks-setting-metadata",
-    "api/migration/migrations/v1.5.1/control-container-v0-5-4",
 
     "bottlerocket-release",
+    "constants",
 
-    "imdsclient",
-
-    "driverdog",
-
-    "ghostdog",
-
-    "growpart",
-
-    "prairiedog",
-
-    "metricdog",
-
-    "logdog",
+    "generate-readme",
 
     "models",
 
-    "parse-datetime",
-
     "retry-read",
 
-    "updater/block-party",
-    "updater/signpost",
-    "updater/update_metadata",
-    "updater/updog",
+    "settings-defaults/aws-dev",
+    "settings-defaults/aws-ecs-2",
+    "settings-defaults/aws-ecs-2-nvidia",
+    "settings-defaults/aws-ecs-3",
+    "settings-defaults/aws-ecs-3-nvidia",
+    "settings-defaults/aws-ecs-4",
+    "settings-defaults/aws-ecs-4-nvidia",
+    "settings-defaults/aws-k8s-1.31",
+    "settings-defaults/aws-k8s-1.31-nvidia",
+    "settings-defaults/aws-k8s-1.32",
+    "settings-defaults/aws-k8s-1.32-nvidia",
+    "settings-defaults/aws-k8s-1.33",
+    "settings-defaults/aws-k8s-1.33-nvidia",
+    "settings-defaults/aws-k8s-1.34",
+    "settings-defaults/aws-k8s-1.34-nvidia",
+    "settings-defaults/aws-k8s-1.35",
+    "settings-defaults/aws-k8s-1.35-nvidia",
+    "settings-defaults/aws-k8s-1.36",
+    "settings-defaults/aws-k8s-1.36-nvidia",
+    "settings-defaults/aws-k8s-1.37",
+    "settings-defaults/aws-k8s-1.37-nvidia",
+    "settings-defaults/aws-mantle-1",
+    "settings-defaults/aws-mantle-1-nvidia",
+    "settings-defaults/metal-dev",
+    "settings-defaults/metal-k8s-1.30",
+    "settings-defaults/vmware-dev",
+    "settings-defaults/vmware-k8s-1.32",
+    "settings-defaults/vmware-k8s-1.33",
+    "settings-defaults/vmware-k8s-1.34",
+    "settings-defaults/vmware-k8s-1.35",
+    "settings-defaults/vmware-k8s-1.36",
+    "settings-defaults/vmware-k8s-1.37",
 
-    "webpki-roots-shim",
+    # (all previous migrations archived; add new ones after this line)
+    "settings-migrations/v1.34.0/kubelet-device-plugins-mig-settings",
+    "settings-migrations/v1.36.0/kubernetes-ecr-credential-providers-expansion",
+    "settings-migrations/v1.37.0/delete-configs-and-services-on-downgrade",
+    "settings-migrations/v1.39.0/kubelet-setting-container-log-single-process-oom-kill",
+    "settings-migrations/v1.40.0/kubelet-device-plugins-cdi-settings",
+    "settings-migrations/v1.41.0/kubernetes-ecr-credential-providers-correction",
+    "settings-migrations/v1.42.0/kubernetes-memory-swap-behavior-setting",
+    "settings-migrations/v1.44.0/container-runtime-plugins-settings",
+    "settings-migrations/v1.44.0/container-runtime-snapshotter-setting",
+    "settings-migrations/v1.46.0/kubernetes-static-pods-enabled-setting",
+    "settings-migrations/v1.47.0/container-runtime-concurrent-download-chunk-size",
+    "settings-migrations/v1.47.0/host-bootstrap-containers-command-setting",
+    "settings-migrations/v1.50.0/kubernetes-reserved-pid-settings",
+    "settings-migrations/v1.51.0/kubernetes-ecr-credential-provider-patterns",
+    "settings-migrations/v1.51.0/kubernetes-additional-settings",
+    "settings-migrations/v1.51.0/kubernetes-beta-cpu-manager-policy-options",
+    "settings-migrations/v1.54.0/kubelet-device-plugins-mps-settings",
+    "settings-migrations/v1.54.0/kubelet-device-plugins-mps-prefix-settings",
+    "settings-migrations/v1.56.0/image-verifier-plugins-extensible",
+    "settings-migrations/v1.60.0/kubernetes-topology-manager-policy-options",
+    "settings-migrations/v1.60.0/container-runtime-max-concurrent-unpacks",
+    "settings-migrations/v1.63.0/image-verifier-plugins-settings",
+    "settings-migrations/v1.63.0/nvidia-k8s-device-plugin-enabled",
+    "settings-migrations/v1.64.0/kubernetes-container-runtime-endpoint",
+    "settings-migrations/v1.64.0/hugepages-settings",
+    "settings-migrations/v1.66.0/kubernetes-memory-qos-settings",
+    "settings-migrations/v1.66.0/nvidia-driver-branch-setting",
+    "settings-migrations/v1.66.0/kubelet-dra-drivers-nvidia-enabled",
 
-    "constants",
-
-    "shimpei"
+    "settings-plugins/aws-dev",
+    "settings-plugins/aws-ecs-2",
+    "settings-plugins/aws-ecs-3",
+    "settings-plugins/aws-ecs-4",
+    "settings-plugins/aws-mantle-1",
+    "settings-plugins/aws-k8s",
+    "settings-plugins/aws-k8s-nvidia",
+    "settings-plugins/metal-dev",
+    "settings-plugins/metal-k8s",
+    "settings-plugins/vmware-dev",
+    "settings-plugins/vmware-k8s",
 ]
+
+[workspace.dependencies]
+bottlerocket-release = { version = "0.1", path = "bottlerocket-release" }
+constants = { version = "0.1", path = "constants" }
+datastore = { version = "0.1", path = "api/datastore" }
+generate-readme = { version = "0.1", path = "generate-readme" }
+migration-helpers = { version = "0.1.0", path = "api/migration/migration-helpers" }
+models = { version = "0.1", path = "models" }
+retry-read = { version = "0.1", path = "retry-read" }
+
+abi_stable = "0.11.3"
+argh = "0.1"
+async-trait = "0.1"
+aws-lc-rs = "1"
+base64 = "0.21"
+cached = "0.49"
+cargo-readme = "3"
+dns-lookup = "2"
+envy = "0.4"
+futures = { version = "0.3", default-features = false }
+futures-channel = { version = "0.3", default-features = false }
+handlebars = "4"
+http = "0.2"
+httparse = "1"
+hyper = { version = "0.14", default-features = false }
+hyper-unix-connector = "0.2"
+lazy_static = "1"
+libc = "0.2"
+log = "0.4"
+maplit = "1.0"
+nix = "0.26"
+num_cpus = "1"
+percent-encoding = "2"
+pest = "2.5"
+pest_derive = "2.5"
+rand = "0.8"
+regex = "1"
+reqwest = { version = "0.12", default-features = false }
+rustls = "0.23"
+semver = "1"
+serde = "1"
+serde_json = "1"
+serde_plain = "1"
+shlex = "1"
+signal-hook = "0.3"
+simplelog = "0.12"
+snafu = "0.8"
+tokio = { version = "~1.43", default-features = false }
+tokio-tungstenite = { version = "0.20", default-features = false }
+toml = "0.8"
+unindent = "0.1"
+url = "2"
+walkdir = "2"
+
+[workspace.dependencies.bottlerocket-defaults-helper]
+git = "https://github.com/bottlerocket-os/bottlerocket-settings-sdk"
+tag = "bottlerocket-settings-models-v0.29.0"
+version = "0.1.1"
+
+[workspace.dependencies.bottlerocket-modeled-types]
+git = "https://github.com/bottlerocket-os/bottlerocket-settings-sdk"
+tag = "bottlerocket-settings-models-v0.29.0"
+version = "0.19.0"
+
+[workspace.dependencies.bottlerocket-settings-models]
+git = "https://github.com/bottlerocket-os/bottlerocket-settings-sdk"
+tag = "bottlerocket-settings-models-v0.29.0"
+version = "0.29.0"
+
+[workspace.dependencies.bottlerocket-settings-plugin]
+git = "https://github.com/bottlerocket-os/bottlerocket-settings-sdk"
+tag = "bottlerocket-settings-models-v0.29.0"
+version = "0.1.0"
+
+[workspace.dependencies.settings-extension-oci-defaults]
+git = "https://github.com/bottlerocket-os/bottlerocket-settings-sdk"
+tag = "bottlerocket-settings-models-v0.29.0"
+version = "0.1.0"
 
 [profile.release]
 debug = true
-
-# This replaces webpki-roots with a shim that reads from the ca-certificates package. See
-# webpki-roots-shim/Cargo.toml for more information about using the right version number.
-[patch.crates-io.webpki-roots]
-path = "webpki-roots-shim"

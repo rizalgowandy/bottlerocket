@@ -1,16 +1,14 @@
 # Using Bottlerocket as a Kubernetes worker node with VMware
 
-> The [VMware variants](variants/README.md#vmware-k8s-121-vmware-kubernetes-121-node) are currently in preview phase and we're looking for [feedback](https://github.com/bottlerocket-os/bottlerocket#contact-us).
-> Please try it out and let us know what you think!
-
 This quickstart will walk through joining a Bottlerocket VM guest to an existing Kubernetes cluster running in VMware.
 
 ## Prerequisites
 
 You must be able to access vSphere, via webUI or some type of client.
-We will use the CLI tool [`govc`](https://github.com/vmware/govmomi/tree/master/govc) to communicate with vSphere in this quide.
+We will use the CLI tool [`govc`](https://github.com/vmware/govmomi/tree/master/govc) to communicate with vSphere in this guide.
 `govc` can use [environment variables or take arguments](https://github.com/vmware/govmomi/tree/master/govc#usage) to specify needed parameters.
 For the purposes of this guide we will assume that the following environment variables are set to the proper values in your environment:
+
 ```
 GOVC_URL
 GOVC_USERNAME
@@ -39,18 +37,20 @@ The Bottlerocket OVA is signed and uploaded alongside the rest of the Bottlerock
 You first need the Bottlerocket root role, which is used by `tuftool` to verify the OVA.
 The following will download and verify the root role itself:
 
-```
+```shell
 curl -O "https://cache.bottlerocket.aws/root.json"
-sha512sum -c <<<"e9b1ea5f9b4f95c9b55edada4238bf00b12845aa98bdd2d3edb63ff82a03ada19444546337ec6d6806cbf329027cf49f7fde31f54d551c5e02acbed7efe75785  root.json"
+sha512sum -c <<<"33eb2f01738391907a9380f74b6b2a84fada845b0474d3a30c5756f49067690e520c1d7a531a3e9d1877d3a2f05ec21d9093a8f7307e3fe5b61aa4584472dc9a  root.json"
 ```
 
 Next, set your desired version and variant, and download the OVA:
-```
-VERSION="v1.2.0"
-VARIANT="vmware-k8s-1.21"
-OVA="bottlerocket-${VARIANT}-x86_64-${VERSION}.ova"
 
-tuftool download . --target-name "${OVA}" \
+```shell
+VERSION="v1.31.0"
+VARIANT="vmware-k8s-1.32"
+OVA="bottlerocket-${VARIANT}-x86_64-${VERSION}.ova"
+OUTDIR="${VARIANT}-${VERSION}"
+
+tuftool download "${OUTDIR}" --target-name "${OVA}" \
    --root ./root.json \
    --metadata-url "https://updates.bottlerocket.aws/2020-07-07/${VARIANT}/x86_64/" \
    --targets-url "https://updates.bottlerocket.aws/targets/"
@@ -61,12 +61,14 @@ tuftool download . --target-name "${OVA}" \
 Once you have downloaded the OVA, you can upload it to vSphere.
 
 The first command generates a spec file (`bottlerocket_spec.json` in this case) using the OVA and gives you few options for your deployment.
-```
-govc import.spec "${OVA}" > bottlerocket_spec.json
+
+```shell
+govc import.spec "${OUTDIR}/${OVA}" > bottlerocket_spec.json
 ```
 
 The spec will look similar to this:
-```
+
+```json
 {
   "DiskProvisioning": "flat",
   "IPAllocationPolicy": "dhcpPolicy",
@@ -86,25 +88,28 @@ The spec will look similar to this:
 ```
 
 We will use `$GOVC_NETWORK` to populate the value for `Network` in the file and use it to upload the OVA!
-```
+
+```shell
 VM_NAME="bottlerocket-quickstart-${VERSION}"
 
 jq --arg network "${GOVC_NETWORK}" \
   '.NetworkMapping[].Network = $network' \
   bottlerocket_spec.json > bottlerocket_spec_edit.json
 
-govc import.ova -options=bottlerocket_spec_edit.json -name="${VM_NAME}" "${OVA}"
+govc import.ova -options=bottlerocket_spec_edit.json -name="${VM_NAME}" "${OUTDIR}/${OVA}"
 ```
 
 Since we intend to run multiple identical VMs, let's mark the OVA you just uploaded as a template.
 You can think of a template as a "golden" image, allowing you to create many VMs without affecting the "golden" image.
-```
+
+```shell
 govc vm.markastemplate "${VM_NAME}"
 ```
 
 Let's create 3 Bottlerocket VMs using the template.
 The following will clone from the template, but leave the VMs turned off since we still need to set user data.
-```
+
+```shell
 for node in 1 2 3; do
   govc vm.clone -vm "${VM_NAME}" -on=false "${VM_NAME}-${node}"
 done
@@ -117,26 +122,30 @@ The below commands assume a single cluster.
 
 #### API Server
 This is the address (including port) of the control plane.
-```
+
+```shell
 export API_SERVER="$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}')"
 ```
 
 #### Cluster DNS IP
 This is the IP address of the DNS pod/service.
-```
+
+```shell
 export CLUSTER_DNS_IP="$(kubectl -n kube-system get svc -l k8s-app=kube-dns -o=jsonpath='{.items[0].spec.clusterIP}')"
 ```
 
 #### Bootstrap token
 Nodes require a token to establish trust between the node and the control plane.
 Tokens must be [used within 24 hours](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-token/), but once the node has booted and registered with the cluster, it isn't used again.
-```
+
+```shell
 export BOOTSTRAP_TOKEN="$(kubeadm token create)"
 ```
 
 #### Cluster Certificate
 This is the base64 encoded cluster certificate authority.
-```
+
+```shell
 export CLUSTER_CERTIFICATE="$(kubectl config view --raw -o=jsonpath='{.clusters[0].cluster.certificate-authority-data}')"
 ```
 
@@ -145,9 +154,10 @@ export CLUSTER_CERTIFICATE="$(kubectl config view --raw -o=jsonpath='{.clusters[
 In order to join Bottlerocket to your cluster, it must be configured via user data.
 There are multiple methods of passing user data to Bottlerocket in VMware; we will demonstrate all of them.
 
-Create a file called `userdata.toml` and populate it with the values you just retrieved.
-```
-cat <<EOF > userdata.toml
+Create a file called `user-data.toml` and populate it with the values you just retrieved.
+
+```shell
+cat <<EOF > user-data.toml
 [settings.kubernetes]
 api-server = "${API_SERVER}"
 cluster-dns-ip = "${CLUSTER_DNS_IP}"
@@ -165,12 +175,13 @@ You can use our [admin](https://github.com/bottlerocket-os/bottlerocket-admin-co
 #### Admin container
 If you would like to use the admin container, you will need to create some base64 encoded user data which will be passed to the container at runtime.
 Full details are covered in the [admin container documentation](https://github.com/bottlerocket-os/bottlerocket-admin-container#authenticating-with-the-admin-container).
-If we assume you have a public key at `${HOME}/.ssh/id_rsa.pub`, the below will add the correct user data to your `userdata.toml`.
-```
+If we assume you have a public key at `${HOME}/.ssh/id_rsa.pub`, the below will add the correct user data to your `user-data.toml`.
+
+```shell
 PUBKEY="${HOME}/.ssh/id_rsa.pub"
 ADMIN_USER_DATA="$(echo '{"ssh":{"authorized-keys":["'"$(cat ${PUBKEY})"'"]}}' | base64 -w 0)"
 
-cat <<EOF >>userdata.toml
+cat <<EOF >>user-data.toml
 [settings.host-containers.admin]
 enabled = true
 user-data = "${ADMIN_USER_DATA}"
@@ -184,7 +195,8 @@ Full details can be found in the [control container documentation](https://githu
 
 You'll first need an AWS account, and AWS CLI installed.
 Then you'll create a service role in that account to [grant AWS STS trust to the AWS Systems Manager service](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-service-role.html).
-```
+
+```shell
 cat <<EOF > ssmservice-trust.json
 {
     "Version": "2012-10-17",
@@ -206,11 +218,12 @@ aws iam create-role \
 # Attach the policy enabling the role to create session tokens
 aws iam attach-role-policy \
     --role-name SSMServiceRole \
-    --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore  
+    --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 ```
 
 Once the above is created, we can use the role to create an activation code and ID.
-```
+
+```shell
 export SSM_ACTIVATION="$(aws ssm create-activation \
   --iam-role SSMServiceRole \
   --registration-limit 100 \
@@ -218,13 +231,14 @@ export SSM_ACTIVATION="$(aws ssm create-activation \
   --output json)"
 ```
 
-Using the above activation data we can create our user data to pass to the control container
-```
+Using the above activation data we can create our user data to pass to the control container:
+
+```shell
 SSM_ACTIVATION_ID="$(jq -r '.ActivationId' <<< ${SSM_ACTIVATION})"
 SSM_ACTIVATION_CODE="$(jq -r '.ActivationCode' <<< ${SSM_ACTIVATION})"
 CONTROL_USER_DATA="$(echo '{"ssm":{"activation-id":"'${SSM_ACTIVATION_ID}'","activation-code":"'${SSM_ACTIVATION_CODE}'","region":"us-west-2"}}' | base64 -w0)"
 
-cat <<EOF >>userdata.toml
+cat <<EOF >>user-data.toml
 [settings.host-containers.control]
 enabled = true
 user-data = "${CONTROL_USER_DATA}"
@@ -240,9 +254,9 @@ These extended attributes are `guestinfo.userdata` and `guestinfo.userdata.encod
 `guestinfo.userdata` may be passed as base64, gzipped base64, or (least desirable) raw TOML.
 Valid values for `guestinfo.userdata.encoding` are: `base64`, `b64`, `gzip+base64`, and `gz+b64`.
 
-Given the above file `userdata.toml`, base64 encode and set user data for your VM:
-```
-export BR_USERDATA=$(base64 -w0 userdata.toml)
+Given the above file `user-data.toml`, base64 encode and set user data for your VM:
+```shell
+export BR_USERDATA=$(base64 -w0 user-data.toml)
 
 for node in 1 2 3; do
   govc vm.change -vm "${VM_NAME}-${node}" \
@@ -252,13 +266,13 @@ done
 ```
 
 You can check that your user data was set; using node "1" as an example below:
-```
+```shell
 govc vm.info -e -r -t "${VM_NAME}-1"
 ```
 
 ## Launch!
 Once you've created your user data and given your VM a way to access it via guestinfo, you can launch all 3 Bottlerocket VMs in your cluster!
-```
+```shell
 for node in 1 2 3; do
   govc vm.power -on "${VM_NAME}-${node}"
 done

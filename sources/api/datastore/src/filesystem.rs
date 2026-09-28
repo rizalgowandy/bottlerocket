@@ -13,6 +13,8 @@ use std::io;
 use std::path::{self, Path, PathBuf};
 use walkdir::{DirEntry, WalkDir};
 
+use crate::constraints_check::{ApprovedWrite, ConstraintCheckResult};
+
 use super::key::{Key, KeyType};
 use super::{error, Committed, DataStore, Result};
 
@@ -57,7 +59,7 @@ impl FilesystemDataStore {
         // Encode key segments so they're filesystem-safe
         let encoded: Vec<_> = key.segments().iter().map(encode_path_component).collect();
         // Join segments with filesystem separator to get path underneath data store
-        let path_suffix = encoded.join(&path::MAIN_SEPARATOR.to_string());
+        let path_suffix = encoded.join(path::MAIN_SEPARATOR_STR);
 
         // Make path from base + prefix
         // FIXME: canonicalize requires that the full path exists.  We know our Key is checked
@@ -68,7 +70,7 @@ impl FilesystemDataStore {
         // Confirm no path traversal outside of base
         ensure!(
             path != *base_path && path.starts_with(base_path),
-            error::PathTraversal { name: key.name() }
+            error::PathTraversalSnafu { name: key.name() }
         );
 
         Ok(path)
@@ -91,9 +93,12 @@ impl FilesystemDataStore {
         // we don't think "a.b" is actually two segments, for example.
         // Metadata keys only have a single segment, and we encode that as a single path
         // component, so we don't need the quotes in the filename.
-        let raw_key_name = metadata_key.segments().get(0).context(error::Internal {
-            msg: "metadata key with no segments",
-        })?;
+        let raw_key_name = metadata_key
+            .segments()
+            .first()
+            .context(error::InternalSnafu {
+                msg: "metadata key with no segments",
+            })?;
 
         let encoded_meta = encode_path_component(raw_key_name);
         path_str.push(METADATA_KEY_PREFIX);
@@ -124,7 +129,7 @@ impl FilesystemDataStore {
             Ok(()) => {}
             Err(e) => {
                 if e.kind() != io::ErrorKind::NotFound {
-                    return Err(e).context(error::DeleteKey { path });
+                    return Err(e).context(error::DeleteKeySnafu { path });
                 }
             }
         }
@@ -192,9 +197,9 @@ where
         // decode_utf8 will only fail if someone messed with the filesystem contents directly
         // and created a filename that contains percent-encoded bytes that are invalid UTF-8.
         .ok()
-        .context(error::Corruption {
+        .context(error::CorruptionSnafu {
             path: path.as_ref(),
-            msg: format!("invalid UTF-8 in encoded segment '{}'", segment),
+            msg: format!("invalid UTF-8 in encoded segment '{segment}'"),
         })
 }
 
@@ -208,7 +213,7 @@ fn read_file_for_key(key: &Key, path: &Path) -> Result<Option<String>> {
                 return Ok(None);
             }
 
-            Err(e).context(error::KeyRead { key: key.name() })
+            Err(e).context(error::KeyReadSnafu { key: key.name() })
         }
     }
 }
@@ -217,15 +222,15 @@ fn read_file_for_key(key: &Key, path: &Path) -> Result<Option<String>> {
 /// arbitrarily dotted keys without needing to create fixed structure first.
 fn write_file_mkdir<S: AsRef<str>>(path: PathBuf, data: S) -> Result<()> {
     // create key prefix directory if necessary
-    let dirname = path.parent().with_context(|| error::Internal {
+    let dirname = path.parent().with_context(|| error::InternalSnafu {
         msg: format!(
             "Given path to write without proper prefix: {}",
             path.display()
         ),
     })?;
-    fs::create_dir_all(dirname).context(error::Io { path: dirname })?;
+    fs::create_dir_all(dirname).context(error::IoSnafu { path: dirname })?;
 
-    fs::write(&path, data.as_ref().as_bytes()).context(error::Io { path: &path })
+    fs::write(&path, data.as_ref().as_bytes()).context(error::IoSnafu { path: &path })
 }
 
 /// KeyPath represents the filesystem path to a data or metadata key, relative to the base path of
@@ -263,13 +268,13 @@ impl KeyPath {
         let key_path_raw = entry
             .path()
             .strip_prefix(strip_path_prefix)
-            .context(error::Path)?;
+            .context(error::PathSnafu)?;
         // If from_path doesn't think this is an OK key, we'll return Ok(None), otherwise the KeyPath
         Ok(Self::from_path(key_path_raw).ok())
     }
 
     fn from_path(path: &Path) -> Result<KeyPath> {
-        let path_str = path.to_str().context(error::Corruption {
+        let path_str = path.to_str().context(error::CorruptionSnafu {
             msg: "Non-UTF8 path",
             path,
         })?;
@@ -277,7 +282,7 @@ impl KeyPath {
         // Split the data and metadata parts.
         // Any dots in key names are encoded.
         let mut keys = path_str.splitn(2, '.');
-        let data_key_raw = keys.next().context(error::Internal {
+        let data_key_raw = keys.next().context(error::InternalSnafu {
             msg: "KeyPath given empty path",
         })?;
         // Turn the data path into a dotted key
@@ -326,7 +331,7 @@ fn find_populated_key_paths<S: AsRef<str>>(
         match committed {
             // No live keys; something must be wrong because we create a default datastore.
             Committed::Live => {
-                return error::Corruption {
+                return error::CorruptionSnafu {
                     msg: "Live datastore missing",
                     path: base,
                 }
@@ -357,7 +362,7 @@ fn find_populated_key_paths<S: AsRef<str>>(
 
     // For anything we find, confirm it matches the user's filters, and add it to results.
     for entry in walker {
-        let entry = entry.context(error::ListKeys)?;
+        let entry = entry.context(error::ListKeysSnafu)?;
         if let Some(kp) = KeyPath::from_entry(&entry, &base)? {
             if !kp.data_key.name().starts_with(prefix.as_ref()) {
                 trace!(
@@ -410,6 +415,7 @@ impl DataStore for FilesystemDataStore {
     fn list_populated_metadata<S1, S2>(
         &self,
         prefix: S1,
+        committed: &Committed,
         metadata_key_name: &Option<S2>,
     ) -> Result<HashMap<Key, HashSet<Key>>>
     where
@@ -417,14 +423,14 @@ impl DataStore for FilesystemDataStore {
         S2: AsRef<str>,
     {
         // Find metadata key paths on disk
-        let key_paths = find_populated_key_paths(self, KeyType::Meta, prefix, &Committed::Live)?;
+        let key_paths = find_populated_key_paths(self, KeyType::Meta, prefix, committed)?;
 
         // For each file on disk, check the user's conditions, and add it to our output
         let mut result = HashMap::new();
         for key_path in key_paths {
             let data_key = key_path.data_key;
-            let meta_key = key_path.metadata_key.context(error::Internal {
-                msg: format!("Found meta key path with no dot: {}", data_key),
+            let meta_key = key_path.metadata_key.context(error::InternalSnafu {
+                msg: format!("Found meta key path with no dot: {data_key}"),
             })?;
 
             // If the user requested specific metadata, move to the next key unless it matches.
@@ -444,7 +450,7 @@ impl DataStore for FilesystemDataStore {
 
     fn get_key(&self, key: &Key, committed: &Committed) -> Result<Option<String>> {
         let path = self.data_path(key, committed)?;
-        read_file_for_key(&key, &path)
+        read_file_for_key(key, &path)
     }
 
     fn set_key<S: AsRef<str>>(&mut self, key: &Key, value: S, committed: &Committed) -> Result<()> {
@@ -457,9 +463,14 @@ impl DataStore for FilesystemDataStore {
         self.delete_key_path(path, committed)
     }
 
-    fn get_metadata_raw(&self, metadata_key: &Key, data_key: &Key) -> Result<Option<String>> {
-        let path = self.metadata_path(metadata_key, data_key, &Committed::Live)?;
-        read_file_for_key(&metadata_key, &path)
+    fn get_metadata_raw(
+        &self,
+        metadata_key: &Key,
+        data_key: &Key,
+        committed: &Committed,
+    ) -> Result<Option<String>> {
+        let path = self.metadata_path(metadata_key, data_key, committed)?;
+        read_file_for_key(metadata_key, &path)
     }
 
     fn set_metadata<S: AsRef<str>>(
@@ -467,8 +478,9 @@ impl DataStore for FilesystemDataStore {
         metadata_key: &Key,
         data_key: &Key,
         value: S,
+        committed: &Committed,
     ) -> Result<()> {
-        let path = self.metadata_path(metadata_key, data_key, &Committed::Live)?;
+        let path = self.metadata_path(metadata_key, data_key, committed)?;
         write_file_mkdir(path, value)
     }
 
@@ -479,32 +491,62 @@ impl DataStore for FilesystemDataStore {
 
     /// We commit by copying pending keys to live, then removing pending.  Something smarter (lock,
     /// atomic flip, etc.) will be required to make the server concurrent.
-    fn commit_transaction<S>(&mut self, transaction: S) -> Result<HashSet<Key>>
+    fn commit_transaction<S, C>(
+        &mut self,
+        transaction: S,
+        constraint_check: &C,
+    ) -> Result<HashSet<Key>>
     where
         S: Into<String> + AsRef<str>,
+        C: Fn(
+            &mut Self,
+            &Committed,
+        ) -> std::result::Result<
+            ConstraintCheckResult,
+            Box<dyn std::error::Error + Send + Sync + 'static>,
+        >,
     {
+        let mut pending_keys: HashSet<Key> = Default::default();
+
+        let transactions = self.list_transactions()?;
+        if !transactions.contains(transaction.as_ref()) {
+            return Ok(pending_keys);
+        }
+
         let pending = Committed::Pending {
             tx: transaction.into(),
         };
-        // Get data for changed keys
-        let pending_data = self.get_prefix("settings.", &pending)?;
 
-        // Nothing to do if no keys are present in pending
-        if pending_data.is_empty() {
-            return Ok(Default::default());
+        let constraints_check_result =
+            constraint_check(self, &pending).context(error::CheckConstraintExecutionSnafu)?;
+
+        let approved_write = ApprovedWrite::try_from(constraints_check_result)?;
+
+        trace!(
+            "commit_transaction: transaction_metadata: {:?}",
+            approved_write.metadata
+        );
+
+        // write the metadata.
+        for (metadata_key, data_key, value) in approved_write.metadata {
+            self.set_metadata(&metadata_key, &data_key, value, &Committed::Live)?;
         }
 
-        // Save Keys for return value
-        let pending_keys: HashSet<Key> = pending_data.keys().cloned().collect();
+        let pending_data = approved_write.settings;
 
-        // Apply changes to live
-        debug!("Writing pending keys to live");
-        self.set_keys(&pending_data, &Committed::Live)?;
+        if !pending_data.is_empty() {
+            // Save Keys for return value
+            pending_keys = pending_data.keys().cloned().collect();
+
+            // Apply changes to live
+            debug!("Writing pending keys to live");
+            self.set_keys(&pending_data, &Committed::Live)?;
+        }
 
         // Remove pending
         debug!("Removing old pending keys");
         let path = self.base_path(&pending);
-        fs::remove_dir_all(&path).context(error::Io { path })?;
+        fs::remove_dir_all(&path).context(error::IoSnafu { path })?;
 
         Ok(pending_keys)
     }
@@ -520,8 +562,8 @@ impl DataStore for FilesystemDataStore {
         let pending_data = self.get_prefix("settings.", &pending)?;
 
         // Pull out just the keys so we can log them and return them
-        let pending_keys = pending_data.into_iter().map(|(key, _val)| key).collect();
-        debug!("Found pending keys: {:?}", &pending_keys);
+        let pending_keys = pending_data.into_keys().collect();
+        debug!("Found pending keys: {:?}", pending_keys);
 
         // Delete pending from the filesystem, same as a commit
         let path = self.base_path(&pending);
@@ -529,7 +571,7 @@ impl DataStore for FilesystemDataStore {
         if let Err(e) = fs::remove_dir_all(&path) {
             // If path doesn't exist, it's fine, we'll just return an empty list.
             if e.kind() != io::ErrorKind::NotFound {
-                return Err(e).context(error::Io { path });
+                return Err(e).context(error::IoSnafu { path });
             }
         }
 
@@ -560,14 +602,14 @@ impl DataStore for FilesystemDataStore {
                             break;
                         }
                     }
-                    return Err(e).context(error::ListKeys);
+                    return Err(e).context(error::ListKeysSnafu);
                 }
             };
 
             if entry.file_type().is_dir() {
                 // The directory name should be valid UTF-8, encoded by encode_path_component,
                 // or the data store has been corrupted.
-                let file_name = entry.file_name().to_str().context(error::Corruption {
+                let file_name = entry.file_name().to_str().context(error::CorruptionSnafu {
                     msg: "Non-UTF8 path",
                     path: entry.path(),
                 })?;

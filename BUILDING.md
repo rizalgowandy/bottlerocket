@@ -25,13 +25,13 @@ Ensure the following OS packages are installed:
 
 ##### Ubuntu
 
-```
+```shell
 apt install build-essential openssl libssl-dev pkg-config liblz4-tool
 ```
 
 ##### Fedora
 
-```
+```shell
 yum install make automake gcc openssl openssl-devel pkg-config lz4 perl-FindBin perl-lib
 ```
 
@@ -45,7 +45,7 @@ Rust 1.51.0 or higher is required.
 To organize build tasks, we use [cargo-make](https://sagiegurari.github.io/cargo-make/).
 To get it, run:
 
-```
+```shell
 cargo install cargo-make
 ```
 
@@ -68,11 +68,11 @@ Docker's [post-installation steps for Linux](https://docs.docker.com/install/lin
 
 To build an image, run:
 
-```
+```shell
 cargo make
 ```
 
-This will build an image for the default variant, `aws-k8s-1.21`.
+This will build an image for the default variant (a recent `aws-k8s-*`, see the `BUILDSYS_VARIANT` variable in [Makefile.toml](Makefile.toml) to find the current default variant).
 All packages will be built in turn, and then compiled into an `img` file in the `build/images/` directory.
 
 The version number in [Release.toml](Release.toml) will be used in naming the file, and will be used inside the image as the release version.
@@ -80,25 +80,93 @@ If you're planning on [publishing your build](PUBLISHING.md), you may want to ch
 
 To build an image for a different variant, run:
 
-```
+```shell
 cargo make -e BUILDSYS_VARIANT=my-variant-here
 ```
 
 To build an image for a different architecture, run:
 
-```
+```shell
 cargo make -e BUILDSYS_ARCH=my-arch-here
 ```
 
+If you want to limit the build concurrency, set `BUILDSYS_JOBS` (the default is `8`):
+
+```shell
+cargo make -e BUILDSYS_JOBS=4
+```
+
 (You can use variant and arch arguments together, too.)
+
+#### Package licenses
+
+Most packages will include license files extracted from upstream source archives.
+However, in some rare cases there are multiple licenses that could apply to a package.
+Bottlerocket's build system uses the `Licenses.toml` file in conjunction with the `licenses` directory to configure the licenses used for such special packages.
+Here is an example of a simple `Licenses.toml` configuration file:
+
+```toml
+[package]
+spdx-id = "SPDX-ID"
+licenses = [
+  { path = "the-license.txt" }
+]
+```
+
+In the previous example, it is expected that the file `the-license.txt` is present in `licenses`.
+You can retrieve the licenses from a remote endpoint, or the local filesystem if you specify the `license-url` field:
+
+```toml
+[package]
+spdx-id = "SPDX-ID AND SPDX-ID-2" # Package with multiple licenses
+licenses = [
+  # This file is copied from a file system, and will be saved as `path`
+  { license-url = "file:///path/to/spdx-id-license.txt", path = "spdx-id-license.txt" },
+  # This file is fetched from an https endpoint, and will be saved as `path`
+  { license-url = "https://localhost/spdx-id-license-v2.txt", path = "spdx-id-license-2.txt" }
+]
+```
+
+#### NVIDIA variants
+
+If you want to build any of the NVIDIA variants, you can follow these steps to prepare a `Licenses.toml` file using the [License for customer use of NVIDIA software](https://www.nvidia.com/en-us/drivers/nvidia-license/):
+
+1. Create a `Licenses.toml` file in your Bottlerocket root directory, with the following content:
+
+```toml
+[nvidia]
+spdx-id = "LicensesRef-NVIDIA-Customer-Use"
+licenses = [
+  { path = "LICENSE", license-url = "https://www.nvidia.com/en-us/drivers/nvidia-license/" }
+]
+```
+
+2. Fetch the licenses with this command:
+
+```shell
+cargo make -e BUILDSYS_UPSTREAM_LICENSE_FETCH=true fetch-licenses
+```
+
+3. Build your image, setting the `BUILDSYS_UPSTREAM_SOURCE_FALLBACK` flag to `true`, if you haven't cached the driver's sources:
+
+```shell
+K8S_VERSION=1.32
+cargo make \
+  -e BUILDSYS_VARIANT=aws-k8s-${K8S_VERSION}-nvidia \
+  -e BUILDSYS_UPSTREAM_SOURCE_FALLBACK="true"
+```
 
 ### Register an AMI
 
 To use the image in Amazon EC2, we need to register the image as an AMI.
 
+To do this, you'll need to have your AWS account credentials setup on your system.
+There are lots of ways to do this; one method is using [the `aws` CLI](https://aws.amazon.com/cli/) via its `configure` command with your user's access and secret keys.
+If you're using an EC2 instance, the [EC2 instance's IAM role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) will be used automatically if available.
+
 For a simple start, pick an [EC2 region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions), then run:
 
-```
+```shell
 cargo make -e PUBLISH_REGIONS=your-region-here ami
 ```
 
@@ -108,7 +176,7 @@ Your new AMI ID will be printed after it's registered.
 
 If you built your image for a different architecture or variant, just use the same arguments here:
 
-```
+```shell
 cargo make -e PUBLISH_REGIONS=your-region-here -e BUILDSYS_VARIANT=my-variant-here ami
 ```
 
@@ -116,7 +184,12 @@ cargo make -e PUBLISH_REGIONS=your-region-here -e BUILDSYS_VARIANT=my-variant-he
 
 ## Use your image
 
-See the [setup guide for Kubernetes](QUICKSTART-EKS.md) or the [setup guide for Amazon ECS](QUICKSTART-ECS.md) for information on running Bottlerocket images.
+See any of the setup guides tailored to the various execution environments for information on running Bottlerocket images:
+
+* [Setup guide for Kubernetes](QUICKSTART-EKS.md)
+* [Setup guide for Amazon ECS](QUICKSTART-ECS.md)
+* [Setup guide for VMware](QUICKSTART-VMWARE.md)
+* [Setup guide for QEMU/KVM](QUICKSTART-LOCAL.md)
 
 ## Publish your image
 
@@ -130,27 +203,28 @@ The specifics of building an out-of-tree module will vary by project, but the fi
 ### Downloading the kmod kit
 
 kmod kits are included in the official Bottlerocket repos starting with Bottlerocket v1.0.6.
-Let's say you want to download the kit for building x86_64 modules for v1.0.6 and variant aws-k8s-1.18.
+Let's say you want to download the kit for building x86_64 modules for v1.31.0 and variant aws-k8s-1.32.
 
 First, you need tuftool:
-```bash
+```shell
 cargo install tuftool
 ```
 
 Next, you need the Bottlerocket root role, which is used by tuftool to verify the kmod kit.
 This will download and verify the root role itself:
-```bash
+```shell
 curl -O "https://cache.bottlerocket.aws/root.json"
-sha512sum -c <<<"e9b1ea5f9b4f95c9b55edada4238bf00b12845aa98bdd2d3edb63ff82a03ada19444546337ec6d6806cbf329027cf49f7fde31f54d551c5e02acbed7efe75785  root.json"
+sha512sum -c <<<"33eb2f01738391907a9380f74b6b2a84fada845b0474d3a30c5756f49067690e520c1d7a531a3e9d1877d3a2f05ec21d9093a8f7307e3fe5b61aa4584472dc9a  root.json"
 ```
 
 Next, set your desired parameters, and download the kmod kit:
-```bash
+```shell
 ARCH=x86_64
-VERSION=v1.0.6
-VARIANT=aws-k8s-1.18
+VERSION=v1.31.0
+VARIANT=aws-k8s-1.32
+OUTDIR="${VARIANT}-${VERSION}"
 
-tuftool download . --target-name ${VARIANT}-${ARCH}-kmod-kit-${VERSION}.tar.xz \
+tuftool download "${OUTDIR}" --target-name ${VARIANT}-${ARCH}-kmod-kit-${VERSION}.tar.xz \
    --root ./root.json \
    --metadata-url "https://updates.bottlerocket.aws/2020-07-07/${VARIANT}/${ARCH}/" \
    --targets-url "https://updates.bottlerocket.aws/targets/"
@@ -159,11 +233,11 @@ tuftool download . --target-name ${VARIANT}-${ARCH}-kmod-kit-${VERSION}.tar.xz \
 ### Using the kmod kit
 
 To use the kmod kit, extract it, and update your PATH to use its toolchain:
-```bash
+```shell
 tar xf "${VARIANT}-${ARCH}-kmod-kit-${VERSION}.tar.xz"
 
 export CROSS_COMPILE="${ARCH}-bottlerocket-linux-musl-"
-export KERNELDIR="${PWD}/${VARIANT}-${ARCH}-kmod-kit-${VERSION}/kernel-devel
+export KERNELDIR="${PWD}/${VARIANT}-${ARCH}-kmod-kit-${VERSION}/kernel-devel"
 export PATH="${PWD}/${VARIANT}-${ARCH}-kmod-kit-${VERSION}/toolchain/usr/bin:${PATH}"
 ```
 

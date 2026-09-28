@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 /// Error contains the errors that can happen in the migration helper functions and in migrations.
 #[derive(Debug, Snafu)]
-#[snafu(visibility = "pub")]
+#[snafu(visibility(pub))]
 pub enum Error {
     #[snafu(display("Unable to get system release data: {}", source))]
     BottlerocketRelease { source: bottlerocket_release::Error },
@@ -13,11 +13,15 @@ pub enum Error {
     #[snafu(display("Unable to get {:?} data for migration: {}", committed, source))]
     GetData {
         committed: datastore::Committed,
-        source: datastore::Error,
+        #[snafu(source(from(datastore::Error, Box::new)))]
+        source: Box<datastore::Error>,
     },
 
     #[snafu(display("Unable to get metadata for migration: {}", source))]
-    GetMetadata { source: datastore::Error },
+    GetMetadata {
+        #[snafu(source(from(datastore::Error, Box::new)))]
+        source: Box<datastore::Error>,
+    },
 
     #[snafu(display("Unable to deserialize to Value from '{}': {}", input, source))]
     Deserialize {
@@ -28,18 +32,25 @@ pub enum Error {
     #[snafu(display("Unable to serialize Value: {}", source))]
     Serialize { source: datastore::ScalarError },
 
+    #[snafu(display("Unable to serialize datastore for rendering templates: {}", source))]
+    SerializeTemplateData { source: serde_json::Error },
+
     #[snafu(display("Unable to serialize release data: {}", source))]
     SerializeRelease {
         source: datastore::serialization::Error,
     },
 
     #[snafu(display("Unable to write to data store: {}", source))]
-    DataStoreWrite { source: datastore::Error },
+    DataStoreWrite {
+        #[snafu(source(from(datastore::Error, Box::new)))]
+        source: Box<datastore::Error>,
+    },
 
     #[snafu(display("Unable to remove key '{}' from data store: {}", key, source))]
     DataStoreRemove {
         key: String,
-        source: datastore::Error,
+        #[snafu(source(from(datastore::Error, Box::new)))]
+        source: Box<datastore::Error>,
     },
 
     #[snafu(display("Migrated data failed validation: {}", msg))]
@@ -57,23 +68,30 @@ pub enum Error {
     InvalidKey {
         key_type: datastore::KeyType,
         key: String,
-        source: datastore::Error,
+        #[snafu(source(from(datastore::Error, Box::new)))]
+        source: Box<datastore::Error>,
+    },
+
+    #[snafu(display(
+        "Invalid regex pattern for prefix '{}' and suffix '{}': {}",
+        prefix,
+        suffix,
+        source
+    ))]
+    InvalidPrefixSuffixPattern {
+        prefix: String,
+        suffix: String,
+        source: regex::Error,
     },
 
     #[snafu(display("Unable to list transactions in data store: {}", source))]
-    ListTransactions { source: datastore::Error },
-
-    #[snafu(display("Unable to build handlebar template registry: {}", source))]
-    BuildTemplateRegistry { source: schnauzer::error::Error },
-
-    #[snafu(display("Unable to render template string '{}': {}", template, source))]
-    RenderTemplate {
-        template: String,
-        source: handlebars::RenderError,
+    ListTransactions {
+        #[snafu(source(from(datastore::Error, Box::new)))]
+        source: Box<datastore::Error>,
     },
 
     #[snafu(display("'{}' is set to non-string value", setting))]
-    NonStringSettingDataType { setting: &'static str },
+    NonStringSettingDataType { setting: String },
 
     #[snafu(display("Unable to deserialize datastore data: {}", source))]
     DeserializeDatastore {
@@ -106,6 +124,18 @@ pub enum Error {
         path: PathBuf,
         source: std::io::Error,
     },
+
+    #[snafu(display("Failed to create async runtime: {}", source))]
+    CreateTokioRuntime { source: std::io::Error },
+
+    #[snafu(display(
+        "Error in deserializing response value to SettingsGenerator: {}",
+        source
+    ))]
+    DeserializeSettingsGenerator { source: serde_json::Error },
+
+    #[snafu(display("Setting data '{}' must be either a string or a list", data))]
+    InvalidSettingType { data: String },
 }
 
 /// Result alias containing our Error type.

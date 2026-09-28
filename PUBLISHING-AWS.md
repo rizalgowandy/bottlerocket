@@ -12,6 +12,11 @@ You can also specify this in your `Infra.toml` file:
 regions = ["us-west-2", "us-east-1", "us-east-2"]
 ```
 
+Note: several commands work with AWS services, so there's some shared configuration related to AWS accounts and AWS IAM roles.
+For example, you can specify a role to assume before any API calls are made, and a role to assume before any API calls in a specific region.
+This can be useful if you want to use roles to control access to the accounts that own AMIs, for example.
+See the commented [example Infra.toml](tools/pubsys/Infra.toml.example) for details.
+
 If you specify multiple regions, an AMI will be registered in the first region and then copied to the other regions.
 
 After putting this in `Infra.toml`, you can make an AMI more easily:
@@ -86,7 +91,7 @@ This isn't very discoverable yet, but it's useful for testing.
 As an example, a parameter might look like this:
 
 ```
-/your/prefix/here/aws-k8s-1.21/x86_64/1.0.1-dafe3b16/image_id
+/your/prefix/here/aws-k8s-1.32/x86_64/1.31.0-41108b4/image_id
 ```
 
 Once you're satisfied with your image and parameters, you can promote the parameters to simpler names (for example, "latest") using the [instructions below](#promoting-ssm-parameters).
@@ -104,7 +109,7 @@ This is useful for testing, and for sharing private AMIs with specific accounts.
 
 If you want to make your AMIs public to the world, there's a shortcut:
 
-```
+```shell
 cargo make ami-public
 ```
 
@@ -128,12 +133,13 @@ cargo make -e SSM_TARGET=latest promote-ssm
 This will copy the fully versioned parameter from earlier, something like:
 
 ```
-/your/prefix/here/aws-k8s-1.21/x86_64/1.0.1-dafe3b16/image_id
+/your/prefix/here/aws-k8s-1.32/x86_64/1.31.0-41108b4/image_id
 ```
 
 ...to a simpler parameter name:
+
 ```
-/your/prefix/here/aws-k8s-1.21/x86_64/latest/image_id
+/your/prefix/here/aws-k8s-1.32/x86_64/latest/image_id
 ```
 
 You can then use this parameter name to get the latest AMI ID.

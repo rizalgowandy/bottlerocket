@@ -141,13 +141,13 @@ There's nothing secret in a root role file, so if you have a way of storing it r
 The `signing_keys` portion above references a local file path.
 If you want to use an SSM or KMS key, you'd write it like this, instead:
 
-```
+```toml
 signing_keys = { kms = { key_id = "abc-def-123" } }
 ```
 
 ...or...
 
-```
+```toml
 signing_keys = { ssm = { parameter = "/my/parameter" } }
 ```
 
@@ -208,19 +208,19 @@ First, open the directory for your variant under [sources/models/src/](sources/m
 Then, open the `defaults.d` directory.
 Here, you can have any number of TOML files, or symlinks to shared TOML files, that define your default settings.
 Later files override earlier ones.
-For an example, take a look at the [aws-ecs-1 defaults](sources/models/src/aws-ecs-1/defaults.d/).
+For an example, take a look at the [aws-ecs-2 defaults](sources/models/src/aws-ecs-2/defaults.d/).
 
 These default settings will be applied to your hosts at startup, meaning any host you run would already know to look at your repo.
 (You'll probably want to commit your changes into your fork of the repo; we're working on ways of making it easier to maintain your own model and settings without a fork.)
 
 The easiest way to change your repo URLs at run time is to include the settings changes in user data.
 This method is covered [in README](README.md#using-user-data).
-For example, if you built the `aws-k8s-1.21` variant for `x86_64` and uploaded to the public S3 bucket `my-bucket`, your URLs could look like:
+For example, if you built the `aws-k8s-1.32` variant for `x86_64` and uploaded to the public S3 bucket `my-bucket`, your URLs could look like:
 
 ```toml
 [settings.updates]
 targets-base-url = "https://my-bucket.s3-us-west-2.amazonaws.com/targets/"
-metadata-base-url = "https://my-bucket.s3-us-west-2.amazonaws.com/aws-k8s-1.21/x86_64/"
+metadata-base-url = "https://my-bucket.s3-us-west-2.amazonaws.com/aws-k8s-1.32/x86_64/"
 ```
 
 ### Waves

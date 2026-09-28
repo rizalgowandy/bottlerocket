@@ -1,3 +1,3256 @@
+# v1.66.0 (2026-09-18)
+
+## Release Highlights
+* Add new Kubernetes 1.37 variants ([#4935])
+  * Add `aws-k8s-1.37`, `aws-k8s-1.37-nvidia`, `aws-k8s-1.37-fips`, `aws-k8s-1.37-nvidia-fips`, `vmware-k8s-1.37`, and `vmware-k8s-1.37-fips` variants
+  * All k8s-1.37 variants, including FIPS variants, use `kernel-6.18` and `containerd-2.3`
+* Add opt-in NVIDIA GPU DRA support for Kubernetes 1.34-1.37 NVIDIA variants, including FIPS variants ([#4926], [bottlerocket-core-kit#1035])
+* Add NVIDIA driver branch selection at boot for `aws-k8s-1.37-nvidia` and `aws-k8s-1.37-nvidia-fips` ([#4939], [bottlerocket-core-kit#1041], [bottlerocket-kernel-kit#536])
+* Remove `/usr/lib/nvidia/tesla/` compatibility symlinks inside containers on Kubernetes 1.37 NVIDIA variants ([#4942], [bottlerocket-core-kit#1044])
+
+## Security Fixes
+* Fix Nitro Enclaves use-after-free on `SLOT_ALLOC` failure ([bottlerocket-kernel-kit#550])
+* Backport patches to fix TUN and AH6 bugs in the networking stack ([bottlerocket-kernel-kit#559])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 16.3.0 to 17.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v16.3.0...v17.0.0)) ([bottlerocket-core-kit#1045])
+* Update `bottlerocket-kernel-kit` from 9.1.0 to 9.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v920-2026-09-18) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v9.1.0...v9.2.0)) ([bottlerocket-kernel-kit#561])
+* Update `admin-container` from 0.21.5 to 0.21.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0216) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.21.5...v0.21.6)) ([#4945])
+* Update `control-container` from 0.21.5 to 0.21.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0216) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.21.5...v0.21.6)) ([#4945])
+* Update `bootstrap-container` from 0.3.5 to 0.3.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#036) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.3.5...v0.3.6)) ([#4945])
+* Boot `aws-mantle-1` variants directly from UKIs ([#4937], [bottlerocket-core-kit#1042])
+* Disable host containers by default and disable `corgid` SBOM uploads for `aws-mantle-1` variants ([#4937])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Add `settings.kubernetes.memory-reservation-policy` and `settings.kubernetes.memory-throttling-factor` ([#4922], [bottlerocket-core-kit#1029])
+
+## Build Changes
+* Update Twoliter from `0.24.0` to `0.25.0` ([#4944])
+* Update `bottlerocket-settings-models` to v0.29.0 ([#4926], [#4939])
+* Add key for signing UKIs locally ([#4936])
+* Add UKI mode for generating AWS Secure Boot keys ([#4940])
+
+[#4922]: https://github.com/bottlerocket-os/bottlerocket/pull/4922
+[#4926]: https://github.com/bottlerocket-os/bottlerocket/pull/4926
+[#4935]: https://github.com/bottlerocket-os/bottlerocket/pull/4935
+[#4936]: https://github.com/bottlerocket-os/bottlerocket/pull/4936
+[#4937]: https://github.com/bottlerocket-os/bottlerocket/pull/4937
+[#4939]: https://github.com/bottlerocket-os/bottlerocket/pull/4939
+[#4940]: https://github.com/bottlerocket-os/bottlerocket/pull/4940
+[#4942]: https://github.com/bottlerocket-os/bottlerocket/pull/4942
+[#4944]: https://github.com/bottlerocket-os/bottlerocket/pull/4944
+[#4945]: https://github.com/bottlerocket-os/bottlerocket/pull/4945
+[bottlerocket-core-kit#1029]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1029
+[bottlerocket-core-kit#1035]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1035
+[bottlerocket-core-kit#1041]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1041
+[bottlerocket-core-kit#1042]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1042
+[bottlerocket-core-kit#1044]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1044
+[bottlerocket-core-kit#1045]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1045
+[bottlerocket-kernel-kit#536]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/536
+[bottlerocket-kernel-kit#550]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/550
+[bottlerocket-kernel-kit#559]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/559
+[bottlerocket-kernel-kit#561]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/561
+
+# v1.65.0 (2026-09-04)
+
+## Release Highlights
+* logdog now captures systemd-pstore kernel dumps ([#4927], [bottlerocket-core-kit#1028])
+* Superpowered containers now receive all kernel-known capabilities ([#4911], [bottlerocket-core-kit#987]) - Thanks @anirbag
+
+## OS Changes
+
+* Update `bottlerocket-core-kit` from 15.0.0 to 16.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v15.0.0...v16.3.0)) ([#4911], [#4927], [#4931], [#4908])
+* Update `bottlerocket-kernel-kit` from 7.2.1 to 9.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v7.2.1...v9.1.0)) ([#4911], [#4912], [#4919], [#4921], [#4931])
+* Update `admin-container` from 0.21.4 to 0.21.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0215) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.21.4...v0.21.5)) ([#4917])
+* Update `control-container` from 0.21.4 to 0.21.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0215) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.21.4...v0.21.5)) ([#4917])
+* Update `bootstrap-container` from 0.3.4 to 0.3.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#035) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.3.4...v0.3.5)) ([#4917])
+* Drop metrics API from aws-dev variant ([#4932])
+
+## Build Changes
+
+* Update `bottlerocket-sdk` from 0.77.0 to 0.79.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.77.0...v0.79.0)) ([#4911], [#4931])
+* Update Twoliter from `0.20.0` to `0.24.0` ([#4900], [#4905], [#4914], [#4918])
+* Add commitlint workflow for PR commit messages ([#4902])
+* Update `root.json` hash in docs ([#4904])
+
+[#4900]: https://github.com/bottlerocket-os/bottlerocket/pull/4900
+[#4902]: https://github.com/bottlerocket-os/bottlerocket/pull/4902
+[#4904]: https://github.com/bottlerocket-os/bottlerocket/pull/4904
+[#4905]: https://github.com/bottlerocket-os/bottlerocket/pull/4905
+[#4908]: https://github.com/bottlerocket-os/bottlerocket/pull/4908
+[#4911]: https://github.com/bottlerocket-os/bottlerocket/pull/4911
+[#4912]: https://github.com/bottlerocket-os/bottlerocket/pull/4912
+[#4914]: https://github.com/bottlerocket-os/bottlerocket/pull/4914
+[#4917]: https://github.com/bottlerocket-os/bottlerocket/pull/4917
+[#4918]: https://github.com/bottlerocket-os/bottlerocket/pull/4918
+[#4919]: https://github.com/bottlerocket-os/bottlerocket/pull/4919
+[#4921]: https://github.com/bottlerocket-os/bottlerocket/pull/4921
+[#4927]: https://github.com/bottlerocket-os/bottlerocket/pull/4927
+[#4931]: https://github.com/bottlerocket-os/bottlerocket/pull/4931
+[#4932]: https://github.com/bottlerocket-os/bottlerocket/pull/4932
+[bottlerocket-core-kit#987]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/987
+[bottlerocket-core-kit#1028]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/1028
+
+# v1.64.0 (2026-07-27)
+
+## Release Highlights
+* Add support for static and transparent hugepages ([#4864], [bottlerocket-core-kit#952])
+* Remove `aws-k8s-1.30` variants ([#4880])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 14.8.0 to 15.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1500-2026-07-23) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.8.0...v15.0.0)) ([#4892], [#4897])
+* Update `bottlerocket-kernel-kit` from 7.0.1 to 7.2.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v721-2026-07-27) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v7.0.1...v7.2.1)) ([#4892], [#4897], [#4898])
+* Update `admin-container` from 0.21.3 to 0.21.4 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0214) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.21.3...v0.21.4)) ([#4893])
+* Update `control-container` from 0.21.3 to 0.21.4 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0214) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.21.3...v0.21.4)) ([#4893])
+* Update `bootstrap-container` from 0.3.3 to 0.3.4 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#034) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.3.3...v0.3.4)) ([#4893])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Add `settings.kubernetes.container-runtime-endpoint` ([#4890], [bottlerocket-core-kit#968]) - Thanks @shvbsle!
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.76.0 to 0.77.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.76.0...v0.77.0)) ([#4897])
+
+[#4864]: https://github.com/bottlerocket-os/bottlerocket/pull/4864
+[#4880]: https://github.com/bottlerocket-os/bottlerocket/pull/4880
+[#4890]: https://github.com/bottlerocket-os/bottlerocket/pull/4890
+[#4892]: https://github.com/bottlerocket-os/bottlerocket/pull/4892
+[#4893]: https://github.com/bottlerocket-os/bottlerocket/pull/4893
+[#4897]: https://github.com/bottlerocket-os/bottlerocket/pull/4897
+[#4898]: https://github.com/bottlerocket-os/bottlerocket/pull/4898
+[bottlerocket-core-kit#952]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/952
+[bottlerocket-core-kit#968]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/968
+
+# v1.63.0 (2026-07-13)
+
+## Release Highlights
+* Add `gdrcopy` driver to `aws-ecs-4-nvidia` variant ([#4874])
+* Add image verification settings and packages to k8s-1.33-k8s-1.36 variants and expand ecs-3 and ecs-4 image verification ([#4832])
+* Add setting to enable/disable `nvidia-device-plugin` ([#4856], [bottlerocket-core-kit#914])
+* Normalize NVIDIA library paths to `/usr/lib/` ([bottlerocket-core-kit#919], [bottlerocket-kernel-kit#425], [bottlerocket-kernel-kit#473])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 14.5.1 to 14.8.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1470-2026-07-09) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.5.1...v14.8.0)) ([#4865], [#4873], [#4883])
+* Update `bottlerocket-kernel-kit` from 6.0.0 to 7.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v701-2026-07-14) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v6.0.0...v7.0.1)) ([#4865], [#4875], [#4876], [#4883], [#4886])
+* Update `admin-container` from 0.21.2 to 0.21.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0213) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.21.2...v0.21.3)) ([#4876])
+* Update `control-container` from 0.21.2 to 0.21.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0213) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.21.2...v0.21.3)) ([#4876])
+* Update `bootstrap-container` from 0.3.2 to 0.3.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#033) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.3.2...v0.3.3)) ([#4876])
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.74.0 to 0.76.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.74.0...v0.76.0)) ([#4865])
+* Update `twoliter` from 0.19.0 to 0.20.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0200---2026-05-27) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.19.0...v0.20.0)) ([#4847])
+
+## Security Fixes
+* Patch `kernel-6.1`, `kernel-6.12` and `kernel-6.18` to mitigate CVE-2026-31694, CVE-2026-46242 and CVE-2026-53362 ([bottlerocket-kernel-kit#481], [bottlerocket-kernel-kit#482])
+
+[#4832]: https://github.com/bottlerocket-os/bottlerocket/pull/4832
+[#4847]: https://github.com/bottlerocket-os/bottlerocket/pull/4847
+[#4856]: https://github.com/bottlerocket-os/bottlerocket/pull/4856
+[#4865]: https://github.com/bottlerocket-os/bottlerocket/pull/4865
+[#4869]: https://github.com/bottlerocket-os/bottlerocket/pull/4869
+[#4873]: https://github.com/bottlerocket-os/bottlerocket/pull/4873
+[#4874]: https://github.com/bottlerocket-os/bottlerocket/pull/4874
+[#4875]: https://github.com/bottlerocket-os/bottlerocket/pull/4875
+[#4876]: https://github.com/bottlerocket-os/bottlerocket/pull/4876
+[#4883]: https://github.com/bottlerocket-os/bottlerocket/pull/4883
+[#4886]: https://github.com/bottlerocket-os/bottlerocket/pull/4886
+[bottlerocket-core-kit#914]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/914
+[bottlerocket-core-kit#919]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/919
+[bottlerocket-kernel-kit#425]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/425
+[bottlerocket-kernel-kit#473]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/473
+[bottlerocket-kernel-kit#481]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/481
+[bottlerocket-kernel-kit#482]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/482
+
+# v1.62.1 (2026-06-22)
+
+## Security Fixes
+* Patch `containerd-1.7`, `containerd-2.1`, `containerd-2.2` to mitigate CVE-2026-50195, CVE-2026-53488, CVE-2026-53492, CVE-2026-53489, and CVE-2026-47262 ([bottlerocket-core-kit#93b33327])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 14.4.0 to 14.5.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/5f13b929c3412e9338ba6455a03ba0542283e596/CHANGELOG.md#v1451-2026-06-18) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.4.0...v14.5.1)) ([bottlerocket-core-kit#5f13b929])
+* Update `admin-container` from 0.21.0 to 0.21.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0212) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.21.0...v0.21.2)) ([#4857])
+* Update `control-container` from 0.21.0 to 0.21.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0212) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.21.0...v0.21.2)) ([#4857])
+* Update `bootstrap-container` from 0.3.0 to 0.3.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#032) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.3.0...v0.3.2)) ([#4857])
+
+[#4857]: https://github.com/bottlerocket-os/bottlerocket/pull/4857
+[bottlerocket-core-kit#93b33327]: https://github.com/bottlerocket-os/bottlerocket-core-kit/commit/93b3332789c194117087e5fb3d4b39502608eb84
+[bottlerocket-core-kit#5f13b929]: https://github.com/bottlerocket-os/bottlerocket-core-kit/commit/5f13b929c3412e9338ba6455a03ba0542283e596
+
+# v1.62.0 (2026-06-01)
+
+## Release Highlights
+* Enable squashfs support for kernel-6.12 and kernel-6.18 ([bottlerocket-kernel-kit#442])
+
+## OS Changes
+
+* Update `bottlerocket-core-kit` from 14.3.0 to 14.4.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1440-2026-05-26) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.3.0...v14.4.0)) ([#4848])
+* Update `bottlerocket-kernel-kit` from 5.5.0 to 6.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v600-2026-05-28) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v5.5.0...v6.0.0)) ([#4850])
+
+## Build Changes
+
+* Update `bottlerocket-sdk` from 0.73.0 to 0.74.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.73.0...v0.74.0)) ([#4848])
+
+[#4848]: https://github.com/bottlerocket-os/bottlerocket/pull/4848
+[#4850]: https://github.com/bottlerocket-os/bottlerocket/pull/4850
+[bottlerocket-kernel-kit#442]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/442
+
+# v1.61.0 (2026-05-18)
+
+## Release Highlights
+* Add new Kubernetes 1.36 variants ([#4827])
+  * Add `aws-k8s-1.36`, `aws-k8s-1.36-nvidia`, `aws-k8s-1.36-fips`, `aws-k8s-1.36-nvidia-fips`, `vmware-k8s-1.36`, and `vmware-k8s-1.36-fips` variants
+  * All k8s-1.36 variants will use `containerd-2.2`
+  * All non-FIPS k8s-1.36 variants will use `kernel-6.18` while FIPS variants will use `kernel-6.12`
+* New ecs-4 variants are now available as a preview ([#4840])
+  * Add `aws-ecs-4`, `aws-ecs-4-nvidia` variants
+  * All ecs-4 variants use `kernel-6.18`
+
+## Security Fixes
+* Patch `kernel-6.1`, `kernel-6.12` and `kernel-6.18` to mitigate CVE-2026-43284 ([bottlerocket-kernel-kit#431], [bottlerocket-kernel-kit#432], [bottlerocket-kernel-kit#433])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 14.2.0 to 14.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1430-2026-05-13) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.2.0...v14.3.0)) ([#4827])
+* Update `bottlerocket-kernel-kit` from 5.4.1 to 5.5.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v550-2026-05-11) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v5.4.1...v5.5.0)) ([#4837])
+* Update `admin-container` from 0.20.6 to 0.21.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0210) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.20.6...v0.21.0)) ([#4842])
+* Update `control-container` from 0.20.6 to 0.21.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0210) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.20.6...v0.21.0)) ([#4842])
+* Update `bootstrap-container` from 0.2.16 to 0.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#030) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.16...v0.3.0)) ([#4842])
+
+## Build Changes
+* Update `twoliter` from 0.17.0 to 0.19.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0190---2026-05-12) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.17.0...v0.19.0)) ([#4803], [#4839])
+
+[#4803]: https://github.com/bottlerocket-os/bottlerocket/pull/4803
+[#4827]: https://github.com/bottlerocket-os/bottlerocket/pull/4827
+[#4837]: https://github.com/bottlerocket-os/bottlerocket/pull/4837
+[#4839]: https://github.com/bottlerocket-os/bottlerocket/pull/4839
+[#4840]: https://github.com/bottlerocket-os/bottlerocket/pull/4840
+[#4842]: https://github.com/bottlerocket-os/bottlerocket/pull/4842
+[bottlerocket-kernel-kit#431]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/431
+[bottlerocket-kernel-kit#432]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/432
+[bottlerocket-kernel-kit#433]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/433
+
+# v1.60.0 (2026-05-04)
+
+## Release Highlights
+* Add `topology-manager-policy-options` settings (`prefer-closest-numa-nodes`, `max-allowable-numa-nodes`) ([#4778], [bottlerocket-core-kit#901])
+
+## Security Fixes
+* Patch `kernel-6.1`, `kernel-6.12` and `kernel-6.18` to mitigate CVE-2026-31431 ([bottlerocket-kernel-kit#416])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 14.1.0 to 14.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1420) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.1.0...v14.2.0)) ([#4818])
+* Update `bottlerocket-kernel-kit` from 5.3.3 to 5.4.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v541) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v5.3.3...v5.4.1)) ([#4818] [#4824])
+* Use the 6.18 kernel for `aws-dev` variant ([#4802])
+* Update `admin-container` from 0.20.5 to 0.20.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0206) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.20.5...v0.20.6)) ([#4820])
+* Update `control-container` from 0.20.5 to 0.20.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0206) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.20.5...v0.20.6)) ([#4820])
+* Update `bootstrap-container` from 0.2.15 to 0.2.16 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#0216) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.15...v0.2.16)) ([#4820])
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.72.0 to 0.73.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.72.0...v0.73.0)) ([#4818])
+* Disable in-place updates for dev variants ([#4765])
+* Update `bottlerocket-settings-models` to v0.23.0 ([#4778])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Support authenticated dualstack ECR public pulls for `aws-k8s-*` variants ([#4792])
+
+[#4765]: https://github.com/bottlerocket-os/bottlerocket/pull/4765
+[#4778]: https://github.com/bottlerocket-os/bottlerocket/pull/4778
+[#4792]: https://github.com/bottlerocket-os/bottlerocket/pull/4792
+[#4802]: https://github.com/bottlerocket-os/bottlerocket/pull/4802
+[#4818]: https://github.com/bottlerocket-os/bottlerocket/pull/4818
+[#4820]: https://github.com/bottlerocket-os/bottlerocket/pull/4820
+[#4824]: https://github.com/bottlerocket-os/bottlerocket/pull/4824
+[bottlerocket-kernel-kit#416]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/416
+[bottlerocket-core-kit#896]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/896
+[bottlerocket-core-kit#901]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/901
+
+# v1.59.0 (2026-04-14)
+
+## Release Highlights
+* Patch `glibc` to revert lazy THP initialization in malloc ([bottlerocket-core-kit#905])
+* Allow runtime processes to write fifos to content stores ([bottlerocket-core-kit#895])
+* Remove orphaned datastores during migration to reclaim disk space ([bottlerocket-core-kit#812])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 5.3.2 to 5.3.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v533-2026-04-13) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v5.3.2...v5.3.3)) ([#4807])
+* Update `bottlerocket-core-kit` from 14.0.0 to 14.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1410-2026-04-13) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v14.0.0...v14.1.0)) ([#4807])
+* Update `admin-container` from 0.20.4 to 0.20.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0205) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.20.4...v0.20.5)) ([#4807])
+* Update `control-container` from 0.20.4 to 0.20.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0205) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.20.4...v0.20.5)) ([#4807])
+* Update `bootstrap-container` from 0.2.14 to 0.2.15 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#0215) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.14...v0.2.15)) ([#4807])
+
+[#4807]: https://github.com/bottlerocket-os/bottlerocket/pull/4807
+[bottlerocket-core-kit#812]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/812
+[bottlerocket-core-kit#895]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/895
+[bottlerocket-core-kit#905]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/905
+
+# v1.58.0 (2026-04-06)
+
+## Release Highlights
+* Remove `aws-k8s-1.29` variants ([#4794])
+* Add CDI support to host-ctr enabling NVIDIA GPU tools access in superpowered containers ([bottlerocket-core-kit#879])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 13.3.0 to 14.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1400-2026-03-27) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v13.3.0...v14.0.0)) ([#4796])
+* Update `bottlerocket-kernel-kit` from 5.2.0 to 5.3.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v531-2026-03-26) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v5.2.0...v5.3.1)) ([#4796])
+
+[#4794]: https://github.com/bottlerocket-os/bottlerocket/pull/4794
+[#4796]: https://github.com/bottlerocket-os/bottlerocket/pull/4796
+[bottlerocket-core-kit#879]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/879
+
+# v1.57.0 (2026-03-18)
+
+## Release Highlights
+* Update `glibc` to 2.43 and `runc` to 1.3.4 ([bottlerocket-core-kit#865], [bottlerocket-core-kit#854])
+* Add `kubelet-env-nvidia` template for `kubernetes-1.35` ([#4784], [bottlerocket-core-kit#860])
+* Reserve EKS add-on ports ([bottlerocket-core-kit#864]) - Thanks @Shreyank031!
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 13.1.0 to 13.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1330-2026-03-18) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v13.1.0...v13.3.0)) ([#4789], [#4791])
+* Update `bottlerocket-kernel-kit` from 5.0.1 to 5.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v520-2026-03-18) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v5.0.1...v5.2.0)) ([#4789], [#4791])
+* Update `admin-container` from 0.20.3 to 0.20.4 ([#4780])
+* Update `control-container` from 0.20.3 to 0.20.4 ([#4780])
+* Update `bootstrap-container` from 0.2.13 to 0.2.14 ([#4780])
+
+## Build Changes
+* Update `twoliter` from 0.16.0 to 0.17.0 ([#4776])
+* Update `bottlerocket-sdk` from 0.70.0 to 0.72.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.70.0...v0.72.0)) ([#4789], [#4791])
+
+[#4776]: https://github.com/bottlerocket-os/bottlerocket/pull/4776
+[#4780]: https://github.com/bottlerocket-os/bottlerocket/pull/4780
+[#4784]: https://github.com/bottlerocket-os/bottlerocket/pull/4784
+[#4789]: https://github.com/bottlerocket-os/bottlerocket/pull/4789
+[#4791]: https://github.com/bottlerocket-os/bottlerocket/pull/4791
+[bottlerocket-core-kit#854]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/854
+[bottlerocket-core-kit#860]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/860
+[bottlerocket-core-kit#864]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/864
+[bottlerocket-core-kit#865]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/865
+
+# v1.56.0 (2026-02-24)
+
+## Release Highlights
+* Add support to render `settings.container-registry` into containerd supported `hosts.toml` ([bottlerocket-core-kit#819], [#4767])
+* Expand image verifier support with a new helper to render trust policies for all image verifier plugins ([bottlerocket-core-kit#820], [#4766])
+* Suppress IPv6 on interfaces with no IPv6 intent in `net.toml` ([bottlerocket-core-kit#826])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.8.2 to 5.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v501-2026-02-26) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.8.2...v5.0.1)) ([#4764], [#4775])
+* Update `bottlerocket-core-kit` from 13.0.0 to 13.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1310-2026-02-25) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v13.0.0...v13.1.0)) ([#4770])
+
+## Build Changes
+* Update Rust dependencies ([#4763])
+* Update `bottlerocket-settings-models` to v0.21.0 ([#4773])
+
+[#4763]: https://github.com/bottlerocket-os/bottlerocket/pull/4763
+[#4764]: https://github.com/bottlerocket-os/bottlerocket/pull/4764
+[#4766]: https://github.com/bottlerocket-os/bottlerocket/pull/4766
+[#4767]: https://github.com/bottlerocket-os/bottlerocket/pull/4767
+[#4770]: https://github.com/bottlerocket-os/bottlerocket/pull/4770
+[#4773]: https://github.com/bottlerocket-os/bottlerocket/pull/4773
+[#4775]: https://github.com/bottlerocket-os/bottlerocket/pull/4775
+[bottlerocket-core-kit#819]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/819
+[bottlerocket-core-kit#820]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/820
+[bottlerocket-core-kit#826]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/826
+
+# v1.55.0 (2026-02-11)
+
+## Release Highlights
+* Add URI resolver support to `apiclient apply` and `apiclient network configure` ([bottlerocket-core-kit#554])
+  * `s3://` - S3 bucket objects
+  * `secretsmanager://` - AWS Secrets Manager secrets
+  * `ssm://` - AWS SSM Parameter Store parameters
+  * `arn:aws:secretsmanager:` and `arn:aws:ssm:` - cross-region access via full ARN
+  * `base64:` - inline encoded content
+* Remove separate FIPS binaries from Go packages in favor of Go built-in FIPS support ([bottlerocket-core-kit#813])
+* Remove hugepages from `reservedMemory` in kubelet config ([bottlerocket-core-kit#821])
+* Update SELinux policy to allow container communication with MPS daemon ([bottlerocket-core-kit#831])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.8.0 to 4.8.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v482-2026-02-07) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.8.0...v4.8.2)) ([#4757])
+* Update `bottlerocket-core-kit` from 12.3.0 to 13.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1300-2026-02-11) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v12.3.0...v13.0.0)) ([#4761])
+* Update `admin-container` from 0.20.1 to 0.20.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0203) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.20.1...v0.20.3)) ([#4759])
+* Update `control-container` from 0.20.1 to 0.20.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0203) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.20.1...v0.20.3)) ([#4759])
+* Update `bootstrap-container` from 0.2.11 to 0.2.13 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#0213) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.11...v0.2.13)) ([#4759])
+
+[#4757]: https://github.com/bottlerocket-os/bottlerocket/pull/4757
+[#4759]: https://github.com/bottlerocket-os/bottlerocket/pull/4759
+[#4761]: https://github.com/bottlerocket-os/bottlerocket/pull/4761
+[bottlerocket-core-kit#554]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/554
+[bottlerocket-core-kit#813]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/813
+[bottlerocket-core-kit#821]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/821
+[bottlerocket-core-kit#823]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/823
+[bottlerocket-core-kit#831]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/831
+
+# v1.54.0 (2026-01-22)
+
+## Release Highlights
+* Migrate to Go's native FIPS 140-3 runtime support for all FIPS variants ([bottlerocket-core-kit#783])
+* Add NVIDIA Multi-Process Service (MPS) support ([#4744], [bottlerocket-core-kit#789])
+* Add `trn3` device IDs to `pciclient` ([bottlerocket-core-kit#800])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.7.1 to 4.8.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v480-2026-01-21) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.7.1...v4.8.0)) ([#4744])
+* Update `bottlerocket-core-kit` from 12.2.0 to 12.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1230-2026-01-21) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v12.2.0...v12.3.0)) ([#4744])
+* Update `admin-container` from 0.20.0 to 0.20.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0201) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.20.0...v0.20.1)) ([#4749])
+* Update `control-container` from 0.20.0 to 0.20.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0201) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.20.0...v0.20.1)) ([#4749])
+* Update `bootstrap-container` from 0.2.10 to 0.2.11 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#0211) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.10...v0.2.11)) ([#4749])
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.66.0 to 0.70.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.66.0...v0.70.0)) ([#4744])
+* Update `bottlerocket-settings-models` to v0.20.0 ([#4744])
+
+[#4744]: https://github.com/bottlerocket-os/bottlerocket/pull/4744
+[#4749]: https://github.com/bottlerocket-os/bottlerocket/pull/4749
+[bottlerocket-core-kit#783]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/783
+[bottlerocket-core-kit#789]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/789
+[bottlerocket-core-kit#800]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/800
+
+# v1.53.0 (2026-01-13)
+
+## Release Highlights
+* Add new kubernetes 1.35 variants ([#4735]):
+  * Add `aws-k8s-1.35`, `aws-k8s-1.35-nvidia`, `aws-k8s-1.35-fips`, `aws-k8s-1.35-nvidia-fips`, `vmware-k8s-1.35`, and `vmware-k8s-1.35-fips` variants
+  * All k8s-1.35 variants use the following:
+    * `kernel-6.12`
+    * `systemd-257`
+    * `nftables`
+    * `containerd-2.1`
+    * `whippet`
+    * `release-swap` - Enable **zram-backed** swap device to improve system stability in low-memory situations  ([bottlerocket-core-kit#590])
+* Migrate all nvidia variants to use nvidia R580 drivers ([#4733])
+* Migrate `admin-container` and `control-container` to AL2023 ([#4740])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.7.0 to 4.7.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v471-2026-01-07) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.7.0...v4.7.1)) ([#4736])
+* Update `bottlerocket-core-kit` from 12.0.1 to 12.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1220-2026-01-08) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v12.0.1...v12.2.0)) ([#4735])
+* Enable `erofs` root partition in all variants ([#4728])
+* Use `whippet` in all variants ([#4738])
+* Update `admin-container` from 0.12.5 to 0.20.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0200) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.12.5...v0.20.0)) ([#4740])
+* Update `bootstrap-container` from 0.2.9 to 0.2.10 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#0210) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.9...v0.2.10)) ([#4740])
+* Update `control-container` from 0.8.11 to 0.20.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0200) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.11...v0.20.0)) ([#4740])
+
+### Twoliter
+* Update `twoliter` from v0.15.0 to v0.16.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0160---2026-01-06) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.15.0...v0.16.0)) ([#4726], [#4734])
+
+## Documentation Changes
+* Remove stale settings extension design documents ([#4716])
+
+[#4716]: https://github.com/bottlerocket-os/bottlerocket/pull/4716
+[#4726]: https://github.com/bottlerocket-os/bottlerocket/pull/4726
+[#4728]: https://github.com/bottlerocket-os/bottlerocket/pull/4728
+[#4733]: https://github.com/bottlerocket-os/bottlerocket/pull/4733
+[#4734]: https://github.com/bottlerocket-os/bottlerocket/pull/4734
+[#4735]: https://github.com/bottlerocket-os/bottlerocket/pull/4735
+[#4736]: https://github.com/bottlerocket-os/bottlerocket/pull/4736
+[#4738]: https://github.com/bottlerocket-os/bottlerocket/pull/4738
+[#4740]: https://github.com/bottlerocket-os/bottlerocket/pull/4740
+[bottlerocket-core-kit#590]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/590
+
+# v1.52.0 (2025-12-16)
+
+## Release Highlights
+* Remove `aws-k8s-1.28` variants ([#4717])
+* Disable concurrent layer fetch by default in `containerd-2.1` ([bottlerocket-core-kit#764])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.5.1 to 4.7.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v470-2025-12-10) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.5.1...v4.7.0)) ([#4719])
+* Update `bottlerocket-core-kit` from 11.0.1 to 12.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1201-2025-12-12) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v11.0.1...v12.0.1)) ([#4719], [#4724])
+* Update `admin-container` from 0.12.4 to 0.12.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0125) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.12.4...v0.12.5)) ([#4712])
+* Update `bootstrap-container` from 0.2.8 to 0.2.9 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#029) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.8...v0.2.9)) ([#4712])
+* Update `control-container` from 0.8.10 to 0.8.11 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0811) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.10...v0.8.11)) ([#4712])
+* Update `aws-dev` and `vmware-dev` variants with the latest Bottlerocket features([#4705])
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.65.1 to 0.66.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.65.1...v0.66.0)) ([#4719])
+
+### Twoliter
+* Update `twoliter` from v0.13.0 to v0.15.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0150---2025-12-11) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.13.0...v0.15.0))([#4718], [#4722])
+
+[#4705]: https://github.com/bottlerocket-os/bottlerocket/pull/4705
+[#4711]: https://github.com/bottlerocket-os/bottlerocket/pull/4711
+[#4712]: https://github.com/bottlerocket-os/bottlerocket/pull/4712
+[#4717]: https://github.com/bottlerocket-os/bottlerocket/pull/4717
+[#4718]: https://github.com/bottlerocket-os/bottlerocket/pull/4718
+[#4719]: https://github.com/bottlerocket-os/bottlerocket/pull/4719
+[#4722]: https://github.com/bottlerocket-os/bottlerocket/pull/4722
+[#4724]: https://github.com/bottlerocket-os/bottlerocket/pull/4724
+[bottlerocket-core-kit#764]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/764
+
+# v1.51.0 (2025-11-17)
+## Release Highlights
+* New ecs-3 variants are now available as a preview ([#4685])
+  * Add `aws-ecs-3`, `aws-ecs-3-nvidia`, `aws-ecs-3-fips`, and `aws-ecs-3-nvidia-fips` variants
+  * All ecs-3 variants use the following:
+    * `kernel-6.12`
+    * `containerd-2.1`
+    * `systemd-257`
+    * `nftables`
+    * `whippet` ([bottlerocket-core-kit#720])
+    * `docker-engine-29` ([bottlerocket-core-kit#711])
+    * `docker-cli-29` ([bottlerocket-core-kit#711])
+  * Use EROFS for root filesystem
+  * Use EBS volume gp3 for all variants
+  * Require IMDSv2 by default
+  * `aws-ecs-3-nvidia` and `aws-ecs-nvidia-fips` variants use NVIDIA R580 drivers
+  * Enable support for image verification
+  * Enable support for encrypted storage
+* Add NVIDIA FIPS variants for Kubernetes 1.29-1.34 and ECS-2 ([#4671])
+* Add support for new Kubernetes settings, `image-minimum-gc-age`, `image-maximum-gc-age`, `max-parallel-image-pulls`, `ids-per-pod`, and Beta options for `cpu-manager-policy-options` ([#4690], [bottlerocket-core-kit#689])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.4.2 to 4.5.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v451-2025-11-12) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.4.2...v4.5.1)) ([#4693], [#4698])
+* Update `bottlerocket-core-kit` from 10.9.0 to 11.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1101-2025-11-12) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v10.9.0...v11.0.1)) ([#4699])
+* Bump `containerd` from 2.0 to 2.1 on all `aws-k8s-1.33` variants ([#4687])
+* Drop `socat` from `aws-dev` variant ([#4699])
+* Update ECR credential provider image patterns to include EUSC image formats ([#4689])
+* Use `whippet` in `aws-ecs-2`, `aws-k8s-1.34`, and `vmware-k8s-1.34` variants ([#4701])
+
+### Twoliter
+* Update `twoliter` from v0.12.0 to v0.13.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0130---2025-11-10) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.12.0...v0.13.0)) ([#4691])
+
+### Settings Extensions
+* Update `bottlerocket-settings-models` to v0.17.0 ([#4690])
+
+[#4671]: https://github.com/bottlerocket-os/bottlerocket/pull/4671
+[#4685]: https://github.com/bottlerocket-os/bottlerocket/pull/4685
+[#4687]: https://github.com/bottlerocket-os/bottlerocket/pull/4687
+[#4689]: https://github.com/bottlerocket-os/bottlerocket/pull/4689
+[#4690]: https://github.com/bottlerocket-os/bottlerocket/pull/4690
+[#4691]: https://github.com/bottlerocket-os/bottlerocket/pull/4691
+[#4693]: https://github.com/bottlerocket-os/bottlerocket/pull/4693
+[#4697]: https://github.com/bottlerocket-os/bottlerocket/pull/4697
+[#4698]: https://github.com/bottlerocket-os/bottlerocket/pull/4698
+[#4699]: https://github.com/bottlerocket-os/bottlerocket/pull/4699
+[#4701]: https://github.com/bottlerocket-os/bottlerocket/pull/4701
+[bottlerocket-core-kit#689]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/689
+[bottlerocket-core-kit#711]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/711
+[bottlerocket-core-kit#720]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/720
+
+# v1.50.0 (2025-11-05)
+
+## Release Highlights
+* Add support for new kubernetes setting `kube-reserved.pid` and `system-reserved.pid` ([#4661], [bottlerocket-core-kit#646])
+* Allow multiple sequential calls of `apiclient ephemeral-storage bind` ([bottlerocket-core-kit#679])
+* Patch `containerd-2.1` to fix image pull when range-get is ignored by the registry ([bottlerocket-core-kit#702])
+
+## Security Fixes
+* Patch `runc` to mitigate CVE-2025-31133, CVE-2025-52565, and CVE-2025-52881 ([bottlerocket-core-kit#6e3d3e2e])
+
+## OS Changes
+
+* Update `bottlerocket-sdk` from 0.64.0 to 0.65.1 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.64.0...v0.65.1))([#4664], [#4667])
+* Update `bottlerocket-kernel-kit` from 4.3.3 to 4.4.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v442-2025-10-27) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.3.3...v4.4.2)) ([#4664], [#4667], [#4672])
+* Update `bottlerocket-core-kit` from 10.6.0 to 10.9.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1082-2025-11-05) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v10.6.0...v10.9.0)) ([#4661], [#4664], [#4667], [#07b40823])
+* Update `admin-container` from 0.12.3 to 0.12.4 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0124) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.12.3...v0.12.4)) ([#4669])
+* Update `bootstrap-container` from 0.2.6 to 0.2.8 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#028) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.6...v0.2.8)) ([#4664], [#4669])
+* Update `control-container` from 0.8.8 to 0.8.10 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#0810) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.8...v0.8.10)) ([#4664], [#4669])
+
+### Settings Extensions
+* Update bottlerocket-settings-models to v0.16.0 ([#4661])
+
+[#4661]: https://github.com/bottlerocket-os/bottlerocket/pull/4661
+[#4664]: https://github.com/bottlerocket-os/bottlerocket/pull/4664
+[#4667]: https://github.com/bottlerocket-os/bottlerocket/pull/4667
+[#4669]: https://github.com/bottlerocket-os/bottlerocket/pull/4669
+[#4672]: https://github.com/bottlerocket-os/bottlerocket/pull/4672
+[bottlerocket-core-kit#646]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/646
+[bottlerocket-core-kit#679]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/679
+[bottlerocket-core-kit#702]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/702
+[#07b40823]: https://github.com/bottlerocket-os/bottlerocket/commit/07b408232df3a5c47b93b7ba086ddebca5677703
+[bottlerocket-core-kit#6e3d3e2e]: https://github.com/bottlerocket-os/bottlerocket-core-kit/commit/6e3d3e2e563ec556b9fc51eb495a180b69bcf43b
+
+# v1.49.0 (2025-10-09)
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.3.1 to 4.3.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v433-2025-10-03) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.3.1...v4.3.3)) ([#4657])
+
+[#4657]: https://github.com/bottlerocket-os/bottlerocket/pull/4657
+
+# v1.48.0 (2025-09-29)
+
+## Release Highlights
+* Support passing arguments to `apiclient exec` subcommand with a `--` separator ([bottlerocket-core-kit#647])
+* Install `driverdog` for all variants ([bottlerocket-core-kit#656]) - Thanks @fletcherw!
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.3.0 to 4.3.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v431-2025-09-15) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.3.0...v4.3.1)) ([#4644])
+* Update `bottlerocket-core-kit` from 10.4.1 to 10.6.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1060-2025-09-23) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v10.4.1...v10.6.0)) ([#4649])
+* Update `admin-container` from 0.12.2 to 0.12.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0123) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.12.2...v0.12.3)) ([#4647])
+* Update `bootstrap-container` from 0.2.5 to 0.2.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#026) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.5...v0.2.6)) ([#4647])
+* Update `control-container` from 0.8.7 to 0.8.8 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#088) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.7...v0.8.8)) ([#4647])
+
+[#4644]: https://github.com/bottlerocket-os/bottlerocket/pull/4644
+[#4647]: https://github.com/bottlerocket-os/bottlerocket/pull/4647
+[#4649]: https://github.com/bottlerocket-os/bottlerocket/pull/4649
+[bottlerocket-core-kit#647]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/647
+[bottlerocket-core-kit#656]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/656
+
+# v1.47.0 (2025-09-15)
+
+## Release Highlights
+* Add new kubernetes 1.34 variants ([#4631]):
+  * Add `aws-k8s-1.34`, `aws-k8s-1.34-nvidia`, `aws-k8s-1.34-fips`, `vmware-k8s-1.34`, and `vmware-k8s-1.34-fips` variants
+  * All k8s-1.34 variants use the following:
+    * Kernel 6.12
+    * `systemd-257` ([bottlerocket-core-kit#581], [bottlerocket-core-kit#636])
+    * `nftables` for managing network filter rules ([bottlerocket-core-kit#549])
+    * `containerd-2.1` ([bottlerocket-core-kit#621])
+      * Default `concurrent-download-chunk-size` setting is set at `8mib`
+      * Remove the support for Schema 1 images
+    * Update defaults for the `shutdown-grace-period` to 2 minutes and 30 seconds with the last 30 seconds reserved for critical pods for aws variants.
+  * Default device list strategy is set to `cdi-cri` for nvidia k8s device plugin
+  * `aws-k8s-1.34-nvidia` variant uses NVIDIA R580 drivers
+* Add `command` field to override default entrypoint for host and bootstrap containers ([#4636], [bottlerocket-core-kit#594]) - Thanks @kasimeka!
+* Add `containerd-2.1` setting for `concurrent-download-chunk-size` ([#4638], [bottlerocket-core-kit#645])
+
+## OS Changes
+* Update `bottlerocket-kernel-kit` from 4.2.0 to 4.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v430-2025-09-08) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.2.0...v4.3.0)) ([#4637])
+* Update `bottlerocket-core-kit` from 10.3.0 to 10.4.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1041-2025-09-11) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v10.3.0...v10.4.1)) ([#4639], [#4642])
+
+[#4631]: https://github.com/bottlerocket-os/bottlerocket/pull/4631
+[#4636]: https://github.com/bottlerocket-os/bottlerocket/pull/4636
+[#4637]: https://github.com/bottlerocket-os/bottlerocket/pull/4637
+[#4638]: https://github.com/bottlerocket-os/bottlerocket/pull/4638
+[#4639]: https://github.com/bottlerocket-os/bottlerocket/pull/4639
+[#4642]: https://github.com/bottlerocket-os/bottlerocket/pull/4642
+[bottlerocket-core-kit#549]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/549
+[bottlerocket-core-kit#581]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/581
+[bottlerocket-core-kit#594]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/594
+[bottlerocket-core-kit#621]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/621
+[bottlerocket-core-kit#636]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/636
+[bottlerocket-core-kit#645]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/645
+
+# v1.46.0 (2025-09-02)
+
+## Release Highlights
+* Add support for new Kubernetes setting `static-pods-enabled` ([bottlerocket-core-kit#641])
+* Add default bind directories for ephemeral storage ([bottlerocket-core-kit#632])
+
+## OS Changes
+* Update `bottlerocket-sdk` from 0.63.0 to 0.64.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.63.0...v0.64.0))([#4623])
+* Update `bottlerocket-core-kit` from 10.1.2 to 10.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1030-2025-08-26) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v10.1.2...v10.3.0)) ([#4623], [#4628])
+* Update `bottlerocket-kernel-kit` from 4.0.1 to 4.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v420-2025-08-25) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v4.0.1...v4.2.0)) ([#4623], [#4626])
+
+## Build Changes
+### Twoliter
+* Update `twoliter` from 0.11.0 to 0.12.0 and schema-version to 2 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0120---2025-08-21) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.11.0...v0.12.0)) ([#4624])
+
+[#4623]: https://github.com/bottlerocket-os/bottlerocket/pull/4623
+[#4624]: https://github.com/bottlerocket-os/bottlerocket/pull/4624
+[#4626]: https://github.com/bottlerocket-os/bottlerocket/pull/4626
+[#4628]: https://github.com/bottlerocket-os/bottlerocket/pull/4628
+[bottlerocket-core-kit#632]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/632
+[bottlerocket-core-kit#641]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/641
+
+# v1.45.0 (2025-08-18)
+
+## Release Highlights
+* Fix `containerd-2.0` settings for `max_concurrent_downloads` ([bottlerocket-core-kit#623])
+
+## OS Changes
+* Restrict kubelet's exec-start file permission to 0600 ([#4574])
+* Restrict kubelet-server.key file permission to 0600 ([#4599])
+* Update admin container from 0.12.1 to 0.12.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0122) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.12.1...v0.12.2)) ([#4612])
+* Update bootstrap container from 0.2.4 to 0.2.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#025) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.4...v0.2.5)) ([#4612])
+* Update control container from 0.8.6 to 0.8.7 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#087) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.6...v0.8.7)) ([#4612])
+* Update `bottlerocket-kernel-kit` from 3.3.1 to 4.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v401-2025-08-11) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v3.3.1...v4.0.1))([#4613])
+* Update `bottlerocket-core-kit` from 10.0.1 to 10.1.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1012-2025-08-14) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v10.0.1...v10.1.2))([#4615], [#4616], [#4619])
+
+[#4574]: https://github.com/bottlerocket-os/bottlerocket/pull/4574
+[#4599]: https://github.com/bottlerocket-os/bottlerocket/pull/4599
+[#4612]: https://github.com/bottlerocket-os/bottlerocket/pull/4612
+[#4613]: https://github.com/bottlerocket-os/bottlerocket/pull/4613
+[#4615]: https://github.com/bottlerocket-os/bottlerocket/pull/4615
+[#4616]: https://github.com/bottlerocket-os/bottlerocket/pull/4616
+[#4619]: https://github.com/bottlerocket-os/bottlerocket/pull/4619
+[bottlerocket-core-kit#623]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/623
+
+# v1.44.0 (2025-08-04)
+
+## Release Highlights
+* Remove `aws-k8s-1.27` and `aws-ecs-1` variants ([#4598])
+* Fix file descriptor leak in `apiserver exec` ([bottlerocket-core-kit#595])
+* Add `soci-snapshotter` support to kubernetes variants ([#4593])
+  * Configure `soci-snapshotter` for parallel pull unpack feature ([bottlerocket-core-kit#569])
+  * Optionally configure containerd and kubelet with `soci-snapshotter` via drop-in configuration files ([bottlerocket-core-kit#576])
+  * Extend selinux-policy to cover `soci-snapshotter` ([bottlerocket-core-kit#579])
+  * Add `configure-snapshotter.service` to reset state directories of snapshotters on boot when selected snapshotter changes ([bottlerocket-core-kit#582])
+  * Apply upstream patches to `soci-snapshotter` ([bottlerocket-core-kit#599])
+  * Drop CLI from `soci-snapshotter` ([bottlerocket-core-kit#569])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 9.2.1 to 10.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v1001-2025-07-31) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v9.2.1...v10.0.1)) ([#4605], [#4609])
+* Update `bottlerocket-kernel-kit` from 3.2.1 to 3.3.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v331-2025-07-25) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v3.2.1...v3.3.1)) ([#4604])
+
+## Build Changes
+*  Add `reset-single-test` testsys command ([#4581])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Add `soci-snapshotter` support to kubernetes variants ([#4593])
+* Remove `aws-k8s-1.27` variants ([#4598])
+
+### ECS
+* Remove `aws-ecs-1` variants ([#4598])
+
+[#4581]: https://github.com/bottlerocket-os/bottlerocket/pull/4581
+[#4593]: https://github.com/bottlerocket-os/bottlerocket/pull/4593
+[#4598]: https://github.com/bottlerocket-os/bottlerocket/pull/4598
+[#4604]: https://github.com/bottlerocket-os/bottlerocket/pull/4604
+[#4605]: https://github.com/bottlerocket-os/bottlerocket/pull/4605
+[#4609]: https://github.com/bottlerocket-os/bottlerocket/pull/4609
+[bottlerocket-core-kit#569]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/569
+[bottlerocket-core-kit#576]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/576
+[bottlerocket-core-kit#579]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/579
+[bottlerocket-core-kit#582]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/582
+[bottlerocket-core-kit#595]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/595
+[bottlerocket-core-kit#599]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/599
+
+# v1.43.0 (2025-07-24)
+## OS Changes
+* Update `bottlerocket-core-kit` from 9.1.0 to 9.2.1 ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v9.1.0...v9.2.1))([#dee811f6])
+* Update `bottlerocket-kernel-kit` from 3.1.1 to 3.2.1 ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v3.1.1...v3.2.1))([#d6d31d6c])
+* Update admin container from 0.12.0 to 0.12.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0121) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.12.0...v0.12.1)) ([#4590])
+* Update bootstrap container from 0.2.3 to 0.2.4 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#024) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.3...v0.2.4)) ([#4590])
+* Update control container from 0.8.5 to 0.8.6 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#086) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.5...v0.8.6)) ([#4590])
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.62.0 to 0.63.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.62.0...v0.63.0)) ([#4592])
+### Twoliter
+* Update `twoliter` from 0.10.1 to 0.11.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0110---2024-07-17) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.10.1...v0.11.0)) ([#4594])
+
+[#4590]: https://github.com/bottlerocket-os/bottlerocket/pull/4590
+[#4592]: https://github.com/bottlerocket-os/bottlerocket/pull/4592
+[#4594]: https://github.com/bottlerocket-os/bottlerocket/pull/4594
+[#dee811f6]: https://github.com/bottlerocket-os/bottlerocket/commit/dee811f63f7da043fb1caea2f54815bdb05da697
+[#d6d31d6c]: https://github.com/bottlerocket-os/bottlerocket/commit/d6d31d6cc322454f3b5738075af805e3f388f966
+
+# v1.42.0 (2025-06-30)
+
+## Release Highlights
+* Add support for kubernetes `memory-swap-behavior` ([#4566], [bottlerocket-core-kit#541], [bottlerocket-settings-sdk#88]) - Thanks @teskje!
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 9.0.0 to 9.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v910-2025-06-23) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v9.0.0...v9.1.0)) ([#4569])
+* Update `bottlerocket-kernel-kit` from 3.1.0 to 3.1.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v311-2025-07-24) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v3.1.0...v3.1.1)) ([#4570])
+* Update admin container from 0.11.20 to 0.12.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#0120) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.11.20...v0.12.0)) ([#4565])
+* Update bootstrap container from 0.2.2 to 0.2.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#023) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.2...v0.2.3)) ([#4565])
+* Update control container from 0.8.4 to 0.8.5 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#085) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.4...v0.8.5)) ([#4565])
+
+## Orchestrator Changes
+### Kubernetes
+* Support kubernetes `memory-swap-behavior` setting [#4566] - Thanks @teskje!
+
+[#4565]: https://github.com/bottlerocket-os/bottlerocket/pull/4565
+[#4566]: https://github.com/bottlerocket-os/bottlerocket/pull/4566
+[#4569]: https://github.com/bottlerocket-os/bottlerocket/pull/4569
+[#4570]: https://github.com/bottlerocket-os/bottlerocket/pull/4570
+[bottlerocket-settings-sdk#88]:https://github.com/bottlerocket-os/bottlerocket-settings-sdk/pull/88
+[bottlerocket-core-kit#541]:https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/541
+
+# v1.41.0 (2025-06-17)
+
+## Release Highlights
+* Remove aws-k8s-1.26 variants ([#4519], [#4536])
+* Add `zramctl` to `util-linux` package ([bottlerocket-core-kit#543])
+* Enable LTO and arch-specific optimizations ([bottlerocket-sdk#276], [bottlerocket-core-kit#526])
+* Provide Vulkan ICD configuration files for variants using the 6.1 and 6.12 kernels ([bottlerocket-kernel-kit#138]) - Thanks, @iterion!
+* Build GRUB with optimizations ([bottlerocket-kernel-kit#163])
+* Provide `libnvidia-gpucomp.so` ([bottlerocket-kernel-kit#181]) - Thanks, @tzmtl!
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 8.2.0 to 9.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v900-2025-06-10) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v8.2.0...v9.0.0)) ([#4561])
+* Update `bottlerocket-kernel-kit` from 2.5.1 to 3.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v310-2025-06-11) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v2.5.1...v3.1.0)) ([#4561])
+* Drop setting generator for hugepages ([#4411])
+
+## Build Changes
+* Update `bottlerocket-sdk` from 0.61.0 to 0.62.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.61.0...v0.62.0)) ([#4561])
+
+## Orchestrator Changes
+### Kubernetes
+* Remove aws-k8s-1.26 variants ([#4519], [#4536])
+* Fix image patterns for ECR dual-stack endpoint ([#4518]) - Thanks @rxnew, @cartermckinnon!
+
+[#4411]: https://github.com/bottlerocket-os/bottlerocket/pull/4411
+[#4518]: https://github.com/bottlerocket-os/bottlerocket/pull/4518
+[#4519]: https://github.com/bottlerocket-os/bottlerocket/issues/4519
+[#4536]: https://github.com/bottlerocket-os/bottlerocket/pull/4536
+[#4561]: https://github.com/bottlerocket-os/bottlerocket/pull/4561
+[bottlerocket-core-kit#526]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/526
+[bottlerocket-core-kit#543]: https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/543
+[bottlerocket-sdk#276]: https://github.com/bottlerocket-os/bottlerocket-sdk/pull/276
+[bottlerocket-kernel-kit#138]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/138
+[bottlerocket-kernel-kit#163]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/163
+[bottlerocket-kernel-kit#181]: https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/181
+
+# v1.40.0 (2025-05-22)
+
+## Release Highlights
+* Migrate ECS to use CDI ([bottlerocket-core-kit#482](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/482))
+* Support CDI and legacy NVIDIA Container Runtime modes ([#4475])
+* Add NVLink Subnet Manager to support NVIDIA B200 ([bottlerocket-core-kit#499](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/499), [bottlerocket-kernel-kit#142](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/142))
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 8.1.1 to 8.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v820-2025-05-20) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v8.1.1...v8.2.0)) ([#4532])
+* Update `bottlerocket-kernel-kit` from 2.3.3 to 2.5.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v251-2025-05-22) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v2.3.3...v2.5.1)) ([#4537])
+* Update bootstrap container from 0.2.1 to 0.2.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#022) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.1...v0.2.2)) ([#4535])
+* Update control container from 0.8.3 to 0.8.4 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#084) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.3...v0.8.4)) ([#4535])
+
+[#4475]: https://github.com/bottlerocket-os/bottlerocket/pull/4475
+[#4532]: https://github.com/bottlerocket-os/bottlerocket/pull/4532
+[#4535]: https://github.com/bottlerocket-os/bottlerocket/pull/4535
+[#4537]: https://github.com/bottlerocket-os/bottlerocket/pull/4537
+
+# v1.39.1 (2025-05-19)
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 8.1.0 to 8.1.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v811-2025-05-14) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v8.1.0...v8.1.1)) ([#4522])
+
+## Build Changes
+
+### Twoliter
+* Update `twoliter` from 0.10.0 to 0.10.1 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0101---2025-05-14) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.10.0...v0.10.1)) ([#4523])
+
+[#4522]: https://github.com/bottlerocket-os/bottlerocket/pull/4522
+[#4523]: https://github.com/bottlerocket-os/bottlerocket/pull/4523
+
+# v1.39.0 (2025-05-06)
+
+## Release Highlights
+* Provide `containerd-2.0` and `containerd-1.7` ([bottlerocket-core-kit#485](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/485))
+* Add new k8s 1.33 variants ([#4507], [#4513]):
+  * Add `aws-k8s-1.33`, `aws-k8s-1.33-nvidia`, `aws-k8s-1.33-fips`, `vmware-k8s-1.33`, and `vmware-k8s-1.33-fips`variants
+  * FIPS variants use 6.1 kernel, all others use 6.12 kernel
+  * Use EROFS for root filesystem on Kernel 6.12 variants
+  * Use `containerd-2.0` on all k8s 1.33 variants
+  * Use EBS volume `gp3` for all AWS k8s 1.33 variant AMIs
+  * Require IMDSv2 by default for new k8s 1.33 variant AMIs. For applications not yet compatible
+    with IMDSv2, this can be disabled at the instance or account level. See
+    [the AWS documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-options.html#instance-metadata-options-order-of-precedence)
+    for more details.
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 8.0.0 to 8.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v810-2025-05-05) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v8.0.0...v8.1.0)) ([#4510])
+* Update `bottlerocket-kernel-kit` from 2.3.0 to 2.3.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v233-2025-05-01) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v2.3.0...v2.3.3)) ([#4508])
+* Update admin container from 0.11.19 to 0.11.20 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#01120) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.11.19...v0.11.20)) ([#4509])
+* Update bootstrap container from 0.2.0 to 0.2.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#021) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.2.0...v0.2.1)) ([#4509])
+* Update control container from 0.8.2 to 0.8.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#083) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.2...v0.8.3)) ([#4509])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Add `aws-k8s-1.33`, `aws-k8s-1.33-nvidia`, `aws-k8s-1.33-fips`, `vmware-k8s-1.33`, and `vmware-k8s-1.33-fips`variants ([#4507])
+* Add new Kubernetes settings ([#4506])
+  * `containerLogMaxWorkers`
+  * `containerLogMonitorInterval`
+  * `singleProcessOOMKill`
+
+## Build Changes
+* Use GP3 volumes and require IMDSv2 by default for AWS k8s 1.33 variant AMIs. ([#4513])
+
+### Twoliter
+* Update `twoliter` from 0.9.0 to 0.10.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#0100---2025-05-06) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.9.0...v0.10.0)) ([#4512])
+
+[#4506]: https://github.com/bottlerocket-os/bottlerocket/pull/4506
+[#4507]: https://github.com/bottlerocket-os/bottlerocket/pull/4507
+[#4508]: https://github.com/bottlerocket-os/bottlerocket/pull/4508
+[#4509]: https://github.com/bottlerocket-os/bottlerocket/pull/4509
+[#4510]: https://github.com/bottlerocket-os/bottlerocket/pull/4510
+[#4512]: https://github.com/bottlerocket-os/bottlerocket/pull/4512
+[#4513]: https://github.com/bottlerocket-os/bottlerocket/pull/4513
+
+# v1.38.0 (2025-04-29)
+
+## Release Highlights
+* Move aws-ecs-2-nvidia, aws-k8s-1.28-nvidia, aws-k8s-1.29-nvidia, aws-k8s-1.30-nvidia, aws-k8s-1.31-nvidia, and aws-k8s-1.32-nvidia variants from NVIDIA r535 driver to r570 driver ([#4499], [#4441])
+* Remove aws-k8s-1.25 variants ([#4497], [#4496])
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 7.0.1 to 8.0.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v800-2025-04-28) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v7.0.1...v8.0.0)) ([#4501])
+* Update `bottlerocket-kernel-kit` from 2.2.2 to 2.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v230-2025-04-28) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v2.2.2...v2.3.0)) ([#4498])
+
+## Build Changes
+* Pass missing vars to sbkeys script ([#4493])
+
+[#4493]: https://github.com/bottlerocket-os/bottlerocket/pull/4493
+[#4496]: https://github.com/bottlerocket-os/bottlerocket/issues/4496
+[#4497]: https://github.com/bottlerocket-os/bottlerocket/pull/4497
+[#4498]: https://github.com/bottlerocket-os/bottlerocket/pull/4498
+[#4499]: https://github.com/bottlerocket-os/bottlerocket/pull/4499
+[#4441]: https://github.com/bottlerocket-os/bottlerocket/issues/4441
+[#4501]: https://github.com/bottlerocket-os/bottlerocket/pull/4501
+
+# v1.37.0 (2025-04-21)
+
+## Release Highlights
+* Add `brush` to enable `aws-signing-helper` and IAM Roles Anywhere usage ([bottlerocket-core-kit#451](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/451))
+* Clear configuration-files and services on upgrades ([bottlerocket-core-kit#456](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/456))
+* Remove `shimpei` and `oci-add-hooks` ([bottlerocket-core-kit#458](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/458))
+* Use the NVIDIA Container Runtime to configure GPUs for containers ([bottlerocket-core-kit#458](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/458))
+* Update `runc` from 1.1.15 to 1.2.6 ([bottlerocket-core-kit#463](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/463))
+* Allow lookups of .local domains using unicast DNS  ([bottlerocket-core-kit#464](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/464)) - Thanks @tzneal!
+* Let `kubelet` start when swap is on ([bottlerocket-core-kit#473](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/473))
+
+## OS Changes
+* Remove unnecessary settings for OCI Hooks API  ([#4474])
+* Update migrations to delete configuration-files and services on downgrade ([#4478])
+* Update `bottlerocket-core-kit` from 6.2.0 to 7.0.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v701-2025-04-22) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v6.3.0...v7.0.1)) ([#4471], [#4485], [#4490])
+* Update `bottlerocket-kernel-kit` from 2.1.0 to 2.2.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v222-2025-04-18) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v2.1.0...v2.2.2)) ([#4485], [#4489])
+* Update admin container from 0.11.18 to 0.11.19 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#01119) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.11.18...v0.11.19)) ([#4476])
+* Update bootstrap container from 0.1.3 to 0.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#020) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.1.3...v0.2.0)) ([#4476])
+* Update control container from 0.8.1 to 0.8.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#082) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.8.1...v0.8.2)) ([#4476])
+
+## Build Changes
+* Update Rust dependencies ([#4468], [#4469])
+* Update secure boot keys to include aws-partition & ca-signing-algo arguments ([#4450])
+* Update `bottlerocket-sdk` from 0.60.0 to 0.61.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.60.0...v0.61.0)) ([#4485])
+
+### Twoliter
+* Update `twoliter` from 0.8.1 to 0.9.0 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#090---2025-04-16) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.8.1...v0.9.0)) ([#4484])
+
+[#4450]: https://github.com/bottlerocket-os/bottlerocket/pull/4450
+[#4468]: https://github.com/bottlerocket-os/bottlerocket/pull/4468
+[#4469]: https://github.com/bottlerocket-os/bottlerocket/pull/4469
+[#4471]: https://github.com/bottlerocket-os/bottlerocket/pull/4471
+[#4474]: https://github.com/bottlerocket-os/bottlerocket/pull/4474
+[#4476]: https://github.com/bottlerocket-os/bottlerocket/pull/4476
+[#4478]: https://github.com/bottlerocket-os/bottlerocket/pull/4478
+[#4484]: https://github.com/bottlerocket-os/bottlerocket/pull/4484
+[#4485]: https://github.com/bottlerocket-os/bottlerocket/pull/4485
+[#4489]: https://github.com/bottlerocket-os/bottlerocket/pull/4489
+[#4490]: https://github.com/bottlerocket-os/bottlerocket/pull/4490
+
+# v1.36.0 (2025-04-07)
+
+## Release Highlights
+* Switch to igzip (x86_64) or pigz with zlib-ng (aarch64) to decompress container images ([bottlerocket-core-kit#443](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/443))
+* Add support for more AWS regions in schnauzer and host-ctr ([bottlerocket-core-kit#454](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/454))
+
+## OS Changes
+* Update `bottlerocket-core-kit` from 6.1.0 to 6.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v620-2025-04-01) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v6.1.0...v6.2.0)) ([#4460], [#4452])
+* Update `bottlerocket-kernel-kit` from 1.3.0 to 2.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v210-2024-04-02) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v1.3.0...v2.1.0)) ([#4461])
+
+## Orchestrator Changes
+### Kubernetes
+* Authenticate with ECR public to avoid rate limits ([#4419]) - Thanks @MarkIannucci!
+* Support ECR credential provider in more ISO partitions ([#4459])
+
+## Build Changes
+* Remove redundant metadata migration helpers ([#4459])
+* Archive migrations prior to v1.34.0 ([#4459])
+* Remove schnauzer and apiclient dependencies from bottlerocket repo ([#4459])
+
+### Documentation Changes
+* Fix links to `./packages` to point to the `bottlerocket-core-kit/packages` ([#4446])
+
+[#4419]: https://github.com/bottlerocket-os/bottlerocket/pull/4419
+[#4446]: https://github.com/bottlerocket-os/bottlerocket/pull/4446
+[#4452]: https://github.com/bottlerocket-os/bottlerocket/pull/4452
+[#4459]: https://github.com/bottlerocket-os/bottlerocket/pull/4459
+[#4460]: https://github.com/bottlerocket-os/bottlerocket/pull/4460
+[#4461]: https://github.com/bottlerocket-os/bottlerocket/pull/4461
+
+# v1.35.0 (2025-03-24)
+
+## Release Highlights
+* Move the `aws-ecs-1` kernel from 5.10 to 5.15 ([#4434])
+* Persist sysctl setting changes to /etc/sysctl.d ([bottlerocket-core-kit#333](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/333)) - Thanks @aetimmes
+* Updated cis report to account for formatting change in iptables ([bottlerocket-core-kit#390](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/390))
+* Include SHA-256 and SHA-512 CPU routines in the ARM kernel image ([bottlerocket-kernel-kit#67](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/pull/67))
+
+## OS Changes
+* Update admin container from 0.11.16 to 0.11.18 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-admin-container/blob/develop/CHANGELOG.md#01118) ([commits](https://github.com/bottlerocket-os/bottlerocket-admin-container/compare/v0.11.16...v0.11.18)) ([#4431], [#4443])
+* Update bootstrap container from 0.1.1 to 0.1.3 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/blob/develop/CHANGELOG.md#013) ([commits](https://github.com/bottlerocket-os/bottlerocket-bootstrap-container/compare/v0.1.1...v0.1.3)) ([#4432], [#4443])
+* Update control container from 0.7.20 to 0.8.1 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-control-container/blob/develop/CHANGELOG.md#081) ([commits](https://github.com/bottlerocket-os/bottlerocket-control-container/compare/v0.7.20...v0.8.1)) ([#4431], [#4443])
+
+## Build Changes
+* Update `bottlerocket-core-kit` from 6.0.2 to 6.1.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v610-2025-03-14) ([commits](https://github.com/bottlerocket-os/bottlerocket-core-kit/compare/v6.0.2...v6.1.0)) ([#4439])
+* Update `bottlerocket-kernel-kit` from 1.2.0 to 1.3.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v130-2024-03-06) ([commits](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/compare/v1.2.0...v1.3.0)) ([#4439])
+* Update `bottlerocket-sdk` from 0.50.1 to 0.60.0 ([commits](https://github.com/bottlerocket-os/bottlerocket-sdk/compare/v0.50.1...v0.60.0)) ([#4439])
+* Bump `ring` from 0.17.8 to 0.17.13 ([#4430])
+
+### Twoliter
+* Update `twoliter` from 0.7.3 to 0.8.1 [CHANGELOG](https://github.com/bottlerocket-os/twoliter/blob/develop/CHANGELOG.md#081---2025-03-13) ([commits](https://github.com/bottlerocket-os/twoliter/compare/v0.7.3...v0.8.1)) ([#4433], [#4438])
+
+[#4430]: https://github.com/bottlerocket-os/bottlerocket/pull/4430
+[#4431]: https://github.com/bottlerocket-os/bottlerocket/pull/4431
+[#4432]: https://github.com/bottlerocket-os/bottlerocket/pull/4432
+[#4433]: https://github.com/bottlerocket-os/bottlerocket/pull/4433
+[#4434]: https://github.com/bottlerocket-os/bottlerocket/pull/4434
+[#4438]: https://github.com/bottlerocket-os/bottlerocket/pull/4438
+[#4439]: https://github.com/bottlerocket-os/bottlerocket/pull/4439
+[#4443]: https://github.com/bottlerocket-os/bottlerocket/pull/4443
+
+# v1.34.0 (2025-03-03)
+
+## OS Changes
+
+* Add support for NVIDIA Multi-Instance GPU (MIG) ([#4418])
+
+## Build Changes
+* Update bottlerocket-core-kit from 6.0.1 to 6.0.2 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-core-kit/blob/develop/CHANGELOG.md#v602-2025-02-26) ([#4416])
+* Update bottlerocket-kernel-kit from 1.1.2 to 1.2.0 [CHANGELOG](https://github.com/bottlerocket-os/bottlerocket-kernel-kit/blob/develop/CHANGELOG.md#v120-2024-02-26) ([#4416])
+
+### Twoliter
+
+* Update Twoliter to 0.7.3 ([#4416])
+
+[#4416]: https://github.com/bottlerocket-os/bottlerocket/pull/4416
+[#4418]: https://github.com/bottlerocket-os/bottlerocket/pull/4418
+
+# v1.33.0 (2025-02-26)
+
+## Release Highlights
+* Remove aws-k8s-1.24 variants ([#4359])
+
+## OS Changes
+* Allow default host containers to be changed without a migration ([#4324])
+* Add default managed Bootstrap container ([#4349])
+* Correct migrations for public control containers. ([#4388])
+
+## Build Changes
+* Update bottlerocket-kernel-kit to 1.1.2 ([#4383], [#4386], [#4394], [#4408])
+* Update bottlerocket-core-kit to 6.0.1 ([#4387], [#4403])
+
+### Twoliter
+* Update Twoliter to 0.7.2 ([#4384])
+
+## Orchestrator Changes
+### Kubernetes
+* Deprecate Kubernetes 1.24 AWS variants ([#4379])
+
+[#4324]: https://github.com/bottlerocket-os/bottlerocket/pull/4324
+[#4349]: https://github.com/bottlerocket-os/bottlerocket/pull/4349
+[#4359]: https://github.com/bottlerocket-os/bottlerocket/issues/4359
+[#4379]: https://github.com/bottlerocket-os/bottlerocket/pull/4379
+[#4383]: https://github.com/bottlerocket-os/bottlerocket/pull/4383
+[#4384]: https://github.com/bottlerocket-os/bottlerocket/pull/4384
+[#4386]: https://github.com/bottlerocket-os/bottlerocket/pull/4386
+[#4387]: https://github.com/bottlerocket-os/bottlerocket/pull/4387
+[#4388]: https://github.com/bottlerocket-os/bottlerocket/pull/4388
+[#4394]: https://github.com/bottlerocket-os/bottlerocket/pull/4394
+[#4403]: https://github.com/bottlerocket-os/bottlerocket/pull/4403
+[#4408]: https://github.com/bottlerocket-os/bottlerocket/pull/4408
+
+# v1.32.0 (2025-01-24)
+
+## Build Changes
+* Update bottlerocket-core-kit to 5.4.2 ([#4374])
+* Update bottlerocket-kernel-kit to 1.0.6 ([#4374])
+* Update bottlerocket-sdk to 0.50.1 ([#4374])
+
+### Twoliter
+
+* Update Twoliter to 0.7.1 ([#4373])
+
+[#4373]: https://github.com/bottlerocket-os/bottlerocket/pull/4373
+[#4374]: https://github.com/bottlerocket-os/bottlerocket/pull/4374
+
+# v1.31.0 (2025-01-21)
+
+## OS Changes
+
+* Update host containers ([#4360])
+
+## Build Changes
+* Update bottlerocket-core-kit to 5.4.1 ([#4365])
+* Update bottlerocket-kernel-kit to 1.0.4 ([#4366])
+
+### Twoliter
+
+* Update Twoliter to 0.7.0 ([#4362])
+
+[#4360]: https://github.com/bottlerocket-os/bottlerocket/pull/4360
+[#4362]: https://github.com/bottlerocket-os/bottlerocket/pull/4362
+[#4365]: https://github.com/bottlerocket-os/bottlerocket/pull/4365
+[#4366]: https://github.com/bottlerocket-os/bottlerocket/pull/4366
+
+# v1.30.0 (2025-01-07)
+
+## OS Changes
+* Update host containers ([#4353])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Add Kubernetes 1.32 variants ([#4320])
+* Add device-ownership-from-security-context setting (default to true on aws-k8s-1.32) ([#4345])
+
+## Build Changes
+* Update bottlerocket-core-kit to 5.3.0 ([#4351])
+* Update bottlerocket-kernel-kit to 1.0.2 ([#4344])
+
+[#4320]: https://github.com/bottlerocket-os/bottlerocket/pull/4320
+[#4344]: https://github.com/bottlerocket-os/bottlerocket/pull/4344
+[#4345]: https://github.com/bottlerocket-os/bottlerocket/pull/4345
+[#4351]: https://github.com/bottlerocket-os/bottlerocket/pull/4351
+[#4353]: https://github.com/bottlerocket-os/bottlerocket/pull/4353
+
+# v1.29.0 (2024-12-17)
+
+## Build Changes
+* Add bottlerocket-kernel-kit 1.0.0 ([#4332])
+* Update bottlerocket-core-kit to 5.0.0 ([#4332])
+* Update bottlerocket-sdk to 0.50.0 ([#4332])
+
+## OS Changes
+* Enable plugins and detailed EBS volume stats for `nvme-cli` ([bottlerocket-core-kit#269](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/269))
+* Set `LoaderTimeInitUSec` and `LoaderTimeExecUSec` in GRUB ([bottlerocket-core-kit#273](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/273))
+
+[#4332]: https://github.com/bottlerocket-os/bottlerocket/pull/4332
+
+# v1.28.0 (2024-12-08)
+
+## Release Highlights
+* Enable EFA support to Bottlerocket AMIs ([#4290])
+* Fix `io_uring` regression in 6.1 kernel ([bottlerocket-core-kit#284](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/284))
+* Allow overriding the max-pods file with one from your variant ([bottlerocket-core-kit#279](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/279)) - thanks @tzneal
+
+## Build Changes
+* Update bottlerocket-core-kit to 4.0.1 ([#4322])
+
+### OS Changes
+* Update host containers ([#4312])
+* Update Twoliter to 0.6.0 ([#4323])
+
+### Documentation Changes
+* Update models README references ([#4138])
+
+[#4138]: https://github.com/bottlerocket-os/bottlerocket/pull/4138
+[#4290]: https://github.com/bottlerocket-os/bottlerocket/pull/4290
+[#4312]: https://github.com/bottlerocket-os/bottlerocket/pull/4312
+[#4322]: https://github.com/bottlerocket-os/bottlerocket/pull/4322
+[#4323]: https://github.com/bottlerocket-os/bottlerocket/pull/4323
+
+# v1.27.1 (2024-11-16)
+
+## Release Highlights
+* Add patch for kernel-5.15 to fix issues when using IPv6 ([bottlerocket-core-kit#266](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/266))
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to 3.3.2 ([#4301])
+
+[#4301]: https://github.com/bottlerocket-os/bottlerocket/pull/4301
+
+# v1.27.0 (2024-11-12)
+
+## Release Highlights
+* Add FIPS variants ([#4274], [#1667], [#4267])
+* Drop k8s 1.28 and k8s 1.29 metal variants ([#4287])
+
+## OS Changes
+* Add aws-creds settings defaults to all AWS variants ([#4285])
+* Add support for migrations to modify aws-config setting generators ([#4271])
+
+## Build Changes
+* Update bottlerocket-core-kit to 3.3.0 ([#4292])
+* Update bottlerocket-sdk to 0.47.0 ([#4286])
+
+[#1667]: https://github.com/bottlerocket-os/bottlerocket/pull/1667
+[#4267]: https://github.com/bottlerocket-os/bottlerocket/pull/4267
+[#4271]: https://github.com/bottlerocket-os/bottlerocket/pull/4271
+[#4274]: https://github.com/bottlerocket-os/bottlerocket/pull/4274
+[#4285]: https://github.com/bottlerocket-os/bottlerocket/pull/4285
+[#4286]: https://github.com/bottlerocket-os/bottlerocket/pull/4286
+[#4287]: https://github.com/bottlerocket-os/bottlerocket/pull/4287
+[#4292]: https://github.com/bottlerocket-os/bottlerocket/pull/4292
+
+# v1.26.2 (2024-11-04)
+
+## Release Highlights
+* Wait for kubelet device-manager socket before starting nvidia-k8s-device-plugin ([bottlerocket-core-kit#238](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/238))
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to 3.1.5 ([#4280])
+
+[#4280]: https://github.com/bottlerocket-os/bottlerocket/pull/4280
+
+# v1.26.1 (2024-10-24)
+
+## Release Highlights
+* Revert system-wide configuration to block writeable/executable memory in systemd services ([bottlerocket-core-kit#215](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/215))
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to 3.1.1 ([#4264])
+
+[#4264]: https://github.com/bottlerocket-os/bottlerocket/pull/4264
+
+# v1.26.0 (2024-10-23)
+
+## Release Highlights
+* Update NVIDIA driver to 535.216.01 ([#4254])
+* Move kmod-5.10-nvidia tesla package for aws-ecs-1-nvidia variant from branch R470 to R535 ([#4251])
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to 3.1.0 ([#4254], [#4251])
+* Update NVIDIA driver to 535.216.01 ([#4254])
+* Update twoliter to 0.5.0 ([#4251])
+* Update bottlerocket-sdk to 0.46 ([#4251])
+* Standardize RPM release fields for RPM packages ([#4244])
+
+## Orchestrator Changes
+
+### ECS
+* Move kmod-5.10-nvidia tesla package for aws-ecs-1-nvidia variant from branch R470 to R535 ([#4251])
+
+### Documentation Changes
+* Add link to bootstrap-commands documentation ([#4247])
+
+[#4244]: https://github.com/bottlerocket-os/bottlerocket/pull/4244
+[#4247]: https://github.com/bottlerocket-os/bottlerocket/pull/4247
+[#4251]: https://github.com/bottlerocket-os/bottlerocket/pull/4251
+[#4254]: https://github.com/bottlerocket-os/bottlerocket/pull/4254
+
+# v1.25.0 (2024-10-15)
+
+## Release Highlights
+* Remove aws-k8s-1.23 variants (https://github.com/bottlerocket-os/bottlerocket/issues/4083)
+* Add support for NVIDIA GPU time slicing (closes https://github.com/bottlerocket-os/bottlerocket/issues/2347)
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to 2.9.0 ([#4242])
+* Update host containers ([#4241])
+* Update twoliter to v0.4.7 ([#4236])
+* Fix permissions for kubelet-exec-start-conf file ([#4199])
+* Add support for NVIDIA GPU time slicing ([#4230])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Drop Kubernetes 1.23 AWS variants ([#4227], [#4237])
+
+### Documentation Changes
+* Add security guidance for NVIDIA GPU time-slicing ([#4240])
+
+[#4199]: https://github.com/bottlerocket-os/bottlerocket/pull/4199
+[#4227]: https://github.com/bottlerocket-os/bottlerocket/pull/4227
+[#4230]: https://github.com/bottlerocket-os/bottlerocket/pull/4230
+[#4236]: https://github.com/bottlerocket-os/bottlerocket/pull/4236
+[#4237]: https://github.com/bottlerocket-os/bottlerocket/pull/4237
+[#4240]: https://github.com/bottlerocket-os/bottlerocket/pull/4240
+[#4241]: https://github.com/bottlerocket-os/bottlerocket/pull/4241
+[#4242]: https://github.com/bottlerocket-os/bottlerocket/pull/4242
+
+# v1.24.1 (2024-10-04)
+
+## Release Highlights
+* Update ecs-agent to 1.86.3 ([bottlerocket-core-kit#168](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/168)) - Closes issue [#4186](https://github.com/bottlerocket-os/bottlerocket/issues/4186)
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to 2.8.4 ([#4231])
+* Update host containers ([#4233])
+
+### Documentation Changes
+* Update QUICKSTART-EKS.md ([#4228]) - Thanks @bryanhsu00 for the suggested fix!
+
+[#4228]: https://github.com/bottlerocket-os/bottlerocket/pull/4228
+[#4231]: https://github.com/bottlerocket-os/bottlerocket/pull/4231
+[#4233]: https://github.com/bottlerocket-os/bottlerocket/pull/4233
+
+# v1.24.0 (2024-09-27)
+
+## Release Highlights
+* Use open GPU drivers on P4 and P5 instances automatically [bottlerocket-core-kit#114](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/114)
+* Update to nvidia-container-toolkit 1.16.2 [bottlerocket-core-kit#161](https://github.com/bottlerocket-os/bottlerocket-core-kit/pull/161)
+
+## Build Changes
+
+### OS Changes
+* Update bottlerocket-core-kit to v2.8.1 ([#4222])
+
+### Settings Extensions
+* Drop dependency on glibc-devel ([#4213])
+
+### Documentation Changes
+* Update QUICKSTART-ECS.md and QUICKSTART-EKS.md ([#4169])  Thanks @bryantbiggs!
+
+[#4169]: https://github.com/bottlerocket-os/bottlerocket/pull/4169
+[#4213]: https://github.com/bottlerocket-os/bottlerocket/pull/4213
+[#4222]: https://github.com/bottlerocket-os/bottlerocket/pull/4222
+
+# v1.23.0 (2024-09-19)
+
+## Orchestrator Changes
+
+### Kubernetes
+* Support Kubernetes NVIDIA Device Plugin configurations through API ([#4182])
+* Support NVIDIA Container Toolkit configurations through API ([#4182])
+
+## Build Changes
+* Update bottlerocket-sdk to 0.45 ([#4189])
+* Add `Twoliter.override` to `.gitignore` ([#4202])
+
+### Twoliter
+* Update bottlerocket-core-kit ([#4189], [#4203], [#4211])
+* Perform binary checksum validation ([#4192])
+* Update Twoliter to v0.4.6 ([#4200])
+
+### Settings Extensions
+* Update bottlerocket-settings-models to v0.4.0 ([#4182])
+
+### Documentation Changes
+* Add NVIDIA Device Plugin and NVIDIA Container Toolkit notes to SECURITY_GUIDANCE.md ([#4205])
+
+[#4182]: https://github.com/bottlerocket-os/bottlerocket/pull/4182
+[#4189]: https://github.com/bottlerocket-os/bottlerocket/pull/4189
+[#4192]: https://github.com/bottlerocket-os/bottlerocket/pull/4192
+[#4200]: https://github.com/bottlerocket-os/bottlerocket/pull/4200
+[#4202]: https://github.com/bottlerocket-os/bottlerocket/pull/4202
+[#4203]: https://github.com/bottlerocket-os/bottlerocket/pull/4203
+[#4205]: https://github.com/bottlerocket-os/bottlerocket/pull/4205
+[#4211]: https://github.com/bottlerocket-os/bottlerocket/pull/4211
+
+# v1.22.0 (2024-09-10)
+
+## Orchestrator Changes
+
+### Kubernetes
+* Add Kubernetes 1.31 variants ([#4142])
+
+## OS Changes
+* Update host containers ([#4171])
+* Add support for bootstrap commands ([#4131])
+
+## Build Changes
+
+### Twoliter
+* Update bottlerocket-core-kit to v2.4.1 ([#4183], [#4177], [#4168])
+
+### Settings Extensions
+* Update bottlerocket-settings-models to v0.4.0 ([#4131])
+
+[#4131]: https://github.com/bottlerocket-os/bottlerocket/pull/4131
+[#4142]: https://github.com/bottlerocket-os/bottlerocket/pull/4142
+[#4168]: https://github.com/bottlerocket-os/bottlerocket/pull/4168
+[#4171]: https://github.com/bottlerocket-os/bottlerocket/pull/4171
+[#4177]: https://github.com/bottlerocket-os/bottlerocket/pull/4177
+[#4183]: https://github.com/bottlerocket-os/bottlerocket/pull/4183
+
+# v1.21.1 (2024-08-21)
+
+## OS Changes
+
+* Update host containers ([#4153])
+
+## Build Changes
+* Use workspace dependencies for all dependencies ([#4132])
+
+### Twoliter
+* Update bottlerocket-core-kit to v2.3.5 ([#4156], [#4152], [#4143], [#4139])
+* Update Twoliter to v0.4.5 ([#4159])
+
+### Settings Extensions
+* Update bottlerocket-settings-models to v0.3.0 ([#4145])
+
+## README changes
+* Update command for SSM Start session on host container ([#4129]) - Thanks @Veronica4036!
+
+[#4129]: https://github.com/bottlerocket-os/bottlerocket/pull/4129
+[#4132]: https://github.com/bottlerocket-os/bottlerocket/pull/4132
+[#4139]: https://github.com/bottlerocket-os/bottlerocket/pull/4139
+[#4143]: https://github.com/bottlerocket-os/bottlerocket/pull/4143
+[#4145]: https://github.com/bottlerocket-os/bottlerocket/pull/4145
+[#4152]: https://github.com/bottlerocket-os/bottlerocket/pull/4152
+[#4153]: https://github.com/bottlerocket-os/bottlerocket/pull/4153
+[#4156]: https://github.com/bottlerocket-os/bottlerocket/pull/4156
+[#4159]: https://github.com/bottlerocket-os/bottlerocket/pull/4159
+
+# v1.21.0 (2024-08-06)
+
+## OS Changes
+
+* Update host containers ([#4117])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Enable k8s reserved cpus ([#3964])
+* Drop k8s 1.27 metal and VMware variants ([#4079])
+* Drop k8s 1.26 metal and VMware variants ([#4018])
+* Build the pause image from upstream ([#3940]) - Thanks @tzneal!
+
+### ECS
+
+* Port to the ECS settings extension ([#3984])
+
+## Build Changes
+
+* Archive previous release migrations ([#4014])
+* Update Go dependencies ([#3999])
+
+### Twoliter
+
+* Migrate to core kit ([#4060])
+* Remove leftover vendor section ([#4071])
+* Update Twoliter to 0.4.4 ([#4008], [#4086], [#4093], [#4123])
+* Update bottlerocket-core-kit to v2.3.1 ([#4122])
+* Update bottlerocket-sdk to 0.43 ([#4122])
+
+### Settings Extensions
+
+* Use settings models vended by bottlerocket-settings-sdk ([#4057])
+* Migrate to settings plugins and eliminate variant-based conditional compilation ([#4038])
+* Enable settings extensions ([#4050])
+* Update to bottlerocket-settings-models v0.2.0 ([#4118])
+
+
+## Platform Changes
+
+### AWS
+
+* Add udev rule to create symlinks using EBS volumes’ device names ([#3977])
+
+## Package changes
+
+* Add Neuron kmod for 6.1 kernel ([#3982])
+* Update containerd to 1.7.20 ([#4122])
+
+## README changes
+
+* Fix OpenAPI spec link ([#4062])
+* Fix NVIDIA variants in SSM parameters ([#4047])
+* Add k8s command to retrieve log archive ([#3993])
+* Fix netdog reference link ([#3974]) - Thanks @emmanuel-ferdman!
+* Update BUILDING.md with the latest Docker requirements ([#4098])
+
+[#3940]: https://github.com/bottlerocket-os/bottlerocket/pull/3940
+[#3964]: https://github.com/bottlerocket-os/bottlerocket/pull/3964
+[#3974]: https://github.com/bottlerocket-os/bottlerocket/pull/3974
+[#3977]: https://github.com/bottlerocket-os/bottlerocket/pull/3977
+[#3982]: https://github.com/bottlerocket-os/bottlerocket/pull/3982
+[#3984]: https://github.com/bottlerocket-os/bottlerocket/pull/3984
+[#3993]: https://github.com/bottlerocket-os/bottlerocket/pull/3993
+[#3999]: https://github.com/bottlerocket-os/bottlerocket/pull/3999
+[#4008]: https://github.com/bottlerocket-os/bottlerocket/pull/4008
+[#4014]: https://github.com/bottlerocket-os/bottlerocket/pull/4014
+[#4018]: https://github.com/bottlerocket-os/bottlerocket/pull/4018
+[#4027]: https://github.com/bottlerocket-os/bottlerocket/pull/4027
+[#4038]: https://github.com/bottlerocket-os/bottlerocket/pull/4038
+[#4047]: https://github.com/bottlerocket-os/bottlerocket/pull/4047
+[#4050]: https://github.com/bottlerocket-os/bottlerocket/pull/4050
+[#4057]: https://github.com/bottlerocket-os/bottlerocket/pull/4057
+[#4060]: https://github.com/bottlerocket-os/bottlerocket/pull/4060
+[#4062]: https://github.com/bottlerocket-os/bottlerocket/pull/4062
+[#4071]: https://github.com/bottlerocket-os/bottlerocket/pull/4071
+[#4079]: https://github.com/bottlerocket-os/bottlerocket/pull/4079
+[#4086]: https://github.com/bottlerocket-os/bottlerocket/pull/4086
+[#4093]: https://github.com/bottlerocket-os/bottlerocket/pull/4093
+[#4098]: https://github.com/bottlerocket-os/bottlerocket/pull/4098
+[#4117]: https://github.com/bottlerocket-os/bottlerocket/pull/4117
+[#4118]: https://github.com/bottlerocket-os/bottlerocket/pull/4118
+[#4122]: https://github.com/bottlerocket-os/bottlerocket/pull/4122
+[#4123]: https://github.com/bottlerocket-os/bottlerocket/pull/4123
+
+# v1.20.5 (2024-07-30)
+
+## OS Changes
+
+* Update docker-engine to v25.0.6 ([#4111])
+* Update containerd to 1.6.34 ([#4113])
+* Update kernels: 5.10.220, 5.15.162, and 6.1.97 ([#4104])
+* Update host containers ([#4110])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Add latest instance types to eni-max-pods mapping ([#4108])
+
+[#4104]: https://github.com/bottlerocket-os/bottlerocket/pull/4104
+[#4108]: https://github.com/bottlerocket-os/bottlerocket/pull/4108
+[#4110]: https://github.com/bottlerocket-os/bottlerocket/pull/4110
+[#4111]: https://github.com/bottlerocket-os/bottlerocket/pull/4111
+[#4113]: https://github.com/bottlerocket-os/bottlerocket/pull/4113
+
+# v1.20.4 (2024-07-15)
+
+## OS Changes
+* Update kernels: 5.10.219 and 6.1.94 ([#4080])
+* Update docker-engine and docker-cli to v25.0.5 ([#4091])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Update patches for kubernetes 1.23, 1.24, 1.25, and 1.26 ([#4084])
+* Update sources for kubernetes 1.27, 1.28, 1.29, and 1.30 ([#4089])
+
+[#4080]: https://github.com/bottlerocket-os/bottlerocket/pull/4080
+[#4084]: https://github.com/bottlerocket-os/bottlerocket/pull/4084
+[#4089]: https://github.com/bottlerocket-os/bottlerocket/pull/4089
+[#4091]: https://github.com/bottlerocket-os/bottlerocket/pull/4091
+
+# v1.20.3 (2024-06-26)
+
+## OS Changes
+* Update kernels: 5.10.218, 5.15.160, and 6.1.92 ([#4064], [#4066])
+
+[#4064]: https://github.com/bottlerocket-os/bottlerocket/pull/4064
+[#4066]: https://github.com/bottlerocket-os/bottlerocket/pull/4066
+
+# v1.20.2 (2024-06-12)
+
+## OS Changes
+* Update kernel to 5.10.217 [#4039]
+* Mount static kmod as /usr/local/sbin/modprobe [#4037]
+
+[#4037]: https://github.com/bottlerocket-os/bottlerocket/pull/4037
+[#4039]: https://github.com/bottlerocket-os/bottlerocket/pull/4039
+
+# v1.20.1 (2024-06-04)
+
+## OS Changes
+* Update kernels to 6.1.90, 5.15.158, and 5.10.216 ([#3976], [#3972])
+* Include statically linked version of kmod ([#3981])
+* Specify AWS EULA as license for kmod-*-nvidia packages ([#3991])
+* Update source for Fabric Manager binaries ([#4015])
+* Update NVIDIA driver versions to 470.256.02 and 535.183.01 ([#4029])
+
+[#3972]: https://github.com/bottlerocket-os/bottlerocket/pull/3972
+[#3976]: https://github.com/bottlerocket-os/bottlerocket/pull/3976
+[#3981]: https://github.com/bottlerocket-os/bottlerocket/pull/3981
+[#3991]: https://github.com/bottlerocket-os/bottlerocket/pull/3991
+[#4015]: https://github.com/bottlerocket-os/bottlerocket/pull/4015
+[#4029]: https://github.com/bottlerocket-os/bottlerocket/pull/4029
+
+# v1.20.0 (2024-05-13)
+
+## OS Changes
+* Update third party packages ([#3939])
+* Enable file system encryption in 5.15 and 6.1 kernels ([#3906], [#3908])
+* Backport fix for loading SELinux modules ([#3907])
+* Add Fabric Manager support ([#3873])
+* Update host containers ([#3947])
+* Add setting to configure ntp options ([#3852] thanks @domgoodwin)
+* Include swap utilities ([#3829])
+* Update kernels to 6.1.87, 5.15.156, 5.10.215 ([#3934], [#3930])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Drop Kubernetes 1.25 Metal and VMware variants ([#3896])
+* Add Kubernetes 1.30 variants ([#3859], [#3936])
+* Add container-runtime settings to `aws-k8s-*-nvidia` variants ([#3945])
+
+### ECS
+* Update ecs-agent to 1.82.3 ([#3939])
+* Use systemd drop-ins to configure the ECS agent ([#3834])
+
+## Build Changes
+* Update twoliter and the SDK ([#3938], [#3885])
+* Remove liblzma and libbzip2 ([#3861], [#3944])
+* Pessimize Rust builds that require the AWS SDK ([#3892])
+* Reduce variant matrix in CI/CD ([#3863])
+* Document package build tools for go dependencies ([#3882])
+* Update Go lints in CI/CD ([#3884])
+* Out-of-tree build enablement
+  * systemd: use build defaults and kernel parameters for unified cgroups ([#3886], [#3935])
+  * early-boot-config: Use standalone provider binaries to fetch user data ([#3637], [#3890])
+  * logdog: retrieve settings via API client ([#3946])
+  * netdog: remove conditional compilation, add hostname helpers ([#3700], [#3898])
+  * schnauzer: add if_not_null template helper ([#3838])
+  * static-pods: remove conditional compilation, switch to config file ([#3891], [#3927], [#3913])
+  * host-containers: switch to config file ([#3777], [#3842])
+  * bootstrap-containers: switch to config file ([#3724])
+  * corndog: switch to config file ([#3715])
+  * prairiedog: switch to config file ([#3713], [#3814], [#3836])
+  * thar-be-updates: switch to config file ([#3721])
+  * updog: use modeled types ([#3901])
+  * kernel: remove variant sensitivity ([#3897], [#3905], [#3932])
+* FIPS enablement
+  * add FIPS report to the API ([#3894])
+  * add release-fips package for FIPS functionality ([#3893])
+  * build Go binaries for FIPS and non-FIPS ([#3887])
+
+[#3637]: https://github.com/bottlerocket-os/bottlerocket/pull/3637
+[#3700]: https://github.com/bottlerocket-os/bottlerocket/pull/3700
+[#3713]: https://github.com/bottlerocket-os/bottlerocket/pull/3713
+[#3715]: https://github.com/bottlerocket-os/bottlerocket/pull/3715
+[#3721]: https://github.com/bottlerocket-os/bottlerocket/pull/3721
+[#3724]: https://github.com/bottlerocket-os/bottlerocket/pull/3724
+[#3777]: https://github.com/bottlerocket-os/bottlerocket/pull/3777
+[#3814]: https://github.com/bottlerocket-os/bottlerocket/pull/3814
+[#3829]: https://github.com/bottlerocket-os/bottlerocket/pull/3829
+[#3834]: https://github.com/bottlerocket-os/bottlerocket/pull/3834
+[#3836]: https://github.com/bottlerocket-os/bottlerocket/pull/3836
+[#3838]: https://github.com/bottlerocket-os/bottlerocket/pull/3838
+[#3842]: https://github.com/bottlerocket-os/bottlerocket/pull/3842
+[#3852]: https://github.com/bottlerocket-os/bottlerocket/pull/3852
+[#3859]: https://github.com/bottlerocket-os/bottlerocket/pull/3859
+[#3861]: https://github.com/bottlerocket-os/bottlerocket/pull/3861
+[#3863]: https://github.com/bottlerocket-os/bottlerocket/pull/3863
+[#3873]: https://github.com/bottlerocket-os/bottlerocket/pull/3873
+[#3882]: https://github.com/bottlerocket-os/bottlerocket/pull/3882
+[#3884]: https://github.com/bottlerocket-os/bottlerocket/pull/3884
+[#3885]: https://github.com/bottlerocket-os/bottlerocket/pull/3885
+[#3886]: https://github.com/bottlerocket-os/bottlerocket/pull/3886
+[#3887]: https://github.com/bottlerocket-os/bottlerocket/pull/3887
+[#3890]: https://github.com/bottlerocket-os/bottlerocket/pull/3890
+[#3891]: https://github.com/bottlerocket-os/bottlerocket/pull/3891
+[#3892]: https://github.com/bottlerocket-os/bottlerocket/pull/3892
+[#3893]: https://github.com/bottlerocket-os/bottlerocket/pull/3893
+[#3894]: https://github.com/bottlerocket-os/bottlerocket/pull/3894
+[#3896]: https://github.com/bottlerocket-os/bottlerocket/pull/3896
+[#3897]: https://github.com/bottlerocket-os/bottlerocket/pull/3897
+[#3898]: https://github.com/bottlerocket-os/bottlerocket/pull/3898
+[#3901]: https://github.com/bottlerocket-os/bottlerocket/pull/3901
+[#3905]: https://github.com/bottlerocket-os/bottlerocket/pull/3905
+[#3906]: https://github.com/bottlerocket-os/bottlerocket/pull/3906
+[#3907]: https://github.com/bottlerocket-os/bottlerocket/pull/3907
+[#3908]: https://github.com/bottlerocket-os/bottlerocket/pull/3908
+[#3913]: https://github.com/bottlerocket-os/bottlerocket/pull/3913
+[#3927]: https://github.com/bottlerocket-os/bottlerocket/pull/3927
+[#3930]: https://github.com/bottlerocket-os/bottlerocket/pull/3930
+[#3932]: https://github.com/bottlerocket-os/bottlerocket/pull/3932
+[#3934]: https://github.com/bottlerocket-os/bottlerocket/pull/3934
+[#3935]: https://github.com/bottlerocket-os/bottlerocket/pull/3935
+[#3936]: https://github.com/bottlerocket-os/bottlerocket/pull/3936
+[#3938]: https://github.com/bottlerocket-os/bottlerocket/pull/3938
+[#3939]: https://github.com/bottlerocket-os/bottlerocket/pull/3939
+[#3944]: https://github.com/bottlerocket-os/bottlerocket/pull/3944
+[#3945]: https://github.com/bottlerocket-os/bottlerocket/pull/3945
+[#3946]: https://github.com/bottlerocket-os/bottlerocket/pull/3946
+[#3947]: https://github.com/bottlerocket-os/bottlerocket/pull/3947
+
+
+# v1.19.5 (2024-05-01)
+
+## OS Changes
+* Update kernel to 5.10.214, 5.15.153, 6.1.84 [#3906]
+* Update third party packages ([#3910], [#3914])
+* Update host containers (#[3911])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Provide runtime cgroup to kubelet ([#3804])
+
+## Build Changes
+* Update twoliter to v0.1.1 ([#3880], [#3900])
+* Update ecs-gpu-init, amazon-ssm-agent, and nvidia-k8s-device-plugin builds for new SDK ([#3920], [#3921], [#3924])
+
+[#3804]: https://github.com/bottlerocket-os/bottlerocket/pull/3804
+[#3880]: https://github.com/bottlerocket-os/bottlerocket/pull/3880
+[#3900]: https://github.com/bottlerocket-os/bottlerocket/pull/3900
+[#3906]: https://github.com/bottlerocket-os/bottlerocket/pull/3906
+[#3910]: https://github.com/bottlerocket-os/bottlerocket/pull/3910
+[#3911]: https://github.com/bottlerocket-os/bottlerocket/pull/3911
+[#3914]: https://github.com/bottlerocket-os/bottlerocket/pull/3914
+[#3920]: https://github.com/bottlerocket-os/bottlerocket/pull/3920
+[#3921]: https://github.com/bottlerocket-os/bottlerocket/pull/3921
+[#3924]: https://github.com/bottlerocket-os/bottlerocket/pull/3924
+
+# v1.19.4 (2024-04-06)
+
+## OS Changes
+* Update kernel to 5.10.213, 5.15.152, 6.1.82 ([#3865])
+* Update containerd to 1.6.31 ([#3869])
+
+[#3865]: https://github.com/bottlerocket-os/bottlerocket/pull/3865
+[#3869]: https://github.com/bottlerocket-os/bottlerocket/pull/3869
+
+# v1.19.3 (2024-03-26)
+
+## OS Changes
+* Update kernel to 5.10.210, 5.15.149, 6.1.79 ([#3853])
+* Update third party packages ([#3793], [#3832])
+* Update host containers ([#3837])
+* Support auditctl in bootstrap containers ([#3831])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Add latest instance types to eni-max-pods mapping ([#3824])
+
+### ECS
+
+## Build Changes
+* Update Rust dependencies ([#3830])
+* Update Go dependencies ([#3830])
+* twoliter updated to v0.0.7 ([#3839])
+
+[#3793]: https://github.com/bottlerocket-os/bottlerocket/pull/3793
+[#3824]: https://github.com/bottlerocket-os/bottlerocket/pull/3824
+[#3832]: https://github.com/bottlerocket-os/bottlerocket/pull/3832
+[#3830]: https://github.com/bottlerocket-os/bottlerocket/pull/3830
+[#3831]: https://github.com/bottlerocket-os/bottlerocket/pull/3831
+[#3837]: https://github.com/bottlerocket-os/bottlerocket/pull/3837
+[#3839]: https://github.com/bottlerocket-os/bottlerocket/pull/3839
+[#3853]: https://github.com/bottlerocket-os/bottlerocket/pull/3853
+
+# v1.19.2 (2024-02-26)
+
+## OS Changes
+* Update third party packages ([#3789])
+* Update kernel to 5.10.209, 5.15.148, 6.1.77 ([#3797])
+* Add AWS settings extension ([#3738], [#3770])
+* Allow CSI helpers in the SELinux policy ([#3779])
+* Update to latest NVIDIA drivers ([#3798])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Enable NVIDIA GPU isolation using volume mounts ([#3718] thanks @chiragjn , [#3790])
+* Clean up CNI results cache on boot ([#3792])
+
+### ECS
+* Add `settings.ecs.enable-container-metadata` ([#3782])
+
+## Build Changes
+* Adjust certdog to utilize a configuration file instead of the API server ([#3706], [#3778], [#3787])
+* Don't use parallel make for shim package ([#3771])
+* Renumber unit files in release package ([#3769])
+* Ignore EKS patches for k8s-1.23 in Git ([#3774])
+
+[#3706]: https://github.com/bottlerocket-os/bottlerocket/pull/3706
+[#3718]: https://github.com/bottlerocket-os/bottlerocket/pull/3718
+[#3738]: https://github.com/bottlerocket-os/bottlerocket/pull/3738
+[#3769]: https://github.com/bottlerocket-os/bottlerocket/pull/3769
+[#3770]: https://github.com/bottlerocket-os/bottlerocket/pull/3770
+[#3771]: https://github.com/bottlerocket-os/bottlerocket/pull/3771
+[#3774]: https://github.com/bottlerocket-os/bottlerocket/pull/3774
+[#3778]: https://github.com/bottlerocket-os/bottlerocket/pull/3778
+[#3779]: https://github.com/bottlerocket-os/bottlerocket/pull/3779
+[#3782]: https://github.com/bottlerocket-os/bottlerocket/pull/3782
+[#3787]: https://github.com/bottlerocket-os/bottlerocket/pull/3787
+[#3789]: https://github.com/bottlerocket-os/bottlerocket/pull/3789
+[#3790]: https://github.com/bottlerocket-os/bottlerocket/pull/3790
+[#3792]: https://github.com/bottlerocket-os/bottlerocket/pull/3792
+[#3797]: https://github.com/bottlerocket-os/bottlerocket/pull/3797
+[#3798]: https://github.com/bottlerocket-os/bottlerocket/pull/3798
+
+# v1.19.1 (2024-02-06)
+
+## OS Changes
+* Update kernel to 5.10.209, 5.15.148 ([#3765])
+* Update host containers ([#3763])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Mark pause container image as "pinned" to prevent garbage collection ([#3757])
+
+### ECS
+* Update Docker engine and Docker CLI to v25.0.2 ([#3759])
+* Update ECS agent to 1.81.0 ([#3759])
+* Update AWS SSM agent to 3.2.2222.0 ([#3762])
+
+[#3765]: https://github.com/bottlerocket-os/bottlerocket/pull/3765
+[#3763]: https://github.com/bottlerocket-os/bottlerocket/pull/3763
+[#3757]: https://github.com/bottlerocket-os/bottlerocket/pull/3757
+[#3759]: https://github.com/bottlerocket-os/bottlerocket/pull/3759
+[#3762]: https://github.com/bottlerocket-os/bottlerocket/pull/3762
+
+# v1.19.0 (2024-02-01)
+
+## OS Changes
+* Adjust unit dependencies for systemd-sysusers ([#3720])
+* Update third party packages ([#3722], [#3750])
+* Add kernel settings extension ([#3727])
+* Update kernel to 5.10.205, 5.15.145, 6.1.72 ([#3734])
+* Update runc to 1.1.12 and containerd to 1.6.28 ([#3751])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Add latest instance types to eni-max-pods mapping ([#3741])
+* Drop Kubernetes 1.24 Metal and VMware variants ([#3742])
+
+### ECS
+* Add additional ECS settings for ECS_BACKEND_HOST and ECS_AWSVPC_BLOCK_IMDS ([#3749])
+
+## Build Changes
+* twoliter updated to v0.0.6 ([#3744])
+
+[#3720]: https://github.com/bottlerocket-os/bottlerocket/pull/3720
+[#3722]: https://github.com/bottlerocket-os/bottlerocket/pull/3722
+[#3727]: https://github.com/bottlerocket-os/bottlerocket/pull/3727
+[#3734]: https://github.com/bottlerocket-os/bottlerocket/pull/3734
+[#3741]: https://github.com/bottlerocket-os/bottlerocket/pull/3741
+[#3742]: https://github.com/bottlerocket-os/bottlerocket/pull/3742
+[#3744]: https://github.com/bottlerocket-os/bottlerocket/pull/3744
+[#3749]: https://github.com/bottlerocket-os/bottlerocket/pull/3749
+[#3750]: https://github.com/bottlerocket-os/bottlerocket/pull/3750
+[#3751]: https://github.com/bottlerocket-os/bottlerocket/pull/3751
+
+# v1.18.0 (2024-01-16)
+
+## OS Changes
+
+* Remove unused runc SELinux policy rule ([#3673])
+* Update third party packages ([#3692])
+* Fix creation of kprobes using unqualified names ([#3699], [#3708])
+* Update host containers ([#3704])
+* Update kernel to 5.10.205, 5.15.145, 6.1.66 ([#3686], [#3708])
+* Add container-registry settings extension ([#3674])
+* Add updates settings extension ([#3689])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Add Kubernetes 1.29 variants ([#3628])
+* Update Kubernetes 1.23 to release 33 ([#3692])
+* Add latest instance types to eni-max-pods mapping ([#3695])
+
+### ECS
+
+* Update ecs-agent to 1.79.2 ([#3692])
+
+## Build Changes
+
+* Export symbols for packages that include dynamically linked Go binaries ([#3680])
+* Update to Bottlerocket SDK v0.37.0 ([#3690])
+  + Upgrades to Go 1.21.5
+
+[#3628]: https://github.com/bottlerocket-os/bottlerocket/pull/3628
+[#3673]: https://github.com/bottlerocket-os/bottlerocket/pull/3673
+[#3674]: https://github.com/bottlerocket-os/bottlerocket/pull/3674
+[#3680]: https://github.com/bottlerocket-os/bottlerocket/pull/3680
+[#3686]: https://github.com/bottlerocket-os/bottlerocket/pull/3686
+[#3689]: https://github.com/bottlerocket-os/bottlerocket/pull/3689
+[#3690]: https://github.com/bottlerocket-os/bottlerocket/pull/3690
+[#3692]: https://github.com/bottlerocket-os/bottlerocket/pull/3692
+[#3695]: https://github.com/bottlerocket-os/bottlerocket/pull/3695
+[#3699]: https://github.com/bottlerocket-os/bottlerocket/pull/3699
+[#3704]: https://github.com/bottlerocket-os/bottlerocket/pull/3704
+[#3708]: https://github.com/bottlerocket-os/bottlerocket/pull/3708
+
+# v1.17.0 (2023-12-12)
+
+## OS Changes
+
+* Generate valid hostname when IPv6 reverse lookup fails ([#3592])
+* Avoid mounting the EFI system partition at `/boot` ([#3591])
+* Update kernel to 5.10.201, 5.15.139, 6.1.61 ([#3611], [#3643])
+* Switch to async `tough` ([#3566])
+* Update host containers ([#3646])
+* Move template migrations to `schnauzer` v2 ([#3633])
+* Handle proxy credentials properly in `pluto` ([#3639], [#3667])
+* Update third party packages ([#3612], [#3642])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Update `nvidia-k8s-device-plugin` to address CVEs ([#3612])
+* Update to Kubernetes 1.28.4 ([#3612])
+* Update to Kubernetes 1.27.8 ([#3612])
+* Update to Kubernetes 1.26.11 ([#3612])
+* Update to Kubernetes 1.25.16 ([#3612])
+
+
+### ECS
+
+* Update `ecs-agent` to address CVEs ([#3612])
+
+## Build Changes
+
+* Update to Bottlerocket SDK v0.36.1 ([#3640], [#3670])
+
+[#3566]: https://github.com/bottlerocket-os/bottlerocket/pull/3566
+[#3591]: https://github.com/bottlerocket-os/bottlerocket/pull/3591
+[#3592]: https://github.com/bottlerocket-os/bottlerocket/pull/3592
+[#3611]: https://github.com/bottlerocket-os/bottlerocket/pull/3611
+[#3612]: https://github.com/bottlerocket-os/bottlerocket/pull/3612
+[#3633]: https://github.com/bottlerocket-os/bottlerocket/pull/3633
+[#3639]: https://github.com/bottlerocket-os/bottlerocket/pull/3639
+[#3640]: https://github.com/bottlerocket-os/bottlerocket/pull/3640
+[#3642]: https://github.com/bottlerocket-os/bottlerocket/pull/3642
+[#3643]: https://github.com/bottlerocket-os/bottlerocket/pull/3643
+[#3646]: https://github.com/bottlerocket-os/bottlerocket/pull/3646
+[#3667]: https://github.com/bottlerocket-os/bottlerocket/pull/3667
+[#3670]: https://github.com/bottlerocket-os/bottlerocket/pull/3670
+
+# v1.16.1 (2023-11-13)
+
+## OS Changes
+
+* Update open-vm-tools to 12.3.5 to address CVE-2023-34058 and CVE-2023-34059 ([#3553])
+* Update NVIDIA drivers to 470.223.02 and 535.129.03 to address CVE‑2023‑31022 and CVE‑2023‑31018 ([#3561])
+* Improvements to Bottlerocket CIS benchmark checks ([#3552] [#3562] [#3564])
+* Regenerate updog proxy configuration when settings.network.proxy gets updated ([#3578])
+* kernel: Update to 5.10.198, 5.15.136, and 6.1.59 ([#3572])
+
+## Orchestrator Changes
+
+### Kubernetes
+* Update Kubernetes versions to address HTTP v2 x/net CVE-2023-39325 ([#3581])
+* Avoid specifying `hostname-override` kubelet option if `cloud-provider` is set to `aws` ([#3582])
+
+[#3552]: https://github.com/bottlerocket-os/bottlerocket/pull/3552
+[#3553]: https://github.com/bottlerocket-os/bottlerocket/pull/3553
+[#3561]: https://github.com/bottlerocket-os/bottlerocket/pull/3561
+[#3562]: https://github.com/bottlerocket-os/bottlerocket/pull/3562
+[#3564]: https://github.com/bottlerocket-os/bottlerocket/pull/3564
+[#3572]: https://github.com/bottlerocket-os/bottlerocket/pull/3572
+[#3578]: https://github.com/bottlerocket-os/bottlerocket/pull/3578
+[#3581]: https://github.com/bottlerocket-os/bottlerocket/pull/3581
+[#3582]: https://github.com/bottlerocket-os/bottlerocket/pull/3582
+
+# v1.16.0 (2023-10-25)
+
+## OS Changes
+
+* Adjust netlink timeout to prevent interfaces from entering a failed state ([#3520])
+* Update third-party packages ([#3535])
+* Add XFS CLI utilities for managing XFS-formatted storage ([#3444])
+* Add facilities to auto-load kernel modules ([#3460])
+* Update to kernels 5.10.197, 5.15.134, and 6.1.55 ([#3509] [#3542])
+* Fix reporting for Bottlerocket CIS Benchmark 4.1.2 ([#3547])
+* Update systemd to 252.18 ([#3533])
+* Allow fanotify permission events for trusted subjects in SELinux policy ([#3540])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Drop Kubernetes 1.23 Metal and VMware variants ([#3531])
+
+### ECS
+
+* Update ecs-agent ([#3535])
+
+## Build Changes
+
+* Update to Bottlerocket SDK v0.35.0 ([#3528])
+
+[#3444]: https://github.com/bottlerocket-os/bottlerocket/pull/3444
+[#3460]: https://github.com/bottlerocket-os/bottlerocket/pull/3460
+[#3509]: https://github.com/bottlerocket-os/bottlerocket/pull/3509
+[#3520]: https://github.com/bottlerocket-os/bottlerocket/pull/3520
+[#3528]: https://github.com/bottlerocket-os/bottlerocket/pull/3528
+[#3531]: https://github.com/bottlerocket-os/bottlerocket/pull/3531
+[#3533]: https://github.com/bottlerocket-os/bottlerocket/pull/3533
+[#3535]: https://github.com/bottlerocket-os/bottlerocket/pull/3535
+[#3540]: https://github.com/bottlerocket-os/bottlerocket/pull/3540
+[#3542]: https://github.com/bottlerocket-os/bottlerocket/pull/3542
+[#3547]: https://github.com/bottlerocket-os/bottlerocket/pull/3547
+
+# v1.15.1 (2023-10-9)
+
+## OS Changes
+
+* Allow older ext4 snapshot volumes to be mounted in newer variants that default to xfs ([#3499])
+* Update `apiclient` Rust dependencies ([#3491])
+* Update `pluto` Rust dependencies ([#3439])
+* Patch glibc to address CVE-2023-4806, CVE-2023-4911, and CVE-2023-5156 ([#3501])
+* Update open-vm-tools to 12.3.0 to address CVE-2023-20900 ([#3500])
+
+## Build Changes
+
+* Update `twoliter` to v0.0.4 ([#3480])
+
+[#3439]: https://github.com/bottlerocket-os/bottlerocket/pull/3439
+[#3480]: https://github.com/bottlerocket-os/bottlerocket/pull/3480
+[#3491]: https://github.com/bottlerocket-os/bottlerocket/pull/3491
+[#3499]: https://github.com/bottlerocket-os/bottlerocket/pull/3499
+[#3500]: https://github.com/bottlerocket-os/bottlerocket/pull/3500
+[#3501]: https://github.com/bottlerocket-os/bottlerocket/pull/3501
+
+# v1.15.0 (2023-09-18)
+
+## Major Features
+
+This release brings support for Secure Boot on platforms using UEFI boot; the Linux 6.1 kernel; systemd-networkd and systemd-resolved for host networking; and XFS as the filesystem for local storage.
+
+These features are enabled by default in the new variants. Existing variants will continue to use earlier kernels, `wicked` for host networking, and EXT4 as the filesystem for local storage.
+
+## Known Incompatibilities
+
+* Variants using the 6.1 kernel (`aws-ecs-2`/`aws-ecs-2-nvidia`, `aws-k8s-1.28`/`aws-k8s-1.28-nvidia`, `vmware-k8s-1.28`, and `metal-k8s-1.28`) do not support [LustreFS](https://aws.amazon.com/fsx/lustre/) ([#3459])
+
+## Deprecation Notice
+
+The functionality to apply a hotpatch for log4j CVE-2021-44228 has been removed. The corresponding setting, `settings.oci-hooks.log4j-hotpatch-enabled`, is still available for backwards compatibility. However, it has no effect beyond printing a deprecation warning to the system logs. ([#3401])
+
+## OS Changes
+
+* Add kernel 6.1 ([#3121], [#3441])
+* Update admin and control containers ([#3368])
+* Update third party packages and dependencies ([#3362], [#3369], [#3330], [#3339], [#3355], [#3441], [#3456])
+* Updated to systemd 252 ([#3290])
+* Add support for Secure Boot ([#3097])
+* Add support for XFS ([#3198])
+* Add `apiclient report` command ([#3258]) and Bottlerocket CIS benchmark report ([#2881])
+* Add resource-limit settings for OCI defaults ([#3206])
+* Use `systemd-networkd` and `systemd-resolved` instead of `wicked` for `aws-k8s-1.28`, `aws-ecs-2`, and `*-dev` variants ([#3134], [#3232], [#3266], [#3311], [#3394], [#3395], [#3451], [#3455])
+
+## Orchestrator Changes
+
+### ECS
+
+* Add `aws-ecs-2` variants ([#3273])
+  * Enables Secure Boot, systemd-networkd, and XFS for the data partition
+* Add support for AppMesh ([#3267])
+
+### Kubernetes
+
+* Add Kubernetes 1.28 variants ([#3329])
+  * Enables Secure Boot, systemd-networkd, and XFS for the data partition
+* Drop Kubernetes 1.22 variants ([#2988])
+* Update to Kubernetes 1.27.4 ([#3319])
+* Update to Kubernetes 1.26.7 ([#3320])
+* Update to Kubernetes 1.25.12 ([#3321])
+* Update to Kubernetes 1.24.16 ([#3322])
+* Add support for SeccompDefault setting for k8s 1.25+ ([#3334])
+* Add Kubernetes CIS benchmark report ([#3239])
+
+## Platform Changes
+
+### AWS
+* Retry on empty PrivateDnsName from EC2 ([#3364])
+
+### Metal
+* Enable Intel VMD driver ([#3419])
+* Add linux-firmware ([#3296], [#3418])
+* Add aws-iam-authenticator to k8s variants ([#3357])
+
+## Build Changes
+
+* Upgrade to Bottlerocket SDK v0.34.1 ([#3445])
+* Use [Twoliter] to enable work on [out-of-tree builds]. Most `tools` have moved to [Twoliter] ([#3379], [#3429], [#3392], [#3342])
+* Only limit concurrency while building RPMs ([#3343])
+
+
+[Twoliter]: https://github.com/bottlerocket-os/twoliter
+[out-of-tree builds]: https://github.com/bottlerocket-os/bottlerocket/issues/2669
+[#2881]: https://github.com/bottlerocket-os/bottlerocket/pull/2881
+[#2988]: https://github.com/bottlerocket-os/bottlerocket/pull/2988
+[#3075]: https://github.com/bottlerocket-os/bottlerocket/pull/3075
+[#3097]: https://github.com/bottlerocket-os/bottlerocket/pull/3097
+[#3121]: https://github.com/bottlerocket-os/bottlerocket/pull/3121
+[#3134]: https://github.com/bottlerocket-os/bottlerocket/pull/3134
+[#3198]: https://github.com/bottlerocket-os/bottlerocket/pull/3198
+[#3206]: https://github.com/bottlerocket-os/bottlerocket/pull/3206
+[#3232]: https://github.com/bottlerocket-os/bottlerocket/pull/3232
+[#3239]: https://github.com/bottlerocket-os/bottlerocket/pull/3239
+[#3258]: https://github.com/bottlerocket-os/bottlerocket/pull/3258
+[#3266]: https://github.com/bottlerocket-os/bottlerocket/pull/3266
+[#3267]: https://github.com/bottlerocket-os/bottlerocket/pull/3267
+[#3273]: https://github.com/bottlerocket-os/bottlerocket/pull/3273
+[#3290]: https://github.com/bottlerocket-os/bottlerocket/pull/3290
+[#3296]: https://github.com/bottlerocket-os/bottlerocket/pull/3296
+[#3311]: https://github.com/bottlerocket-os/bottlerocket/pull/3311
+[#3319]: https://github.com/bottlerocket-os/bottlerocket/pull/3319
+[#3320]: https://github.com/bottlerocket-os/bottlerocket/pull/3320
+[#3321]: https://github.com/bottlerocket-os/bottlerocket/pull/3321
+[#3322]: https://github.com/bottlerocket-os/bottlerocket/pull/3322
+[#3329]: https://github.com/bottlerocket-os/bottlerocket/pull/3329
+[#3330]: https://github.com/bottlerocket-os/bottlerocket/pull/3330
+[#3334]: https://github.com/bottlerocket-os/bottlerocket/pull/3334
+[#3339]: https://github.com/bottlerocket-os/bottlerocket/pull/3339
+[#3342]: https://github.com/bottlerocket-os/bottlerocket/pull/3342
+[#3342]: https://github.com/bottlerocket-os/bottlerocket/pull/3342
+[#3343]: https://github.com/bottlerocket-os/bottlerocket/pull/3343
+[#3355]: https://github.com/bottlerocket-os/bottlerocket/pull/3355
+[#3357]: https://github.com/bottlerocket-os/bottlerocket/pull/3357
+[#3362]: https://github.com/bottlerocket-os/bottlerocket/pull/3362
+[#3364]: https://github.com/bottlerocket-os/bottlerocket/pull/3364
+[#3366]: https://github.com/bottlerocket-os/bottlerocket/pull/3366
+[#3368]: https://github.com/bottlerocket-os/bottlerocket/pull/3368
+[#3369]: https://github.com/bottlerocket-os/bottlerocket/pull/3369
+[#3379]: https://github.com/bottlerocket-os/bottlerocket/pull/3379
+[#3392]: https://github.com/bottlerocket-os/bottlerocket/pull/3392
+[#3394]: https://github.com/bottlerocket-os/bottlerocket/pull/3394
+[#3395]: https://github.com/bottlerocket-os/bottlerocket/pull/3395
+[#3401]: https://github.com/bottlerocket-os/bottlerocket/pull/3401
+[#3418]: https://github.com/bottlerocket-os/bottlerocket/pull/3418
+[#3419]: https://github.com/bottlerocket-os/bottlerocket/pull/3419
+[#3429]: https://github.com/bottlerocket-os/bottlerocket/pull/3429
+[#3441]: https://github.com/bottlerocket-os/bottlerocket/pull/3441
+[#3445]: https://github.com/bottlerocket-os/bottlerocket/pull/3445
+[#3451]: https://github.com/bottlerocket-os/bottlerocket/pull/3451
+[#3455]: https://github.com/bottlerocket-os/bottlerocket/pull/3455
+[#3456]: https://github.com/bottlerocket-os/bottlerocket/pull/3456
+[#3459]: https://github.com/bottlerocket-os/bottlerocket/issues/3459
+
+# v1.14.3 (2023-08-10)
+
+## OS Changes
+
+* Apply patches to 5.10 and 5.15 kernels to address CVE-2023-20593 ([#3300])
+* Update admin and control containers ([#3307])
+* Update eni-max-pods with new instance types ([#3324])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Update Kubernetes v1.23.17 to include latest EKS-D patches ([#3323])
+
+[#3300]: https://github.com/bottlerocket-os/bottlerocket/pull/3300
+[#3307]: https://github.com/bottlerocket-os/bottlerocket/pull/3307
+[#3323]: https://github.com/bottlerocket-os/bottlerocket/pull/3323
+[#3324]: https://github.com/bottlerocket-os/bottlerocket/pull/3324
+
+# v1.14.2 (2023-07-06)
+
+## OS Changes
+
+* Improve the reliability of acquiring a DHCPv6 lease ([#3211], [#3212])
+* Update kernel-5.10 to 5.10.184 and kernel-5.15 to 5.15.117 ([#3238])
+* Update eni-max-pods with new instance types ([#3193])
+* Make `pluto` outbound API requests more resilient to intermittent network errors ([#3214])
+* Update runc to 1.1.6 ([#3249])
+
+## Orchestrator Changes
+
+### ECS
+
+* Add image cleanup settings to control task image cleanup frequency ([#3231])
+
+### Kubernetes
+
+* Update to Kubernetes v1.24.15 ([#3234])
+* Update to Kubernetes v1.25.11 ([#3235])
+* Update to Kubernetes v1.26.6 ([#3236])
+* Update to Kubernetes v1.27.3 ([#3237])
+
+## Build Changes
+
+* Updated Bottlerocket SDK version to v0.33.0 ([#3213])
+
+[#3211]: https://github.com/bottlerocket-os/bottlerocket/pull/3211
+[#3212]: https://github.com/bottlerocket-os/bottlerocket/pull/3212
+[#3213]: https://github.com/bottlerocket-os/bottlerocket/pull/3213
+[#3214]: https://github.com/bottlerocket-os/bottlerocket/pull/3214
+[#3231]: https://github.com/bottlerocket-os/bottlerocket/pull/3231
+[#3234]: https://github.com/bottlerocket-os/bottlerocket/pull/3234
+[#3235]: https://github.com/bottlerocket-os/bottlerocket/pull/3235
+[#3236]: https://github.com/bottlerocket-os/bottlerocket/pull/3236
+[#3237]: https://github.com/bottlerocket-os/bottlerocket/pull/3237
+[#3238]: https://github.com/bottlerocket-os/bottlerocket/pull/3238
+[#3193]: https://github.com/bottlerocket-os/bottlerocket/pull/3193
+[#3249]: https://github.com/bottlerocket-os/bottlerocket/pull/3249
+
+# v1.14.1 (2023-05-31)
+
+## OS Changes
+
+* Apply patches to 5.10 and 5.15 kernels to address CVE-2023-32233 ([#3128])
+* Add fallback container image source parsing for regions not yet supported by the `aws-go-sdk` in `host-ctr` ([#3138])
+* Increase default `max_dgram_qlen` sysctl value to `512` for both 5.10 and 5.15 kernels ([#3139])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Kubernetes package updates
+  * Update Kubernetes v1.22.17 to include latest EKS-D patches ([#3108])
+  * Update Kubernetes v1.23.17 to include latest EKS-D patches ([#3119])
+  * Update to Kubernetes v1.24.14 ([#3119])
+  * Update to Kubernetes v1.25.9 ([#3119])
+  * Update to Kubernetes v1.26.4 ([#3119])
+  * Update Kubernetes v1.27.1 to include latest EKS-D patches ([#3119])
+* Change `nvidia-k8s-device-plugin` service dependency on `kubelet` ([#3141])
+
+## Build Changes
+
+* Fix `pubsys` bug preventing multiple SSM parameter promotions in `promote-ssm` Makefile target ([#3137])
+
+[#3108]: https://github.com/bottlerocket-os/bottlerocket/pull/3108
+[#3119]: https://github.com/bottlerocket-os/bottlerocket/pull/3119
+[#3128]: https://github.com/bottlerocket-os/bottlerocket/pull/3128
+[#3137]: https://github.com/bottlerocket-os/bottlerocket/pull/3137
+[#3138]: https://github.com/bottlerocket-os/bottlerocket/pull/3138
+[#3139]: https://github.com/bottlerocket-os/bottlerocket/pull/3139
+[#3141]: https://github.com/bottlerocket-os/bottlerocket/pull/3141
+
+# v1.14.0 (2023-05-11)
+
+## OS Changes
+
+* Update kernel-5.10 to 5.10.178 and kernel-5.15 to 5.15.108 ([#3077])
+* Update admin and control containers ([#3090])
+* Update third party packages and dependencies ([#2991], [#3082])
+* Enable `SCSI_VIRTIO` driver for better hypervisor support ([#3047])
+* Disable panic on hung task for kernel 5.15 ([#3091])
+* Create symlink to `inventory` path using Storewolf ([#3035])
+
+## Orchestrator Changes
+
+### ECS
+
+* Add support for ECS Exec ([#3075])
+
+### Kubernetes
+
+* Add Kubernetes 1.27 variants ([#3046])
+  * Switch to using Kubernetes default values for `kube-api-burst` and `kube-api-qps` ([#3094])
+* Add more Kubernetes settings ([#2930], [#2986])
+  * Soft eviction policy
+  * Graceful shutdown
+  * CPU quota enforcement
+  * Memory manager policy
+  * CPU manager policy
+* Fix Kubernetes 1.26 credential provider apiVersion ([#3070])
+* Add ability to pass environment variables to image credential providers ([#2934])
+
+## Build Changes
+
+* Upgrade to Bottlerocket SDK v0.32.0 ([#3071])
+* Add AMI validation to PubSys ([#3020])
+* Add SSM parameter validation to PubSys ([#2969])
+* Add `validate-ami` and `validate-ssm` Makefile targets ([#3043])
+* Add `check-migrations` Makefile target to check for common migration problems ([#3051])
+
+## Testing Changes
+
+* Update testsys to v0.0.7 ([#3065])
+* Add support for node provisioning with Karpenter ([#3067])
+* Enable using custom Sonobuoy images ([#3068])
+
+[#3077]: https://github.com/bottlerocket-os/bottlerocket/pull/3077
+[#3090]: https://github.com/bottlerocket-os/bottlerocket/pull/3090
+[#2991]: https://github.com/bottlerocket-os/bottlerocket/pull/2991
+[#3082]: https://github.com/bottlerocket-os/bottlerocket/pull/3082
+[#3047]: https://github.com/bottlerocket-os/bottlerocket/pull/3047
+[#3091]: https://github.com/bottlerocket-os/bottlerocket/pull/3091
+[#3071]: https://github.com/bottlerocket-os/bottlerocket/pull/3071
+[#3035]: https://github.com/bottlerocket-os/bottlerocket/pull/3035
+[#3075]: https://github.com/bottlerocket-os/bottlerocket/pull/3075
+[#3046]: https://github.com/bottlerocket-os/bottlerocket/pull/3046
+[#3094]: https://github.com/bottlerocket-os/bottlerocket/pull/3094
+[#2930]: https://github.com/bottlerocket-os/bottlerocket/pull/2930
+[#2986]: https://github.com/bottlerocket-os/bottlerocket/pull/2986
+[#3070]: https://github.com/bottlerocket-os/bottlerocket/pull/3070
+[#2934]: https://github.com/bottlerocket-os/bottlerocket/pull/2934
+[#3051]: https://github.com/bottlerocket-os/bottlerocket/pull/3051
+[#3020]: https://github.com/bottlerocket-os/bottlerocket/pull/3020
+[#2969]: https://github.com/bottlerocket-os/bottlerocket/pull/2969
+[#3043]: https://github.com/bottlerocket-os/bottlerocket/pull/3043
+[#3065]: https://github.com/bottlerocket-os/bottlerocket/pull/3065
+[#3067]: https://github.com/bottlerocket-os/bottlerocket/pull/3067
+[#3068]: https://github.com/bottlerocket-os/bottlerocket/pull/3068
+
+# v1.13.5 (2023-05-01)
+
+## OS Changes
+
+* Revert `runc` update to move back to 1.1.5 ([#3054])
+
+[#3054]: https://github.com/bottlerocket-os/bottlerocket/pull/3054
+
+# v1.13.4 (2023-04-24)
+
+## OS Changes
+
+* Ensure the first hostname is used when a VPC DHCP option set has multiple domains ([#3032])
+* Update `runc` to version 1.1.6 ([#3037])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Generate and pass `--hostname-override` flag to kubelet in `aws-k8s-1.26` variants ([#3033])
+
+[#3032]: https://github.com/bottlerocket-os/bottlerocket/pull/3032
+[#3033]: https://github.com/bottlerocket-os/bottlerocket/pull/3033
+[#3037]: https://github.com/bottlerocket-os/bottlerocket/pull/3037
+
+# v1.13.3 (2023-04-17)
+
+## OS Changes
+
+* Update kernel-5.10 to 5.10.173 and kernel-5.15 to 5.15.102 ([#2948], [#3002])
+* Fix check for rule existence in ip6tables v1.8.9  ([#3001])
+* Backport systemd fixes for skipped udevd events ([#2999])
+* Check platform-specific mechanisms for hostname first ([#3021])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Generate 'provider-id' setting for aws-k8s variants ([#3026])
+
+[#2948]: https://github.com/bottlerocket-os/bottlerocket/pull/2948
+[#2999]: https://github.com/bottlerocket-os/bottlerocket/pull/2999
+[#3001]: https://github.com/bottlerocket-os/bottlerocket/pull/3001
+[#3002]: https://github.com/bottlerocket-os/bottlerocket/pull/3002
+[#3021]: https://github.com/bottlerocket-os/bottlerocket/pull/3021
+[#3026]: https://github.com/bottlerocket-os/bottlerocket/pull/3026
+
+# v1.13.2 (2023-04-04)
+
+## OS Changes
+
+* Update `runc` to version 1.1.5 ([#2946])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Update to Kubernetes v1.26.2 ([#2929])
+* Update `aws-iam-authenticator` package to v0.6.8 ([#2965])
+
+[#2946]: https://github.com/bottlerocket-os/bottlerocket/pull/2946
+[#2929]: https://github.com/bottlerocket-os/bottlerocket/pull/2929
+[#2965]: https://github.com/bottlerocket-os/bottlerocket/pull/2965
+
+# v1.13.1 (2023-03-23)
+
+## OS Changes
+
+* Improve logic around repartitioning and disk expansion by using symlinks to differentiate "fallback" and "preferred" data partitions ([#2935])
+* Add `keyutils` package to enable mounting CIFS shares ([#2907])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Fix AWS profile rendering in credential provider ([#2904])
+* Change CredentialProviderConfig api version to `v1beta1` for Kubernetes 1.25 variants ([#2906])
+
+[#2904]: https://github.com/bottlerocket-os/bottlerocket/pull/2904
+[#2906]: https://github.com/bottlerocket-os/bottlerocket/pull/2906
+[#2907]: https://github.com/bottlerocket-os/bottlerocket/pull/2907
+[#2935]: https://github.com/bottlerocket-os/bottlerocket/pull/2935
+
+# v1.13.0 (2023-03-15)
+
+## OS Changes
+
+* Add `ethtool` to Bottlerocket ([#2829])
+* Improve logging in `migrator` to track ongoing migrations ([#2751])
+* Improve random-access read performance of root volume on some devices ([#2863])
+* Add `CAP_SYS_MODULE` and `CAP_CHROOT` to bootstrap containers ([#2772])
+* Add support for cgroup v2 ([#2875], [#2802])
+* Disable IA and SafeSetID LSM for kernel-5.15 ([#2789])
+* Update kernel-5.10 to 5.10.165 and kernel-5.15 to 5.15.90 ([#2795])
+* Allow `=` in bootconfig values ([#2806])
+* Include `systemd-analyze plot` for `logdog` ([#2880])
+* Update host containers ([#2864])
+* Update third party packages ([#2825], [#2842])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* **Remove Kubernetes 1.21 variants ([#2700])**
+* Add Kubernetes 1.26 variants ([#2771], ([#2876])
+* Change `kubelet` service to have restart policy `always` ([#2774])
+* Update to Kubernetes v1.25.6 ([#2782])
+* Update to Kubernetes v1.24.10 ([#2790])
+* Update to Kubernetes v1.23.16 ([#2791])
+* Update Kubernetes 1.22.17 to include latest EKS-D patches ([#2792])
+
+### ECS
+
+* Enable FireLens capability in `aws-ecs-1` variant ([#2819])
+
+## Platform Changes
+
+### AWS
+
+* Set NVMe IO request timeouts for EBS according to AWS recommendations ([#2820])
+* Support an alternate data partition on EC2 instances launched with a single volume ([#2807], [#2879], [#2873])
+* Update `eni-max-pod` mappings to include the latest AWS instance types ([#2818])
+
+### VMware
+
+* Remove `k8s.gcr.io` in favor of `public.ecr.aws` ([#2861], ([#2786])
+* Disable UDP offload for primary interface ([#2850])
+
+## Build Changes
+
+* Ensure empty build/rpms directory is included in build context ([#2784])
+* Add image feature flag for cgroup v2 ([#2845])
+* Enable `systemd-networkd` development via build flag ([#2741], [#2832], [#2750])
+* Fix `clippy` linter warnings in source files and add `clippy` CI coverage ([#2745])
+* Use `clippy` provided in SDK image ([#2793]) ([#2868])
+* Remove unnecessary `time` 0.1.x dependency ([#2748], [#2851])
+* Remove unnecessary patch from `containerd` ([#2755])
+* Update Bottlerocket SDK to v0.30.2 ([#2866], [#2857], [#2836])
+* Remove outdated `rust_2018_idioms` enforcement ([#2837])
+* Update Rust edition to `2021` ([#2835])
+* Upgraded Rust code dependencies ([#2816], [#2869], [#2851], [#2736], [#2895])
+* Upgraded Go code dependencies ([#2828], [#2826], [#2813])
+* Rename `ncurses` to `libncurses` ([#2769])
+* Update schnauzer's registry map ([#2867])
+
+## Testing Changes
+
+* Add support for Kubernetes workloads in `testsys` ([#2830])
+* Add support for a `tests` directory ([#2737], [#2775])
+* Provide advanced config controls to `testsys` ([#2799])
+* Fix incorrect migration starting image for VMware testing in `testsys` ([#2804])
+* Use testsys v0.0.6 ([#2865])
+
+## Documentation Changes
+
+* Add boot sequence documentation ([#2735])
+* Update Bottlerocket version in provisioning step in `PROVISIONING-METAL.md` ([#2785])
+* Add user-data example for setting container registry credentials in `README.md` ([#2803])
+* Fix missing trailing backslashes on `ami` commands in `TESTING.md` ([#2838])
+
+[#2700]: https://github.com/bottlerocket-os/bottlerocket/pull/2700
+[#2735]: https://github.com/bottlerocket-os/bottlerocket/pull/2735
+[#2736]: https://github.com/bottlerocket-os/bottlerocket/pull/2736
+[#2737]: https://github.com/bottlerocket-os/bottlerocket/pull/2737
+[#2741]: https://github.com/bottlerocket-os/bottlerocket/pull/2741
+[#2745]: https://github.com/bottlerocket-os/bottlerocket/pull/2745
+[#2748]: https://github.com/bottlerocket-os/bottlerocket/pull/2748
+[#2749]: https://github.com/bottlerocket-os/bottlerocket/pull/2749
+[#2750]: https://github.com/bottlerocket-os/bottlerocket/pull/2750
+[#2751]: https://github.com/bottlerocket-os/bottlerocket/pull/2751
+[#2755]: https://github.com/bottlerocket-os/bottlerocket/pull/2755
+[#2769]: https://github.com/bottlerocket-os/bottlerocket/pull/2769
+[#2771]: https://github.com/bottlerocket-os/bottlerocket/pull/2771
+[#2772]: https://github.com/bottlerocket-os/bottlerocket/pull/2772
+[#2774]: https://github.com/bottlerocket-os/bottlerocket/pull/2774
+[#2775]: https://github.com/bottlerocket-os/bottlerocket/pull/2775
+[#2782]: https://github.com/bottlerocket-os/bottlerocket/pull/2782
+[#2784]: https://github.com/bottlerocket-os/bottlerocket/pull/2784
+[#2785]: https://github.com/bottlerocket-os/bottlerocket/pull/2785
+[#2786]: https://github.com/bottlerocket-os/bottlerocket/pull/2786
+[#2789]: https://github.com/bottlerocket-os/bottlerocket/pull/2789
+[#2790]: https://github.com/bottlerocket-os/bottlerocket/pull/2790
+[#2791]: https://github.com/bottlerocket-os/bottlerocket/pull/2791
+[#2792]: https://github.com/bottlerocket-os/bottlerocket/pull/2792
+[#2793]: https://github.com/bottlerocket-os/bottlerocket/pull/2793
+[#2795]: https://github.com/bottlerocket-os/bottlerocket/pull/2795
+[#2797]: https://github.com/bottlerocket-os/bottlerocket/pull/2797
+[#2799]: https://github.com/bottlerocket-os/bottlerocket/pull/2799
+[#2802]: https://github.com/bottlerocket-os/bottlerocket/pull/2802
+[#2803]: https://github.com/bottlerocket-os/bottlerocket/pull/2803
+[#2804]: https://github.com/bottlerocket-os/bottlerocket/pull/2804
+[#2806]: https://github.com/bottlerocket-os/bottlerocket/pull/2806
+[#2807]: https://github.com/bottlerocket-os/bottlerocket/pull/2807
+[#2813]: https://github.com/bottlerocket-os/bottlerocket/pull/2813
+[#2816]: https://github.com/bottlerocket-os/bottlerocket/pull/2816
+[#2818]: https://github.com/bottlerocket-os/bottlerocket/pull/2818
+[#2819]: https://github.com/bottlerocket-os/bottlerocket/pull/2819
+[#2820]: https://github.com/bottlerocket-os/bottlerocket/pull/2820
+[#2825]: https://github.com/bottlerocket-os/bottlerocket/pull/2825
+[#2826]: https://github.com/bottlerocket-os/bottlerocket/pull/2826
+[#2828]: https://github.com/bottlerocket-os/bottlerocket/pull/2828
+[#2829]: https://github.com/bottlerocket-os/bottlerocket/pull/2829
+[#2830]: https://github.com/bottlerocket-os/bottlerocket/pull/2830
+[#2832]: https://github.com/bottlerocket-os/bottlerocket/pull/2832
+[#2835]: https://github.com/bottlerocket-os/bottlerocket/pull/2835
+[#2836]: https://github.com/bottlerocket-os/bottlerocket/pull/2836
+[#2837]: https://github.com/bottlerocket-os/bottlerocket/pull/2837
+[#2838]: https://github.com/bottlerocket-os/bottlerocket/pull/2838
+[#2842]: https://github.com/bottlerocket-os/bottlerocket/pull/2842
+[#2845]: https://github.com/bottlerocket-os/bottlerocket/pull/2845
+[#2846]: https://github.com/bottlerocket-os/bottlerocket/pull/2846
+[#2850]: https://github.com/bottlerocket-os/bottlerocket/pull/2850
+[#2851]: https://github.com/bottlerocket-os/bottlerocket/pull/2851
+[#2857]: https://github.com/bottlerocket-os/bottlerocket/pull/2857
+[#2861]: https://github.com/bottlerocket-os/bottlerocket/pull/2861
+[#2863]: https://github.com/bottlerocket-os/bottlerocket/pull/2863
+[#2864]: https://github.com/bottlerocket-os/bottlerocket/pull/2864
+[#2865]: https://github.com/bottlerocket-os/bottlerocket/pull/2865
+[#2866]: https://github.com/bottlerocket-os/bottlerocket/pull/2866
+[#2867]: https://github.com/bottlerocket-os/bottlerocket/pull/2867
+[#2868]: https://github.com/bottlerocket-os/bottlerocket/pull/2868
+[#2869]: https://github.com/bottlerocket-os/bottlerocket/pull/2869
+[#2873]: https://github.com/bottlerocket-os/bottlerocket/pull/2873
+[#2875]: https://github.com/bottlerocket-os/bottlerocket/pull/2875
+[#2876]: https://github.com/bottlerocket-os/bottlerocket/pull/2876
+[#2879]: https://github.com/bottlerocket-os/bottlerocket/pull/2879
+[#2880]: https://github.com/bottlerocket-os/bottlerocket/pull/2880
+[#2895]: https://github.com/bottlerocket-os/bottlerocket/pull/2895
+
+# v 1.12.0 (2023-01-24)
+
+## OS Changes
+
+* Disable strict aliasing for c-utf-8 library strict aliasing in dbus-broker ([#2730])
+* Add `/sys/firmware` to privileged mounts in host-ctr ([#2714])
+* Use user-provided registry credentials for public.ecr.aws in host-ctr ([#2676])
+* Build masked paths list dynamically in host-ctr ([#2637])
+* Enable EFI option in systemd ([#2714])
+* Allow simple enums as map keys in datastore ([#2687])
+* Improve reliability of `settings.network.hostname` generator ([#2647])
+* Add support for bonding and VLANS in `net.toml` ([#2596])
+* Keep only one intermediate datastore during migration ([#2589])
+* Widen access to filesystem relabel in SELinux policy ([#2738])
+* Update hotdog to 1.05 ([#2728])
+* Update systemd to 250.9 ([#2718])
+* Update third party packages and dependencies ([#2588], [#2717])
+* Update host containers ([#2739])
+* Update eksd ([#2690], [#2693], [#2694], thanks @rcrozean)
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Add support for Kubernetes 1.25 variants ([#2699])
+* Allow access to public kubelet certificates ([#2639])
+* During kubelet prestart, skip pause image pull if image exists ([#2587])
+* Delay kubelet.service until after warm-pool-wait service runs ([#2562])
+* Add OCI default spec and settings to containerd ([#2697])
+
+## Platform Changes
+
+### VMware
+
+* Downgrade iopl warning when fetching guestinfo in `early-boot-config` ([#2732])
+
+## Build Changes
+
+* Treat alias warning as errors ([#2730])
+* Suppress "missing changelog" warning in build ([#2730])
+* Update Bottlerocket SDK version to 0.29.0 ([#2730])
+* Improve error messages for publish-ami command ([#2695])
+* Disallow private AMIs in public SSM parameters ([#2680])
+* Rework `start-local-vm` image selection to use `latest` symlink ([#2696])
+* Improve integration testing through `cargo make test` ([#2560], [#2592], [#2618], [#2646], [#2653], [#2683], [#2674], [#2723], [#2724], [#2725])
+
+
+[#2560]: https://github.com/bottlerocket-os/bottlerocket/pull/2560
+[#2562]: https://github.com/bottlerocket-os/bottlerocket/pull/2562
+[#2587]: https://github.com/bottlerocket-os/bottlerocket/pull/2587
+[#2589]: https://github.com/bottlerocket-os/bottlerocket/pull/2589
+[#2592]: https://github.com/bottlerocket-os/bottlerocket/pull/2592
+[#2596]: https://github.com/bottlerocket-os/bottlerocket/pull/2596
+[#2618]: https://github.com/bottlerocket-os/bottlerocket/pull/2618
+[#2637]: https://github.com/bottlerocket-os/bottlerocket/pull/2637
+[#2639]: https://github.com/bottlerocket-os/bottlerocket/pull/2639
+[#2646]: https://github.com/bottlerocket-os/bottlerocket/pull/2646
+[#2647]: https://github.com/bottlerocket-os/bottlerocket/pull/2647
+[#2650]: https://github.com/bottlerocket-os/bottlerocket/pull/2650
+[#2653]: https://github.com/bottlerocket-os/bottlerocket/pull/2653
+[#2674]: https://github.com/bottlerocket-os/bottlerocket/pull/2674
+[#2676]: https://github.com/bottlerocket-os/bottlerocket/pull/2676
+[#2680]: https://github.com/bottlerocket-os/bottlerocket/pull/2680
+[#2683]: https://github.com/bottlerocket-os/bottlerocket/pull/2683
+[#2687]: https://github.com/bottlerocket-os/bottlerocket/pull/2687
+[#2690]: https://github.com/bottlerocket-os/bottlerocket/pull/2690
+[#2693]: https://github.com/bottlerocket-os/bottlerocket/pull/2693
+[#2694]: https://github.com/bottlerocket-os/bottlerocket/pull/2694
+[#2695]: https://github.com/bottlerocket-os/bottlerocket/pull/2695
+[#2696]: https://github.com/bottlerocket-os/bottlerocket/pull/2696
+[#2697]: https://github.com/bottlerocket-os/bottlerocket/pull/2697
+[#2699]: https://github.com/bottlerocket-os/bottlerocket/pull/2699
+[#2714]: https://github.com/bottlerocket-os/bottlerocket/pull/2714
+[#2717]: https://github.com/bottlerocket-os/bottlerocket/pull/2717
+[#2718]: https://github.com/bottlerocket-os/bottlerocket/pull/2718
+[#2723]: https://github.com/bottlerocket-os/bottlerocket/pull/2723
+[#2724]: https://github.com/bottlerocket-os/bottlerocket/pull/2724
+[#2725]: https://github.com/bottlerocket-os/bottlerocket/pull/2725
+[#2728]: https://github.com/bottlerocket-os/bottlerocket/pull/2728
+[#2730]: https://github.com/bottlerocket-os/bottlerocket/pull/2730
+[#2732]: https://github.com/bottlerocket-os/bottlerocket/pull/2732
+[#2738]: https://github.com/bottlerocket-os/bottlerocket/pull/2738
+[#2739]: https://github.com/bottlerocket-os/bottlerocket/pull/2739
+
+# v1.11.1 (2022-11-28)
+
+## Security Fixes
+
+* Update NVIDIA driver for 5.10 and 5.15 to include recent security fixes ([74d2c5c13ab0][64f3967373a5])
+* Apply patch to systemd for CVE-2022-3821 ([#2611])
+
+[74d2c5c13ab0]: https://github.com/bottlerocket-os/bottlerocket/commit/74d2c5c13ab0f6839b9849a9f058a70e82f6ffb8
+[64f3967373a5]: https://github.com/bottlerocket-os/bottlerocket/commit/64f3967373a53096219a73580fd81409c846266c
+[#2611]: https://github.com/bottlerocket-os/bottlerocket/pull/2611
+
+# v1.11.0 (2022-11-15)
+
+## OS Changes
+
+* Prevent a panic in `early-boot-config` when there is no IMDS region ([#2493])
+* Update grub to 2.06-42 ([#2503])
+* Bring back wicked support for matching interfaces via hardware address ([#2519])
+* Allow bootstrap containers to manage swap ([#2537])
+* Add `systemd-analyze` commands to troubleshooting log collection tool ([#2550])
+* Allow bootstrap containers to manage network configuration ([#2558])
+* Serialize bootconfig values correctly when the value is empty ([#2565])
+* Update zlib, libexpat, libdbus, docker-cli ([#2583])
+* Update host containers ([#2574])
+* Unmask /sys/firmware from host containers ([#2573])
+
+## Orchestrator Changes
+
+### ECS
+
+* Add additional ECS API configurations ([#2527])
+  * `ECS_CONTAINER_STOP_TIMEOUT`
+  * `ECS_ENGINE_TASK_CLEANUP_WAIT_DURATION`
+  * `ECS_TASK_METADATA_RPS_LIMIT`
+  * `ECS_RESERVED_MEMORY`
+
+### Kubernetes
+
+* Add a timeout when calling EKS for configuration values ([#2566])
+* Enable IAM Roles Anywhere with the k8s `ecr-credential-provider` plugin ([#2377], [#2553])
+* Kubernetes EKS-D updates
+  * v1.24.6 ([#2582])
+  * v1.23.13 ([#2578])
+  * v1.22.15 ([#2580], [#2490])
+
+## Platform Changes
+
+### AWS
+
+* Add driver support for AWS variants in hybrid environments ([#2554])
+
+## Build Changes
+
+* Add support for publishing to AWS organizations ([#2484])
+* Remove unnecessary dependencies when building grub ([#2495])
+* Switch to the latest Dockerfile frontend for builds ([#2496])
+* Prepare foundations for Secure Boot and image re-signing ([#2505])
+* Fix EFI file system to fit partition size ([#2528])
+* Add ShellCheck to `check-lints` for build scripts ([#2532])
+* Update the SDK to v0.28.0 ([#2543])
+* Use `rustls-native-certs` instead of `webpki-roots` ([#2551])
+* Handle absolute paths for output directory in kernel build script ([#2563])
+
+## Documentation Changes
+
+* Add a Roadmap markdown file ([#2549])
+
+[#2377]: https://github.com/bottlerocket-os/bottlerocket/pull/2377
+[#2484]: https://github.com/bottlerocket-os/bottlerocket/pull/2484
+[#2488]: https://github.com/bottlerocket-os/bottlerocket/pull/2488
+[#2490]: https://github.com/bottlerocket-os/bottlerocket/pull/2490
+[#2493]: https://github.com/bottlerocket-os/bottlerocket/pull/2493
+[#2495]: https://github.com/bottlerocket-os/bottlerocket/pull/2495
+[#2496]: https://github.com/bottlerocket-os/bottlerocket/pull/2496
+[#2503]: https://github.com/bottlerocket-os/bottlerocket/pull/2503
+[#2505]: https://github.com/bottlerocket-os/bottlerocket/pull/2505
+[#2519]: https://github.com/bottlerocket-os/bottlerocket/pull/2519
+[#2523]: https://github.com/bottlerocket-os/bottlerocket/pull/2523
+[#2527]: https://github.com/bottlerocket-os/bottlerocket/pull/2527
+[#2528]: https://github.com/bottlerocket-os/bottlerocket/pull/2528
+[#2532]: https://github.com/bottlerocket-os/bottlerocket/pull/2532
+[#2536]: https://github.com/bottlerocket-os/bottlerocket/pull/2536
+[#2537]: https://github.com/bottlerocket-os/bottlerocket/pull/2537
+[#2540]: https://github.com/bottlerocket-os/bottlerocket/pull/2540
+[#2541]: https://github.com/bottlerocket-os/bottlerocket/pull/2541
+[#2542]: https://github.com/bottlerocket-os/bottlerocket/pull/2542
+[#2543]: https://github.com/bottlerocket-os/bottlerocket/pull/2543
+[#2547]: https://github.com/bottlerocket-os/bottlerocket/pull/2547
+[#2549]: https://github.com/bottlerocket-os/bottlerocket/pull/2549
+[#2550]: https://github.com/bottlerocket-os/bottlerocket/pull/2550
+[#2551]: https://github.com/bottlerocket-os/bottlerocket/pull/2551
+[#2553]: https://github.com/bottlerocket-os/bottlerocket/pull/2553
+[#2554]: https://github.com/bottlerocket-os/bottlerocket/pull/2554
+[#2558]: https://github.com/bottlerocket-os/bottlerocket/pull/2558
+[#2563]: https://github.com/bottlerocket-os/bottlerocket/pull/2563
+[#2565]: https://github.com/bottlerocket-os/bottlerocket/pull/2565
+[#2566]: https://github.com/bottlerocket-os/bottlerocket/pull/2566
+[#2574]: https://github.com/bottlerocket-os/bottlerocket/pull/2574
+[#2573]: https://github.com/bottlerocket-os/bottlerocket/pull/2573
+[#2578]: https://github.com/bottlerocket-os/bottlerocket/pull/2578
+[#2580]: https://github.com/bottlerocket-os/bottlerocket/pull/2580
+[#2582]: https://github.com/bottlerocket-os/bottlerocket/pull/2582
+[#2583]: https://github.com/bottlerocket-os/bottlerocket/pull/2583
+
+# v1.10.1 (2022-10-19)
+
+## OS Changes
+* Support container runtime settings: enable-unprivileged-icmp, enable-unprivileged-ports, max-concurrent-downloads, max-container-log-line-size ([#2494])
+* Update EKS-D to 1.22-11 ([#2490])
+* Update EKS-D to 1.23-6 ([#2488])
+
+[#2488]: https://github.com/bottlerocket-os/bottlerocket/pull/2488
+[#2490]: https://github.com/bottlerocket-os/bottlerocket/pull/2490
+[#2494]: https://github.com/bottlerocket-os/bottlerocket/pull/2494
+
+# v1.10.0 (2022-10-10)
+
+## OS Changes
+* Add optional settings to reboot into new kernel command line parameters ([#2375])
+* Support for static IP addressing ([#2204], [#2330], [#2445])
+* Add support for NVIDIA driver version 515 ([#2455])
+* Set mode for tmpfs mounts ([#2473])
+* Increase inotify default limits ([#2335])
+* Align `vm.max_map_count` with the EKS Optimized AMI ([#2344])
+* Add support for configuring DNS settings ([#2353])
+* Migrate `netdog` from `serde_xml_rs` to `quick-xml` ([#2311])
+* Support versioning for `net.toml` ([#2281])
+* Update admin and control container ([#2471], [#2472])
+
+## Orchestrator Changes
+
+### ECS
+* Add `cargo make` tasks for testing ECS variants ([#2348])
+
+### Kubernetes
+
+* Add support for Kubernetes 1.24 variants ([#2437])
+* Remove Kubernetes aws-k8s-1.19 variants ([#2316])
+* Increase the kube-api-server QPS from 5/10 to 10/20 ([#2436], thanks @tzneal)
+* Update eni-max-pods with new instance types ([#2416])
+* Add setting to change `kubelet`'s log level ([#2460], [#2470])
+* Add `cargo make` tasks to perform migration testing for Kubernetes variants in AWS ([#2273])
+
+## Platform Changes
+
+### AWS
+* Disable drivers for USB-attached network interfaces ([#2328])
+
+### Metal
+* Add driver support for Solarflare, Pensando, Myricom, Huawei, Emulex, Chelsio, Broadcom, AMD and Intel 10G+ network cards ([#2379])
+
+## Build Changes
+* Extend `external-files` to vendor go modules ([#2378], [#2403], [#2430])
+* Make `net_config` unit tests reusable across versions ([#2385])
+* Add `diff-kernel-config` to identify kernel config changes ([#2368])
+* Extended support for variants in buildsys ([#2339])
+* Clarify crossbeam license ([#2447])
+* Honor `BUILDSYS_ARCH` and `BUILDSYS_VARIANT` env variables when set ([#2425])
+* Use architecture specific json payloads in unit tests ([#2367], [#2363])
+* Add unified `check` target in `Makefile.toml` for review readiness ([#2384])
+* Update Go dependencies of first-party go projects ([#2424], [#2440], [#2450], [#2452], [#2456])
+* Update Rust dependencies ([#2458], [#2476])
+* Update third-party packages ([#2397], [#2398], [#2464], [#2465], thanks @kschumy)
+* Update Bottlerocket SDK to 0.27.0 ([#2428])
+* Migrate `pubsys` and `infrasys` to the AWS SDK for Rust ([#2414], [#2415], [#2454])
+* Update `testsys` dependencies ([#2392])
+* Fix `hotdog`'s spec URL to the correct upstream link ([#2326])
+* Fix clippy warnings and enable lints on pull requests ([#2337], [#2346], [#2443])
+* Format issue field in PR template ([#2314])
+
+## Documentation Changes
+* Update checksum for new `root.json` ([#2405])
+* Mention that boot settings are available in Kubernetes 1.23 variants ([#2358])
+* Mention the need for AWS credentials in BUILDING.md and PUBLISHING-AWS.md ([#2334])
+* Add China to supported regions lists ([#2315])
+* Add community section to README.md ([#2305], [#2383])
+* Standardize `userdata.toml` as the filename used in different docs ([#2446])
+* Remove commit from image name in PROVISIONING-METAL.md ([#2312])
+* Add note to CONTRIBUTING.md that outlines filenames' casing ([#2306])
+* Fix typos in `Makefile.toml`, QUICKSTART-ECS.md, QUICKSTART-EKS.md, `netdog` and `prairiedog` ([#2318], thanks @kianmeng)
+* Fix casing for GitHub and VMware in CHANGELOG.md ([#2329])
+* Fix typo in test setup command ([#2477])
+* Fix TESTING.md link typo ([#2438])
+* Fix positional `fetch-license` argument ([#2457])
+
+[#2204]: https://github.com/bottlerocket-os/bottlerocket/pull/2204
+[#2273]: https://github.com/bottlerocket-os/bottlerocket/pull/2273
+[#2281]: https://github.com/bottlerocket-os/bottlerocket/pull/2281
+[#2305]: https://github.com/bottlerocket-os/bottlerocket/pull/2305
+[#2306]: https://github.com/bottlerocket-os/bottlerocket/pull/2306
+[#2311]: https://github.com/bottlerocket-os/bottlerocket/pull/2311
+[#2312]: https://github.com/bottlerocket-os/bottlerocket/pull/2312
+[#2314]: https://github.com/bottlerocket-os/bottlerocket/pull/2314
+[#2315]: https://github.com/bottlerocket-os/bottlerocket/pull/2315
+[#2316]: https://github.com/bottlerocket-os/bottlerocket/pull/2316
+[#2318]: https://github.com/bottlerocket-os/bottlerocket/pull/2318
+[#2326]: https://github.com/bottlerocket-os/bottlerocket/pull/2326
+[#2328]: https://github.com/bottlerocket-os/bottlerocket/pull/2328
+[#2329]: https://github.com/bottlerocket-os/bottlerocket/pull/2329
+[#2330]: https://github.com/bottlerocket-os/bottlerocket/pull/2330
+[#2334]: https://github.com/bottlerocket-os/bottlerocket/pull/2334
+[#2335]: https://github.com/bottlerocket-os/bottlerocket/pull/2335
+[#2337]: https://github.com/bottlerocket-os/bottlerocket/pull/2337
+[#2339]: https://github.com/bottlerocket-os/bottlerocket/pull/2339
+[#2344]: https://github.com/bottlerocket-os/bottlerocket/pull/2344
+[#2346]: https://github.com/bottlerocket-os/bottlerocket/pull/2346
+[#2348]: https://github.com/bottlerocket-os/bottlerocket/pull/2348
+[#2353]: https://github.com/bottlerocket-os/bottlerocket/pull/2353
+[#2358]: https://github.com/bottlerocket-os/bottlerocket/pull/2358
+[#2363]: https://github.com/bottlerocket-os/bottlerocket/pull/2363
+[#2367]: https://github.com/bottlerocket-os/bottlerocket/pull/2367
+[#2368]: https://github.com/bottlerocket-os/bottlerocket/pull/2368
+[#2375]: https://github.com/bottlerocket-os/bottlerocket/pull/2375
+[#2378]: https://github.com/bottlerocket-os/bottlerocket/pull/2378
+[#2379]: https://github.com/bottlerocket-os/bottlerocket/pull/2379
+[#2383]: https://github.com/bottlerocket-os/bottlerocket/pull/2383
+[#2384]: https://github.com/bottlerocket-os/bottlerocket/pull/2384
+[#2385]: https://github.com/bottlerocket-os/bottlerocket/pull/2385
+[#2392]: https://github.com/bottlerocket-os/bottlerocket/pull/2392
+[#2397]: https://github.com/bottlerocket-os/bottlerocket/pull/2397
+[#2398]: https://github.com/bottlerocket-os/bottlerocket/pull/2398
+[#2403]: https://github.com/bottlerocket-os/bottlerocket/pull/2403
+[#2405]: https://github.com/bottlerocket-os/bottlerocket/pull/2405
+[#2414]: https://github.com/bottlerocket-os/bottlerocket/pull/2414
+[#2415]: https://github.com/bottlerocket-os/bottlerocket/pull/2415
+[#2416]: https://github.com/bottlerocket-os/bottlerocket/pull/2416
+[#2424]: https://github.com/bottlerocket-os/bottlerocket/pull/2424
+[#2425]: https://github.com/bottlerocket-os/bottlerocket/pull/2425
+[#2428]: https://github.com/bottlerocket-os/bottlerocket/pull/2428
+[#2430]: https://github.com/bottlerocket-os/bottlerocket/pull/2430
+[#2436]: https://github.com/bottlerocket-os/bottlerocket/pull/2436
+[#2437]: https://github.com/bottlerocket-os/bottlerocket/pull/2437
+[#2438]: https://github.com/bottlerocket-os/bottlerocket/pull/2438
+[#2440]: https://github.com/bottlerocket-os/bottlerocket/pull/2440
+[#2443]: https://github.com/bottlerocket-os/bottlerocket/pull/2443
+[#2445]: https://github.com/bottlerocket-os/bottlerocket/pull/2445
+[#2446]: https://github.com/bottlerocket-os/bottlerocket/pull/2446
+[#2447]: https://github.com/bottlerocket-os/bottlerocket/pull/2447
+[#2450]: https://github.com/bottlerocket-os/bottlerocket/pull/2450
+[#2452]: https://github.com/bottlerocket-os/bottlerocket/pull/2452
+[#2454]: https://github.com/bottlerocket-os/bottlerocket/pull/2454
+[#2455]: https://github.com/bottlerocket-os/bottlerocket/pull/2455
+[#2456]: https://github.com/bottlerocket-os/bottlerocket/pull/2456
+[#2457]: https://github.com/bottlerocket-os/bottlerocket/pull/2457
+[#2458]: https://github.com/bottlerocket-os/bottlerocket/pull/2458
+[#2460]: https://github.com/bottlerocket-os/bottlerocket/pull/2460
+[#2464]: https://github.com/bottlerocket-os/bottlerocket/pull/2464
+[#2465]: https://github.com/bottlerocket-os/bottlerocket/pull/2465
+[#2470]: https://github.com/bottlerocket-os/bottlerocket/pull/2470
+[#2471]: https://github.com/bottlerocket-os/bottlerocket/pull/2471
+[#2472]: https://github.com/bottlerocket-os/bottlerocket/pull/2472
+[#2473]: https://github.com/bottlerocket-os/bottlerocket/pull/2473
+[#2476]: https://github.com/bottlerocket-os/bottlerocket/pull/2476
+[#2477]: https://github.com/bottlerocket-os/bottlerocket/pull/2477
+
+# v1.9.2 (2022-08-31)
+
+## Build Changes
+
+* Archive old migrations ([#2357])
+* Update `runc` to version 1.1.4 ([#2380])
+
+[#2357]: https://github.com/bottlerocket-os/bottlerocket/pull/2357
+[#2380]: https://github.com/bottlerocket-os/bottlerocket/pull/2380
+
+# v1.9.1 (2022-08-17)
+
+## OS Changes
+
+* Change kernel module compression from zstd to xz ([#2323])
+* Update ECR registry map for new AWS regions ([#2336])
+* Add new regions to pause registry map ([#2349])
+* Update `tough` to v0.8.1 ([#2338])
+
+[#2323]: https://github.com/bottlerocket-os/bottlerocket/pull/2323
+[#2336]: https://github.com/bottlerocket-os/bottlerocket/pull/2336
+[#2338]: https://github.com/bottlerocket-os/bottlerocket/pull/2338
+[#2349]: https://github.com/bottlerocket-os/bottlerocket/pull/2349
+
+# v1.9.0 (2022-07-28)
+
+## OS Changes
+
+* SELinux policy now suppresses audit for tmpfs relabels ([#2222])
+* Restrict permissions for `/boot` and `System.map` ([#2223])
+* Remove unused crates `growpart` and `servicedog` ([#2238])
+* New mount in host containers for system logs ([#2295])
+* Apply strict mount options and enforce execution rules ([#2239])
+* Switch to a more commonly used syntax for disabling kernel config settings ([#2290])
+* Respect proxy settings when running setting generators ([#2227])
+* Add `NET_CAP_ADMIN` to bootstrap containers ([#2266])
+* Reduce log output for DHCP services ([#2260])
+* Fix invalid kernel config options ([#2269])
+* Improve support for container storage mounts ([#2240])
+* Disable uncommon filesystems and network protocols ([#2255])
+* Add support for blocking kernel modules ([#2274])
+* Fix `ntp` service restart when settings change ([#2270])
+* Add kernel 5.15 sources ([#2226])
+* Defer `squashfs` mounts to later in the boot process ([#2276])
+* Improve boot speed and rootfs size ([#2296])
+* Add "quiet" kernel parameter for some variants ([#2277])
+
+## Orchestrator Changes
+
+### Kubernetes
+
+* Make new instance types available ([#2221] , thanks @cablespaghetti)
+* Update Kubernetes versions ([#2230], [#2232], [#2262], [#2263], thanks @kschumy)
+* Add kubelet image GC threshold settings ([#2219])
+
+### ECS
+
+* Add iptables rules for ECS introspection server ([#2267])
+
+## Platform Changes
+
+### AWS
+
+* Add support for AWS China regions ([#2224], [#2242], [#2247], [#2285])
+* Migrate to using `aws-sdk-rust` for first-party OS Rust packages ([#2300])
+
+### VMware
+
+* Remove `console=ttyS0` from kernel params ([#2248])
+
+### Metal
+
+* Enable Mellanox modules in 5.10 kernel ([#2241])
+* Add bnxt module for Broadcom 10/25Gb network adapters in 5.10 kernel ([#2243])
+* Split out baremetal specific config options ([#2264])
+* Add driver support for Cisco UCS platforms ([#2271])
+* Only build baremetal variant specific drivers for baremetal variants ([#2279])
+* Enable the metal-dev build for the ARM architecture ([#2272])
+
+## Build Changes
+
+* Add Makefile targets to create and validate Boot Configuration ([#2189])
+* Create symlinks to images with friendly names ([#2215])
+* Add `start-local-vm` script ([#2194])
+* Add the testsys CLI and new cargo make tasks for testing aws-k8s variants ([#2165])
+* Update Rust and Go dependencies ([#2303], [#2299])
+* Update third-party packages ([#2309])
+
+## Documentation Changes
+
+* Add NVIDIA ECS variant to README ([#2244])
+* Add documentation for metal variants ([#2205])
+* Add missing step in building packages guide ([#2259])
+* Add quickstart for running Bottlerocket in QEMU/KVM VMs ([#2280])
+* Address lints in README markdown caught by `markdownlint` ([#2283])
+
+[#2165]: https://github.com/bottlerocket-os/bottlerocket/pull/2165
+[#2189]: https://github.com/bottlerocket-os/bottlerocket/pull/2189
+[#2194]: https://github.com/bottlerocket-os/bottlerocket/pull/2194
+[#2205]: https://github.com/bottlerocket-os/bottlerocket/pull/2205
+[#2215]: https://github.com/bottlerocket-os/bottlerocket/pull/2215
+[#2219]: https://github.com/bottlerocket-os/bottlerocket/pull/2219
+[#2221]: https://github.com/bottlerocket-os/bottlerocket/pull/2221
+[#2222]: https://github.com/bottlerocket-os/bottlerocket/pull/2222
+[#2223]: https://github.com/bottlerocket-os/bottlerocket/pull/2223
+[#2224]: https://github.com/bottlerocket-os/bottlerocket/pull/2224
+[#2226]: https://github.com/bottlerocket-os/bottlerocket/pull/2226
+[#2227]: https://github.com/bottlerocket-os/bottlerocket/pull/2227
+[#2230]: https://github.com/bottlerocket-os/bottlerocket/pull/2230
+[#2232]: https://github.com/bottlerocket-os/bottlerocket/pull/2232
+[#2238]: https://github.com/bottlerocket-os/bottlerocket/pull/2238
+[#2239]: https://github.com/bottlerocket-os/bottlerocket/pull/2239
+[#2240]: https://github.com/bottlerocket-os/bottlerocket/pull/2240
+[#2241]: https://github.com/bottlerocket-os/bottlerocket/pull/2241
+[#2242]: https://github.com/bottlerocket-os/bottlerocket/pull/2242
+[#2243]: https://github.com/bottlerocket-os/bottlerocket/pull/2243
+[#2244]: https://github.com/bottlerocket-os/bottlerocket/pull/2244
+[#2247]: https://github.com/bottlerocket-os/bottlerocket/pull/2247
+[#2248]: https://github.com/bottlerocket-os/bottlerocket/pull/2248
+[#2255]: https://github.com/bottlerocket-os/bottlerocket/pull/2255
+[#2259]: https://github.com/bottlerocket-os/bottlerocket/pull/2259
+[#2260]: https://github.com/bottlerocket-os/bottlerocket/pull/2260
+[#2262]: https://github.com/bottlerocket-os/bottlerocket/pull/2262
+[#2263]: https://github.com/bottlerocket-os/bottlerocket/pull/2263
+[#2264]: https://github.com/bottlerocket-os/bottlerocket/pull/2264
+[#2266]: https://github.com/bottlerocket-os/bottlerocket/pull/2266
+[#2267]: https://github.com/bottlerocket-os/bottlerocket/pull/2267
+[#2269]: https://github.com/bottlerocket-os/bottlerocket/pull/2269
+[#2270]: https://github.com/bottlerocket-os/bottlerocket/pull/2270
+[#2271]: https://github.com/bottlerocket-os/bottlerocket/pull/2271
+[#2272]: https://github.com/bottlerocket-os/bottlerocket/pull/2272
+[#2274]: https://github.com/bottlerocket-os/bottlerocket/pull/2274
+[#2276]: https://github.com/bottlerocket-os/bottlerocket/pull/2276
+[#2277]: https://github.com/bottlerocket-os/bottlerocket/pull/2277
+[#2279]: https://github.com/bottlerocket-os/bottlerocket/pull/2279
+[#2280]: https://github.com/bottlerocket-os/bottlerocket/pull/2280
+[#2283]: https://github.com/bottlerocket-os/bottlerocket/pull/2283
+[#2285]: https://github.com/bottlerocket-os/bottlerocket/pull/2285
+[#2290]: https://github.com/bottlerocket-os/bottlerocket/pull/2290
+[#2295]: https://github.com/bottlerocket-os/bottlerocket/pull/2295
+[#2296]: https://github.com/bottlerocket-os/bottlerocket/pull/2296
+[#2299]: https://github.com/bottlerocket-os/bottlerocket/pull/2299
+[#2300]: https://github.com/bottlerocket-os/bottlerocket/pull/2300
+[#2303]: https://github.com/bottlerocket-os/bottlerocket/pull/2303
+[#2309]: https://github.com/bottlerocket-os/bottlerocket/pull/2309
+
+# v1.8.0 (2022-06-08)
+
+## OS Changes
+
+### General
+* Update admin and control containers ([#2191])
+* Update to containerd 1.6.x ([#2158])
+* Restart container runtimes when certificates store changes ([#2076])
+* Add support for providing kernel parameters via Boot Configuration ([#1980])
+* Restart long-running systemd services on exit ([#2162])
+* Ignore zero blocks on dm-verity root ([#2169])
+* Add support for static DNS mappings in `/etc/hosts` ([#2129])
+* Enable network configuration generation via `netdog` ([#2066])
+* Add support for non-`eth0` default interfaces ([#2144])
+* Update to IMDS schema `2021-07-15` ([#2190])
+
+### Kubernetes
+* Add support for Kubernetes 1.23 variants ([#2188])
+* Improve Kubernetes pod start times by unsetting `configMapAndSecretChangeDetectionStrategy` in kubelet config ([#2166])
+* Add new setting for configuring kubelet's `provider-id` configuration ([#2192])
+* Add new setting for configuring kubelet's `podPidsLimit` configuration ([#2138])
+* Allow a list of IP addresses in `settings.kubernetes.cluster-dns-ip` ([#2176])
+* Set the default for `settings.kubernetes.cloud-provider` on metal variants to an empty string ([#2188])
+* Add c7g instance data for max pods calculation in AWS variants ([#2107], thanks, @lizthegrey!)
+
+### ECS
+* Add aws-ecs-1-nvidia variant with Nvidia driver support ([#2128], [#2100], [#2098], [#2167], [#2097], [#2090], [#2099])
+* Add support for ECS ImagePullBehavior and WarmPoolsSupport ([#2063], thanks, @mello7tre!)
+
+### Hardware
+* Build smartpqi driver for Microchip Smart Storage devices into 5.10 kernel ([#2184])
+* Add support for Broadcom ethernet cards in 5.10 kernel ([#2143])
+* Add support for MegaRAID SAS in 5.10 kernel ([#2133])
+
+## Build Changes
+* Remove aws-k8s-1.18 variant ([#2044], [#2092])
+* Update third-party packages ([#2178], [#2187], [#2145])
+* Update Rust and Go dependencies ([#2183], [#2181], [#2180], [#2085], [#2110], [#2068], [#2075], [#2074], [#2048], [#2059], [#2049], [#2036], [#2033])
+* Update Bottlerocket SDK to 0.26.0 ([#2157])
+* Speed up kernel builds by installing headers and modules in parallel ([#2185])
+* Removed unused patch from Docker CLI ([#2030], thanks, @thaJeztah!)
+
+## Documentation Changes
+* Standardize README generation in buildsys ([#2134])
+* Clarify migration README ([#2141])
+* Fix typos in BUILDING.md and QUICKSTART-VMWARE.md ([#2159], thanks, @ryanrussell!)
+* Add additional documentation for using GPUs with Kubernetes variants ([#2078])
+* Document examples for using `enter-admin-container` ([#2028])
+
+[#1980]: https://github.com/bottlerocket-os/bottlerocket/pull/1980
+[#2028]: https://github.com/bottlerocket-os/bottlerocket/pull/2028
+[#2030]: https://github.com/bottlerocket-os/bottlerocket/pull/2030
+[#2033]: https://github.com/bottlerocket-os/bottlerocket/pull/2033
+[#2036]: https://github.com/bottlerocket-os/bottlerocket/pull/2036
+[#2044]: https://github.com/bottlerocket-os/bottlerocket/pull/2044
+[#2048]: https://github.com/bottlerocket-os/bottlerocket/pull/2048
+[#2049]: https://github.com/bottlerocket-os/bottlerocket/pull/2049
+[#2059]: https://github.com/bottlerocket-os/bottlerocket/pull/2059
+[#2063]: https://github.com/bottlerocket-os/bottlerocket/pull/2063
+[#2066]: https://github.com/bottlerocket-os/bottlerocket/pull/2066
+[#2068]: https://github.com/bottlerocket-os/bottlerocket/pull/2068
+[#2074]: https://github.com/bottlerocket-os/bottlerocket/pull/2074
+[#2075]: https://github.com/bottlerocket-os/bottlerocket/pull/2075
+[#2076]: https://github.com/bottlerocket-os/bottlerocket/pull/2076
+[#2078]: https://github.com/bottlerocket-os/bottlerocket/pull/2078
+[#2085]: https://github.com/bottlerocket-os/bottlerocket/pull/2085
+[#2090]: https://github.com/bottlerocket-os/bottlerocket/pull/2090
+[#2092]: https://github.com/bottlerocket-os/bottlerocket/pull/2092
+[#2097]: https://github.com/bottlerocket-os/bottlerocket/pull/2097
+[#2098]: https://github.com/bottlerocket-os/bottlerocket/pull/2098
+[#2099]: https://github.com/bottlerocket-os/bottlerocket/pull/2099
+[#2100]: https://github.com/bottlerocket-os/bottlerocket/pull/2100
+[#2107]: https://github.com/bottlerocket-os/bottlerocket/pull/2107
+[#2110]: https://github.com/bottlerocket-os/bottlerocket/pull/2110
+[#2128]: https://github.com/bottlerocket-os/bottlerocket/pull/2128
+[#2129]: https://github.com/bottlerocket-os/bottlerocket/pull/2129
+[#2133]: https://github.com/bottlerocket-os/bottlerocket/pull/2133
+[#2134]: https://github.com/bottlerocket-os/bottlerocket/pull/2134
+[#2138]: https://github.com/bottlerocket-os/bottlerocket/pull/2138
+[#2141]: https://github.com/bottlerocket-os/bottlerocket/pull/2141
+[#2142]: https://github.com/bottlerocket-os/bottlerocket/pull/2142
+[#2143]: https://github.com/bottlerocket-os/bottlerocket/pull/2143
+[#2144]: https://github.com/bottlerocket-os/bottlerocket/pull/2144
+[#2145]: https://github.com/bottlerocket-os/bottlerocket/pull/2145
+[#2146]: https://github.com/bottlerocket-os/bottlerocket/pull/2146
+[#2157]: https://github.com/bottlerocket-os/bottlerocket/pull/2157
+[#2158]: https://github.com/bottlerocket-os/bottlerocket/pull/2158
+[#2159]: https://github.com/bottlerocket-os/bottlerocket/pull/2159
+[#2162]: https://github.com/bottlerocket-os/bottlerocket/pull/2162
+[#2166]: https://github.com/bottlerocket-os/bottlerocket/pull/2166
+[#2167]: https://github.com/bottlerocket-os/bottlerocket/pull/2167
+[#2169]: https://github.com/bottlerocket-os/bottlerocket/pull/2169
+[#2176]: https://github.com/bottlerocket-os/bottlerocket/pull/2176
+[#2178]: https://github.com/bottlerocket-os/bottlerocket/pull/2178
+[#2180]: https://github.com/bottlerocket-os/bottlerocket/pull/2180
+[#2181]: https://github.com/bottlerocket-os/bottlerocket/pull/2181
+[#2183]: https://github.com/bottlerocket-os/bottlerocket/pull/2183
+[#2184]: https://github.com/bottlerocket-os/bottlerocket/pull/2184
+[#2185]: https://github.com/bottlerocket-os/bottlerocket/pull/2185
+[#2187]: https://github.com/bottlerocket-os/bottlerocket/pull/2187
+[#2188]: https://github.com/bottlerocket-os/bottlerocket/pull/2188
+[#2190]: https://github.com/bottlerocket-os/bottlerocket/pull/2190
+[#2191]: https://github.com/bottlerocket-os/bottlerocket/pull/2191
+[#2192]: https://github.com/bottlerocket-os/bottlerocket/pull/2192
+
+# v1.7.2 (2022-04-22)
+
+## Security Fixes
+
+* Update kernel-5.4 to patch CVE-2022-1015, CVE-2022-1016, CVE-2022-25636, CVE-2022-26490, CVE-2022-27666, CVE-2022-28356 ([a3b4674f7108][a3b4674f7108])
+* Update kernel-5.10 to patch CVE-2022-1015, CVE-2022-1016, CVE-2022-25636, CVE-2022-1048, CVE-2022-26490, CVE-2022-27666, CVE-2022-28356 ([37095415bab6][37095415bab6])
+
+## OS Changes
+
+* Update eni-max-pods with new instance types ([#2079])
+* Add support for AWS region ap-southeast-3: Jakarta ([#2080])
+
+[a3b4674f7108]: https://github.com/bottlerocket-os/bottlerocket/commit/a3b4674f7108a7f69f108a011042be2a5b91e563
+[37095415bab6]: https://github.com/bottlerocket-os/bottlerocket/commit/37095415bab67a24240d95b59c7bf20a112d7ae1
+[#2079]: https://github.com/bottlerocket-os/bottlerocket/pull/2079
+[#2080]: https://github.com/bottlerocket-os/bottlerocket/pull/2080
+
+# v1.7.1 (2022-04-05)
+
+## Security Fixes
+
+* Apply patch to hotdog for CVE-2022-0071 ([1a3f35b2fe8e][1a3f35b2fe8e])
+
+## OS Changes
+
+* Enable checkpoint restore (`CONFIG_CHECKPOINT_RESTORE`) for aarch64 ([6e3d6ed4b83e][6e3d6ed4b83e])
+
+[1a3f35b2fe8e]: https://github.com/bottlerocket-os/bottlerocket/commit/1a3f35b2fe8ed9a7078e43940545dc941c5de99f
+[6e3d6ed4b83e]: https://github.com/bottlerocket-os/bottlerocket/commit/6e3d6ed4b83ecefa5de5885f8c4a30cd9df8b689
+
+# v1.7.0 (2022-03-30)
+
+With this release, an inventory of software installed in Bottlerocket will now be reported to SSM if the control container is in use and inventorying has been enabled.
+
+## OS Changes
+
+* Generate host software inventory and make it available to host containers ([#1996])
+* Update admin and control containers ([#2014])
+
+## Build Changes
+
+* Update third-party packages ([#1977], [#1983], [#1987], [#1992], [#2022])
+* Update Rust and Go dependencies ([#2016], [#2019])
+* Makefile: lock tuftool version ([#2009])
+* Fix tmpfilesd configuration for kmod-5.10-nvidia ([#2020])
+
+## Documentation Changes
+
+* Fix tuftool download instruction in VMware Quickstart ([#1994])
+* Explain data partition extension ([#2013])
+
+[#1977]: https://github.com/bottlerocket-os/bottlerocket/pull/1977
+[#1983]: https://github.com/bottlerocket-os/bottlerocket/pull/1983
+[#1987]: https://github.com/bottlerocket-os/bottlerocket/pull/1987
+[#1992]: https://github.com/bottlerocket-os/bottlerocket/pull/1992
+[#1994]: https://github.com/bottlerocket-os/bottlerocket/pull/1994
+[#1996]: https://github.com/bottlerocket-os/bottlerocket/pull/1996
+[#2009]: https://github.com/bottlerocket-os/bottlerocket/pull/2009
+[#2013]: https://github.com/bottlerocket-os/bottlerocket/pull/2013
+[#2014]: https://github.com/bottlerocket-os/bottlerocket/pull/2014
+[#2016]: https://github.com/bottlerocket-os/bottlerocket/pull/2016
+[#2019]: https://github.com/bottlerocket-os/bottlerocket/pull/2019
+[#2020]: https://github.com/bottlerocket-os/bottlerocket/pull/2020
+[#2022]: https://github.com/bottlerocket-os/bottlerocket/pull/2022
+
+# v1.6.2 (2022-03-08)
+
+With this release, the vmware-k8s variants have graduated from preview status and are now generally available.
+:tada:
+
+## Security Fixes
+
+* Update kernel-5.4 and kernel-5.10 to include recent security fixes ([a8e4a20ca7d1][a8e4a20ca7d1], [3d0c10abeecb][3d0c10abeecb])
+
+## OS Changes
+
+* Add support for Kubernetes 1.22 variants ([#1962])
+* Add settings support for registry credentials ([#1955])
+* Add support for AWS CloudFormation signaling ([#1728], thanks, @mello7tre!)
+* Add TCMU support to the kernel ([#1953], thanks, @cvlc!)
+* Fix issue with closing frame construction in apiserver ([#1948])
+
+## Build Changes
+
+* Fix dead code warning during build in netdog ([#1949])
+
+## Documentation Changes
+
+* Correct variable name in bootstrap-containers/README.md ([#1959], thanks, @dangen-effy!)
+* Add art to the console ([#1970])
+
+[a8e4a20ca7d1]: https://github.com/bottlerocket-os/bottlerocket/commit/a8e4a20ca7d1dde4e8b5f679e4e11d9687b6ef09
+[3d0c10abeecb]: https://github.com/bottlerocket-os/bottlerocket/commit/3d0c10abeecb9f69b6ec598fd5137cb146a46b6e
+[#1728]: https://github.com/bottlerocket-os/bottlerocket/pull/1728
+[#1948]: https://github.com/bottlerocket-os/bottlerocket/pull/1948
+[#1949]: https://github.com/bottlerocket-os/bottlerocket/pull/1949
+[#1953]: https://github.com/bottlerocket-os/bottlerocket/pull/1953
+[#1955]: https://github.com/bottlerocket-os/bottlerocket/pull/1955
+[#1959]: https://github.com/bottlerocket-os/bottlerocket/pull/1959
+[#1962]: https://github.com/bottlerocket-os/bottlerocket/pull/1962
+[#1970]: https://github.com/bottlerocket-os/bottlerocket/pull/1970
+
+# v1.6.1 (2022-03-02)
+
+## Security Fixes
+
+* Apply patch to containerd for CVE-2022-23648 ([0de1b39efa64][0de1b39efa64])
+* Update kernel-5.4 and kernel-5.10 to include recent security fixes ([#1973])
+
+[0de1b39efa64]: https://github.com/bottlerocket-os/bottlerocket/commit/0de1b39efa6437fa57388918e1554174ca2f02e4
+[#1973]: https://github.com/bottlerocket-os/bottlerocket/pull/1973
+
+# v1.6.0 (2022-02-07)
+
+## Deprecation Notice
+
+The Kubernetes 1.18 variant, `aws-k8s-1.18`, will lose support in March 2022.
+Kubernetes 1.18 is no longer receiving support upstream.
+We recommend replacing `aws-k8s-1.18` nodes with a later variant, preferably `aws-k8s-1.21` if your cluster supports it.
+See [this issue](https://github.com/bottlerocket-os/bottlerocket/issues/1942) for more details.
+
+## Security Fixes
+
+* Apply patch to the kernel for CVE-2022-0492 ([#1943])
+
+## OS Changes
+* Add aws-k8s-1.21-nvidia variant with Nvidia driver support ([#1859], [#1860], [#1861], [#1862], [#1900], [#1912], [#1915], [#1916], [#1928])
+* Add metal-k8s-1.21 variant with support for running on bare metal ([#1904])
+* Update host containers to the latest version ([#1939])
+* Add driverdog, a configuration-driven utility for linking kernel modules at runtime ([#1867])
+* Kubernetes: Fix a potential inconsistency with IPv6 node-ip comparisons ([#1932])
+* Allow setting multiple Kubernetes node taints with the same key ([#1906])
+* Fix a bug which would prevent Bottlerocket from booting when setting `container-registry` to an empty table ([#1910])
+* Add `/etc/bottlerocket-release` to host containers ([#1883])
+* Send grub output to the local console on BIOS systems ([#1894])
+* Fix minor issues with systemd units ([#1889])
+
+## Build Changes
+* Update third-party packages ([#1936])
+* Update Rust dependencies ([#1940])
+* Update Go dependencies of `host-ctr` ([#1938])
+* Add the ability to fetch licenses at build time ([#1901])
+* Pin tuftool to a specific version ([#1940])
+
+## Documentation Changes
+* Add a no-proxy setting example to the README ([#1765] thanks, @mrajashree!)
+* Document variant `image-layout` options in the README ([#1896])
+
+
+[#1765]: https://github.com/bottlerocket-os/bottlerocket/pull/1765
+[#1859]: https://github.com/bottlerocket-os/bottlerocket/pull/1859
+[#1860]: https://github.com/bottlerocket-os/bottlerocket/pull/1860
+[#1861]: https://github.com/bottlerocket-os/bottlerocket/pull/1861
+[#1862]: https://github.com/bottlerocket-os/bottlerocket/pull/1862
+[#1867]: https://github.com/bottlerocket-os/bottlerocket/pull/1867
+[#1883]: https://github.com/bottlerocket-os/bottlerocket/pull/1883
+[#1889]: https://github.com/bottlerocket-os/bottlerocket/pull/1889
+[#1894]: https://github.com/bottlerocket-os/bottlerocket/pull/1894
+[#1896]: https://github.com/bottlerocket-os/bottlerocket/pull/1896
+[#1900]: https://github.com/bottlerocket-os/bottlerocket/pull/1900
+[#1901]: https://github.com/bottlerocket-os/bottlerocket/pull/1901
+[#1904]: https://github.com/bottlerocket-os/bottlerocket/pull/1904
+[#1906]: https://github.com/bottlerocket-os/bottlerocket/pull/1906
+[#1910]: https://github.com/bottlerocket-os/bottlerocket/pull/1910
+[#1912]: https://github.com/bottlerocket-os/bottlerocket/pull/1912
+[#1915]: https://github.com/bottlerocket-os/bottlerocket/pull/1915
+[#1916]: https://github.com/bottlerocket-os/bottlerocket/pull/1916
+[#1928]: https://github.com/bottlerocket-os/bottlerocket/pull/1928
+[#1932]: https://github.com/bottlerocket-os/bottlerocket/pull/1932
+[#1936]: https://github.com/bottlerocket-os/bottlerocket/pull/1936
+[#1938]: https://github.com/bottlerocket-os/bottlerocket/pull/1938
+[#1939]: https://github.com/bottlerocket-os/bottlerocket/pull/1939
+[#1940]: https://github.com/bottlerocket-os/bottlerocket/pull/1940
+[#1943]: https://github.com/bottlerocket-os/bottlerocket/pull/1943
+
+# v1.5.3 (2022-01-25)
+
+## Security Fixes
+* Update Bottlerocket SDK to 0.25.1 for Rust 1.58.1 ([#1918])
+* Update kernel-5.4 and kernel-5.10 to include recent security fixes ([#1921])
+* Migrate host-container to the latest version for vmware variants ([#1898])
+
+## OS Changes
+* Fix an issue which could impair nodes in Kubernetes 1.21 IPv6 clusters ([#1925])
+
+[#1898]: https://github.com/bottlerocket-os/bottlerocket/pull/1898
+[#1918]: https://github.com/bottlerocket-os/bottlerocket/pull/1918
+[#1921]: https://github.com/bottlerocket-os/bottlerocket/pull/1921
+[#1925]: https://github.com/bottlerocket-os/bottlerocket/pull/1925
+
 # v1.5.2 (2022-01-05)
 
 ## Security Fixes
@@ -570,7 +3823,7 @@ See [this issue](https://github.com/bottlerocket-os/bottlerocket/issues/1478) fo
 * Add compat symlink for kubelet volume plugins ([#1417])
 * Remove bottlerocket.version attribute from ECS agent settings ([#1395])
 * Make Kubernetes taint values optional ([#1406])
-* Add guestinfo to available VMWare user data retrieval methods ([#1393])
+* Add guestinfo to available VMware user data retrieval methods ([#1393])
 * Include source of invalid base64 data in error messages ([#1469])
 * Update eni-max-pods data file ([#1468])
 * Update default host container versions ([#1443], [#1441], [#1466])
@@ -784,7 +4037,7 @@ Attempts to downgrade may result in inconsistencies between ECS and the Bottlero
 * Fix message in partition size check condition ([#1233], **thanks @pranavek!**)
 * Split the datastore module into its own crate ([#1249])
 * Update SDK to v0.15.0 ([#1263])
-* Update Github Actions to ignore changes that only include .md files ([#1274])
+* Update GitHub Actions to ignore changes that only include .md files ([#1274])
 
 ## Documentation Changes
 

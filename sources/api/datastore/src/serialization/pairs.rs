@@ -37,8 +37,8 @@ where
 {
     let prefix = prefix.as_ref();
     let prefix_key = Key::new(KeyType::Data, prefix).map_err(|e| {
-        error::InvalidKey {
-            msg: format!("Prefix '{}' not valid as Key: {}", prefix, e),
+        error::InvalidKeySnafu {
+            msg: format!("Prefix '{prefix}' not valid as Key: {e}"),
         }
         .into_error(NoSource)
     })?;
@@ -84,17 +84,18 @@ impl<'a> Serializer<'a> {
 /// This helps us handle the cases where we have to have an existing prefix in order to output a
 /// value.  It creates an explanatory error if the given prefix is None.
 fn expect_prefix(maybe_prefix: Option<Key>, value: &str) -> Result<Key> {
-    maybe_prefix.context(error::MissingPrefix { value })
+    maybe_prefix.context(error::MissingPrefixSnafu { value })
 }
 
 /// Serializes a concrete value and saves it to the output, assuming we have a prefix.
 macro_rules! concrete_output {
     ($self:expr, $value:expr) => {
         trace!("Serializing scalar at prefix {:?}", $self.prefix);
-        let value =
-            serialize_scalar::<_, ScalarError>(&$value).with_context(|| error::Serialization {
+        let value = serialize_scalar::<_, ScalarError>(&$value).with_context(|_| {
+            error::SerializationSnafu {
                 given: format!("concrete value '{}'", $value),
-            })?;
+            }
+        })?;
         let prefix = expect_prefix($self.prefix, &value)?;
         $self.output.insert(prefix, value);
         return Ok(());
@@ -104,10 +105,9 @@ macro_rules! concrete_output {
 /// Several types are invalid for our serialization so we commonly need to return an error.  This
 /// simplifies the creation of that error, with a customizable message for the type.
 fn bad_type<T>(typename: &str) -> Result<T> {
-    error::InvalidType { typename }.fail()
+    error::InvalidTypeSnafu { typename }.fail()
 }
 
-#[rustfmt::skip]
 impl<'a> ser::Serializer for Serializer<'a> {
     type Ok = ();
     type Error = Error;
@@ -122,32 +122,81 @@ impl<'a> ser::Serializer for Serializer<'a> {
     type SerializeStruct = Self;
 
     // Simple concrete types.
-    fn serialize_bool(self, v: bool) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_i8(self, v: i8) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_i16(self, v: i16) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_i32(self, v: i32) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_i64(self, v: i64) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_u8(self, v: u8) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_u16(self, v: u16) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_u32(self, v: u32) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_f32(self, v: f32) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_f64(self, v: f64) -> Result<()> { concrete_output!(self, v); }
-    fn serialize_str(self, v: &str) -> Result<()> { concrete_output!(self, v); }
+    fn serialize_bool(self, v: bool) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_i8(self, v: i8) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_i16(self, v: i16) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_i32(self, v: i32) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_i64(self, v: i64) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_u8(self, v: u8) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_u16(self, v: u16) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_u32(self, v: u32) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_u64(self, v: u64) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_f32(self, v: f32) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_f64(self, v: f64) -> Result<()> {
+        concrete_output!(self, v);
+    }
+
+    fn serialize_str(self, v: &str) -> Result<()> {
+        concrete_output!(self, v);
+    }
 
     // Don't serialize None at all; it should mean the key wasn't given.
-    fn serialize_none(self) -> Result<()> { Ok(()) }
+    fn serialize_none(self) -> Result<()> {
+        Ok(())
+    }
+
     // Serialize the Some(x) as x.  Our basic structure is that all settings are optional, so
     // the API is ergonomic to call with a subset of keys, and so Some just means they wanted this
     // key set.
-    fn serialize_some<T>(self, value: &T) -> Result<()> where T: ?Sized + Serialize { value.serialize(self) }
+    fn serialize_some<T>(self, value: &T) -> Result<()>
+    where
+        T: ?Sized + Serialize,
+    {
+        value.serialize(self)
+    }
 
     // Compound types
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
-        Ok(FlatSerializer::new(self.output, expect_prefix(self.prefix, "seq")?))
+        Ok(FlatSerializer::new(
+            self.output,
+            expect_prefix(self.prefix, "seq")?,
+        ))
     }
+
     fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
         Ok(Serializer::new(self.output, self.prefix))
     }
+
     fn serialize_struct(self, name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
         trace!("Serializing struct '{}' at prefix {:?}", name, self.prefix);
         // If we already have a prefix, use it - could be because we're in a nested struct, or the
@@ -155,11 +204,13 @@ impl<'a> ser::Serializer for Serializer<'a> {
         let prefix = match self.prefix {
             p @ Some(_) => p,
             None => {
-                trace!("Had no prefix, starting with struct name: {}", name);
-                let key = Key::from_segments(KeyType::Data, &[&name])
-                    .map_err(|e| error::InvalidKey {
-                        msg: format!("struct '{}' not valid as Key: {}", name, e)
-                    }.into_error(NoSource))?;
+                trace!("Had no prefix, starting with struct name: {name}");
+                let key = Key::from_segments(KeyType::Data, &[&name]).map_err(|e| {
+                    error::InvalidKeySnafu {
+                        msg: format!("struct '{name}' not valid as Key: {e}"),
+                    }
+                    .into_error(NoSource)
+                })?;
                 Some(key)
             }
         };
@@ -167,24 +218,55 @@ impl<'a> ser::Serializer for Serializer<'a> {
     }
 
     // Types we can't (or don't want to) represent.
-    // Can't fit u64 into signed 64-bit range.
-    fn serialize_u64(self, _v: u64) -> Result<()> { bad_type("u64") }
     // No char type, and using String would lose the distinction you were trying to make by
     // using a char.
-    fn serialize_char(self, _v: char) -> Result<()> { bad_type("char") }
+    fn serialize_char(self, _v: char) -> Result<()> {
+        bad_type("char")
+    }
+
     // No binary type; could use base64 or similar if we implement our own deserialization
     // that understands it.
-    fn serialize_bytes(self, _v: &[u8]) -> Result<()> { bad_type("bytes") }
-    // We just don't expect to need these, and we doesn't have a great way to represent them.
-    fn serialize_unit(self) -> Result<()> { bad_type("unit") }
-    fn serialize_unit_struct(self, _name: &'static str) -> Result<()> { bad_type("unit struct") }
-    fn serialize_unit_variant(self, _name: &'static str, _variant_index: u32, _variant: &'static str) -> Result<()> {
-        bad_type("unit variant")
+    fn serialize_bytes(self, _v: &[u8]) -> Result<()> {
+        bad_type("bytes")
     }
-    fn serialize_newtype_struct<T>(self, _name: &'static str, _value: &T) -> Result<()> where T: ?Sized + Serialize {
+
+    // We just don't expect to need these, and we doesn't have a great way to represent them.
+    fn serialize_unit(self) -> Result<()> {
+        bad_type("unit")
+    }
+
+    fn serialize_unit_struct(self, _name: &'static str) -> Result<()> {
+        bad_type("unit struct")
+    }
+
+    // When we use "simple" enums (those that only have "unit" variants), we represent them as
+    // strings in the data model. As far as the API is concerned, these are string values, but in
+    // the model we constrain them using an enum.
+    fn serialize_unit_variant(
+        self,
+        _name: &'static str,
+        _variant_index: u32,
+        variant: &'static str,
+    ) -> Result<()> {
+        self.serialize_str(variant)
+    }
+
+    fn serialize_newtype_struct<T>(self, _name: &'static str, _value: &T) -> Result<()>
+    where
+        T: ?Sized + Serialize,
+    {
         bad_type("newtype struct")
     }
-    fn serialize_newtype_variant<T>(self, _name: &'static str, _variant_index: u32, _variant: &'static str, _value: &T) -> Result<()> where T: ?Sized + Serialize {
+    fn serialize_newtype_variant<T>(
+        self,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _value: &T,
+    ) -> Result<()>
+    where
+        T: ?Sized + Serialize,
+    {
         bad_type("newtype variant")
     }
 
@@ -193,27 +275,42 @@ impl<'a> ser::Serializer for Serializer<'a> {
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
         bad_type("tuple")
     }
-    fn serialize_tuple_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeTupleStruct> {
+
+    fn serialize_tuple_struct(
+        self,
+        _name: &'static str,
+        _len: usize,
+    ) -> Result<Self::SerializeTupleStruct> {
         bad_type("tuple struct")
     }
-    fn serialize_tuple_variant(self, _name: &'static str, _variant_index: u32, _variant: &'static str, _len: usize) -> Result<Self::SerializeTupleVariant> {
+
+    fn serialize_tuple_variant(
+        self,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
+    ) -> Result<Self::SerializeTupleVariant> {
         bad_type("tuple variant")
     }
-    fn serialize_struct_variant(self, _name: &'static str, _variant_index: u32, _variant: &'static str, _len: usize) -> Result<Self::SerializeStructVariant> {
+
+    fn serialize_struct_variant(
+        self,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
+    ) -> Result<Self::SerializeStructVariant> {
         bad_type("struct variant")
     }
-
 }
 
 /// Helper that combines the existing prefix, if any, with a separator and the new key.
 fn key_append_or_create(old_prefix: &Option<Key>, key: &Key) -> Result<Key> {
     if let Some(old_prefix) = old_prefix {
-        old_prefix.append_key(&key).map_err(|e| {
-            error::InvalidKey {
-                msg: format!(
-                    "appending '{}' to '{}' is invalid as Key: {}",
-                    key, old_prefix, e
-                ),
+        old_prefix.append_key(key).map_err(|e| {
+            error::InvalidKeySnafu {
+                msg: format!("appending '{key}' to '{old_prefix}' is invalid as Key: {e}"),
             }
             .into_error(NoSource)
         })
@@ -234,7 +331,7 @@ fn key_append_or_create(old_prefix: &Option<Key>, key: &Key) -> Result<Key> {
 /// separately, whereas we'd prefer a single pass because we only need to store the output.  To
 /// work around this, we use the Option 'key' in the struct to store the last-serialized key,
 /// knowing that serde will serialize keys and values in that order.
-impl<'a> ser::SerializeMap for Serializer<'a> {
+impl ser::SerializeMap for Serializer<'_> {
     type Ok = ();
     type Error = Error;
 
@@ -249,8 +346,8 @@ impl<'a> ser::SerializeMap for Serializer<'a> {
         // Note: we use 'new', not 'from_segments', because we just serialized into a string,
         // meaning it's in quoted form.
         let key = Key::new(KeyType::Data, &key_str).map_err(|e| {
-            error::InvalidKey {
-                msg: format!("serialized map key '{}' not valid as Key: {}", &key_str, e),
+            error::InvalidKeySnafu {
+                msg: format!("serialized map key '{}' not valid as Key: {}", key_str, e),
             }
             .into_error(NoSource)
         })?;
@@ -273,7 +370,7 @@ impl<'a> ser::SerializeMap for Serializer<'a> {
                 );
                 value.serialize(Serializer::new(self.output, Some(key)))
             }
-            None => error::Internal {
+            None => error::InternalSnafu {
                 msg: "Attempted to serialize value without key",
             }
             .fail(),
@@ -289,7 +386,7 @@ impl<'a> ser::SerializeMap for Serializer<'a> {
 /// Serialize structs, recursively handling any inner compound structures by using the key name as
 /// the new prefix.  (No need to use the struct's name; we're not at the root level, so it was
 /// already pointed to by some name.)
-impl<'a> ser::SerializeStruct for Serializer<'a> {
+impl ser::SerializeStruct for Serializer<'_> {
     type Ok = ();
     type Error = Error;
 
@@ -298,8 +395,8 @@ impl<'a> ser::SerializeStruct for Serializer<'a> {
         T: ?Sized + Serialize,
     {
         let key = Key::from_segments(KeyType::Data, &[&key_str]).map_err(|e| {
-            error::InvalidKey {
-                msg: format!("struct field '{}' not valid as Key: {}", key_str, e),
+            error::InvalidKeySnafu {
+                msg: format!("struct field '{key_str}' not valid as Key: {e}"),
             }
             .into_error(NoSource)
         })?;
@@ -309,7 +406,7 @@ impl<'a> ser::SerializeStruct for Serializer<'a> {
             "Recursively serializing struct with new root '{}' from prefix '{:?}' and key '{}'",
             new_root,
             self.prefix,
-            &key
+            key
         );
         value.serialize(Serializer::new(self.output, Some(new_root)))
     }
@@ -347,7 +444,7 @@ impl<'a> FlatSerializer<'a> {
     }
 }
 
-impl<'a> ser::SerializeSeq for FlatSerializer<'a> {
+impl ser::SerializeSeq for FlatSerializer<'_> {
     type Ok = ();
     type Error = Error;
 
@@ -356,10 +453,11 @@ impl<'a> ser::SerializeSeq for FlatSerializer<'a> {
         T: ?Sized + Serialize,
     {
         trace!("Serializing element of list");
-        self.list
-            .push(serde_json::to_string(value).context(error::Serialization {
+        self.list.push(
+            serde_json::to_string(value).context(error::SerializationSnafu {
                 given: "list element",
-            })?);
+            })?,
+        );
         Ok(())
     }
 
@@ -367,7 +465,7 @@ impl<'a> ser::SerializeSeq for FlatSerializer<'a> {
         let mut originals: Vec<serde_json::Value> = Vec::new();
         trace!("Deserializing elements of list");
         for original in self.list {
-            originals.push(original.parse().context(error::Deserialization {
+            originals.push(original.parse().context(error::DeserializationSnafu {
                 given: "list element",
             })?);
         }
@@ -375,7 +473,8 @@ impl<'a> ser::SerializeSeq for FlatSerializer<'a> {
         trace!("Serializing list");
         self.output.insert(
             self.prefix,
-            serde_json::to_string(&originals).context(error::Serialization { given: "list" })?,
+            serde_json::to_string(&originals)
+                .context(error::SerializationSnafu { given: "list" })?,
         );
 
         Ok(())
@@ -489,5 +588,48 @@ mod test {
     fn concrete_fails() {
         let i = 42;
         to_pairs(&i).unwrap_err();
+    }
+
+    #[test]
+    fn string_values() {
+        let m = hashmap!(
+            key!("A") => hashmap!(
+                key!("id") => "apples",
+                key!("ie") => "oranges",
+            ),
+        );
+        let keys = to_pairs(&m).unwrap();
+        assert_eq!(
+            keys,
+            hashmap!(
+                key!("A.id") => "\"apples\"".to_string(),
+                key!("A.ie") => "\"oranges\"".to_string(),
+            )
+        );
+    }
+
+    #[derive(Serialize)]
+    #[serde(rename_all = "kebab-case")]
+    enum TestEnum {
+        Alpha,
+        Beta,
+    }
+
+    #[test]
+    fn enum_values() {
+        let m = hashmap!(
+            key!("A") => hashmap!(
+                key!("id") => TestEnum::Alpha,
+                key!("ie") => TestEnum::Beta,
+            ),
+        );
+        let keys = to_pairs(&m).unwrap();
+        assert_eq!(
+            keys,
+            hashmap!(
+                key!("A.id") => "\"alpha\"".to_string(),
+                key!("A.ie") => "\"beta\"".to_string(),
+            )
+        );
     }
 }

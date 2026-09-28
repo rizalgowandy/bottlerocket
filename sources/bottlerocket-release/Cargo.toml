@@ -3,17 +3,17 @@ name = "bottlerocket-release"
 version = "0.1.0"
 authors = ["Tom Kirchner <tjk@amazon.com>"]
 license = "Apache-2.0 OR MIT"
-edition = "2018"
+edition = "2021"
 publish = false
 # Don't rebuild crate just because of changes to README.
 exclude = ["README.md"]
 
 [dependencies]
-envy = "0.4"
-log = "0.4"
-semver = { version = "1.0", features = ["serde"] }
-serde = { version = "1.0", features = ["derive"] }
-snafu = "0.6"
+envy.workspace = true
+log.workspace = true
+semver = { workspace = true, features = ["serde"] }
+serde = { workspace = true, features = ["derive"] }
+snafu.workspace = true
 
 [build-dependencies]
-cargo-readme = "3.1"
+generate-readme.workspace = true

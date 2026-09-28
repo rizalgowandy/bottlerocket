@@ -88,7 +88,7 @@ where
     let key_prefix = match prefix {
         None => None,
         Some(ref p) => {
-            Some(Key::new(KeyType::Data, p).context(error::InvalidPrefix { prefix: p })?)
+            Some(Key::new(KeyType::Data, p).context(error::InvalidPrefixSnafu { prefix: p })?)
         }
     };
     let de = CompoundDeserializer::new(
@@ -132,7 +132,7 @@ where
                 trace!("Handing off to scalar deserializer for deserialize_any");
                 scalar_deserializer
                     .deserialize_any(visitor)
-                    .context(error::DeserializeScalar)
+                    .context(error::DeserializeScalarSnafu)
             }
             ValueDeserializer::Compound(compound_deserializer) => {
                 compound_deserializer.deserialize_map(visitor)
@@ -151,7 +151,7 @@ where
                 trace!("Handing off to scalar deserializer for deserialize_option");
                 scalar_deserializer
                     .deserialize_option(visitor)
-                    .context(error::DeserializeScalar)
+                    .context(error::DeserializeScalarSnafu)
             }
             ValueDeserializer::Compound(compound_deserializer) => {
                 compound_deserializer.deserialize_option(visitor)
@@ -206,7 +206,7 @@ where
 }
 
 fn bad_root<T>() -> Result<T> {
-    error::BadRoot.fail()
+    error::BadRootSnafu.fail()
 }
 
 impl<'de, K, S, BH> serde::de::Deserializer<'de> for CompoundDeserializer<'de, K, S, BH>
@@ -239,7 +239,7 @@ where
                     // this initial 'path' creation is the only place we take the struct name from
                     // serde, per above comment.
                     Key::from_segments(KeyType::Data, &[name.to_lowercase()])
-                        .context(error::InvalidPrefix { prefix: name })?,
+                        .context(error::InvalidPrefixSnafu { prefix: name })?,
                 );
             }
             trace!("Path after name check: {:?}", self.path);
@@ -253,8 +253,8 @@ where
             trace!("Keys before path strip: {:?}", self.keys);
             let mut new_keys = HashSet::new();
             for key in self.keys {
-                new_keys.insert(key.strip_prefix_segments(&path.segments()).context(
-                    error::StripPrefix {
+                new_keys.insert(key.strip_prefix_segments(path.segments()).context(
+                    error::StripPrefixSnafu {
                         prefix: path.name(),
                         name: key.name(),
                     },
@@ -285,18 +285,18 @@ where
                     return None;
                 }
             };
-            trace!("Visiting key '{}', struct name '{}'", key, &struct_name);
+            trace!("Visiting key '{}', struct name '{}'", key, struct_name);
 
             // At the top level (None path) we start with struct_name as Key, otherwise append
             // struct_name.
-            trace!("Old path: {:?}", &self.path);
+            trace!("Old path: {:?}", self.path);
             let path = match self.path {
                 None => match Key::from_segments(KeyType::Data, &[&struct_name]) {
                     Ok(key) => key,
                     Err(e) => {
                         error!(
                             "Tried to construct invalid key from struct name '{}', skipping: {}",
-                            &struct_name, e
+                            struct_name, e
                         );
                         return None;
                     }
@@ -306,18 +306,18 @@ where
                     Err(e) => {
                         error!(
                             "Appending '{}' to existing key '{}' resulted in invalid key, skipping: {}",
-                            old_path, &struct_name, e
+                            old_path, struct_name, e
                         );
                         return None;
                     }
                 }
             };
-            trace!("New path: {}", &path);
+            trace!("New path: {}", path);
 
             if !segments.is_empty() {
                 if structs_done.contains(&struct_name) {
                     // We've handled this structure with a recursive call, so we're done.
-                    trace!("Already handled struct '{}', skipping", &struct_name);
+                    trace!("Already handled struct '{}', skipping", struct_name);
                     None
                 } else {
                     // Otherwise, mark it, and recurse.
@@ -332,17 +332,17 @@ where
                         // Remove the prefix - should always work, but log and skip the key otherwise
                         .filter_map(|new_key| new_key
                                     .strip_prefix(&struct_name)
-                                    .map_err(|e| error!("Key starting with segment '{}' couldn't remove it as prefix: {}", &struct_name, e)).ok())
+                                    .map_err(|e| error!("Key starting with segment '{}' couldn't remove it as prefix: {}", struct_name, e)).ok())
                         .collect();
 
                     // And here's what MapDeserializer expects, the key and deserializer for it
                     trace!(
                         "Recursing for struct '{}' with keys: {:?}",
-                        &struct_name,
+                        struct_name,
                         keys
                     );
                     Some((
-                        struct_name.to_owned(),
+                        struct_name,
                         ValueDeserializer::Compound(CompoundDeserializer::new(
                             self.map,
                             keys,
@@ -353,9 +353,7 @@ where
             } else {
                 // No dot, so we have a scalar; hand the data to a scalar deserializer.
                 trace!(
-                    "Key '{}' is scalar, getting '{}' from input to deserialize",
-                    struct_name,
-                    path
+                    "Key '{struct_name}' is scalar, getting '{path}' from input to deserialize"
                 );
                 let val = self.map.get(&path)?;
                 Some((
@@ -390,10 +388,14 @@ where
 
     /// Scalar types, and compound types we can't use at the root, are forwarded here to be
     /// rejected.  (Compound types need to have a name to serve at the root level.)
-    fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
         V: Visitor<'de>,
     {
+        if self.path.is_none() {
+            return self.deserialize_struct("settings", &[], visitor);
+        }
+
         bad_root()
     }
 

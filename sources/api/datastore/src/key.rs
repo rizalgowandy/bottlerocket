@@ -79,9 +79,9 @@ impl Key {
     where
         S: AsRef<str>,
     {
-        let name = Self::encode_name_segments(&segments)?;
+        let name = Self::encode_name_segments(segments)?;
 
-        Self::check_key(key_type, &name, &segments)?;
+        Self::check_key(key_type, &name, segments)?;
 
         Ok(Self {
             name,
@@ -107,9 +107,9 @@ impl Key {
         let prefix = prefix.as_ref();
         ensure!(
             prefix != self.name,
-            error::InvalidKey {
+            error::InvalidKeySnafu {
                 name: "",
-                msg: format!("strip_prefix of '{}' matches key", prefix)
+                msg: format!("strip_prefix of '{prefix}' matches key")
             }
         );
 
@@ -199,7 +199,7 @@ impl Key {
 
         ensure!(
             name.len() <= MAX_KEY_NAME_LENGTH,
-            error::KeyTooLong {
+            error::KeyTooLongSnafu {
                 name,
                 max: MAX_KEY_NAME_LENGTH,
             }
@@ -208,8 +208,8 @@ impl Key {
         match key_type {
             KeyType::Data => {
                 ensure!(
-                    segments.len() >= 1,
-                    error::InvalidKey {
+                    !segments.is_empty(),
+                    error::InvalidKeySnafu {
                         name,
                         msg: "data keys must have at least one segment",
                     }
@@ -218,7 +218,7 @@ impl Key {
             KeyType::Meta => {
                 ensure!(
                     segments.len() == 1,
-                    error::InvalidKey {
+                    error::InvalidKeySnafu {
                         name,
                         msg: "meta keys may only have one segment",
                     }
@@ -232,10 +232,7 @@ impl Key {
     /// Determines whether a character is acceptable within a segment of a key name.  This is
     /// separate from quoting; if a character isn't valid, it isn't valid quoted, either.
     fn valid_character(c: char) -> bool {
-        match c {
-            'a'..='z' | 'A'..='Z' | '0'..='9' | '_' | '-' | '/' => true,
-            _ => false,
-        }
+        matches!(c, 'a'..='z' | 'A'..='Z' | '0'..='9' | '_' | '-' | '/')
     }
 
     /// Given a key name, returns a list of its name segments, separated by KEY_SEPARATOR.
@@ -249,7 +246,7 @@ impl Key {
 
         ensure!(
             !name.is_empty(),
-            error::InvalidKey {
+            error::InvalidKeySnafu {
                 name,
                 msg: "cannot be empty",
             }
@@ -276,7 +273,7 @@ impl Key {
                     // Segments can't be empty.
                     ensure!(
                         !segment.is_empty(),
-                        error::InvalidKey {
+                        error::InvalidKeySnafu {
                             name,
                             msg: "empty key segment",
                         }
@@ -290,9 +287,9 @@ impl Key {
                 if Self::valid_character(c) {
                     segment.push(c);
                 } else {
-                    return error::InvalidKey {
+                    return error::InvalidKeySnafu {
                         name,
-                        msg: format!("invalid character in key: '{}'", c),
+                        msg: format!("invalid character in key: '{c}'"),
                     }
                     .fail();
                 }
@@ -301,14 +298,14 @@ impl Key {
 
         ensure!(
             !in_quotes,
-            error::InvalidKey {
+            error::InvalidKeySnafu {
                 name,
                 msg: "unbalanced quotes",
             }
         );
         ensure!(
             !segment.is_empty(),
-            error::InvalidKey {
+            error::InvalidKeySnafu {
                 name,
                 msg: "ends with separator",
             }
@@ -317,7 +314,7 @@ impl Key {
         // Push final segment (keys don't end with a dot, which is when we normally push)
         segments.push(segment);
 
-        trace!("Parsed key name '{}' to segments {:?}", name, segments);
+        trace!("Parsed key name '{name}' to segments {segments:?}");
         Ok(segments)
     }
 
@@ -332,17 +329,17 @@ impl Key {
             for chr in segment.chars() {
                 ensure!(
                     chr == KEY_SEPARATOR || Self::valid_character(chr),
-                    error::InvalidKey {
+                    error::InvalidKeySnafu {
                         // Give an understandable key name in the error, even if it's invalid
                         name: segments.join("."),
-                        msg: format!("Segment '{}' contains invalid character '{}'", segment, chr),
+                        msg: format!("Segment '{segment}' contains invalid character '{chr}'"),
                     }
                 );
             }
 
             if segment.chars().any(|c| c == KEY_SEPARATOR) {
                 // Includes separator; quote the segment.
-                outputs.push(format!("\"{}\"", segment));
+                outputs.push(format!("\"{segment}\""));
             } else {
                 // No special characters, no escaping needed.
                 outputs.push(segment.to_string());
@@ -351,7 +348,7 @@ impl Key {
 
         // Join the (possibly quoted) segments with our separator.
         let name = outputs.join(KEY_SEPARATOR_STR);
-        trace!("Encoded key '{}' from segments {:?}", name, segments);
+        trace!("Encoded key '{name}' from segments {segments:?}");
         Ok(name)
     }
 

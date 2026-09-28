@@ -24,7 +24,7 @@ For more information about clusters, see
 
 You can create a cluster with the AWS CLI as follows:
 
-```
+```shell
 aws ecs --region us-west-2 create-cluster --cluster-name bottlerocket
 ```
 
@@ -32,62 +32,38 @@ aws ecs --region us-west-2 create-cluster --cluster-name bottlerocket
 
 ## Finding an AMI
 
-Amazon provides official AMIs in the following AWS regions:
-
-```
-af-south-1
-ap-east-1
-ap-northeast-1
-ap-northeast-2
-ap-northeast-3
-ap-south-1
-ap-southeast-1
-ap-southeast-2
-ca-central-1
-eu-central-1
-eu-north-1
-eu-south-1
-eu-west-1
-eu-west-2
-eu-west-3
-me-south-1
-sa-east-1
-us-east-1
-us-east-2
-us-west-1
-us-west-2
-us-gov-east-1
-us-gov-west-1
-```
-
 The official AMI IDs are stored in [public SSM parameters](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-public-parameters.html).
-The parameter names look like this: `/aws/service/bottlerocket/aws-ecs-1/x86_64/latest/image_id`
+The parameter names look like this: `/aws/service/bottlerocket/aws-ecs-2/x86_64/latest/image_id`
 
-Just change the variant (`aws-ecs-1`) and architecture (`x86_64`) to the ones you want to use.
+Just change the variant (`aws-ecs-2`) and architecture (`x86_64`) to the ones you want to use.
 Supported variants and architectures are described in the [README](README.md#variants).
 For the purposes of SSM parameters, the valid architecture names are `x86_64` and `arm64` (also known as `aarch64`).
 Also, if you know a specific Bottlerocket version you'd like to use, for example `1.0.6`, you can replace `latest` with that version.
+
+Bottlerocket ECS variants with NVIDIA support append `-nvidia` to the variant name.
+For instance, the NVIDIA variant corresponding to `aws-ecs-2` is `aws-ecs-2-nvidia`.
 
 Once you have the parameter name you want to use, the easiest way to use it is to pass it directly to EC2.
 Just prefix the parameter name with `resolve:ssm:` and EC2 will fetch the current value for you.
 (You can also use this method for CloudFormation and other services that launch EC2 instances for you.)
 
-For example, to use the parameter above, you would pass this as the AMI ID in your launch request: `resolve:ssm:/aws/service/bottlerocket/aws-ecs-1/x86_64/latest/image_id`
+For example, to use the parameter above, you would pass this as the AMI ID in your launch request: `resolve:ssm:/aws/service/bottlerocket/aws-ecs-2/x86_64/latest/image_id`
 
 #### Manually querying SSM
 
 If you prefer to fetch the AMI ID yourself, you can use [aws-cli](https://aws.amazon.com/cli/) on the command line.
 To fetch the example parameter above, for the us-west-2 region, you could run this:
 
-```
-aws ssm get-parameter --region us-west-2 --name "/aws/service/bottlerocket/aws-ecs-1/x86_64/latest/image_id" --query Parameter.Value --output text
+```shell
+aws ssm get-parameter --region us-west-2 --name "/aws/service/bottlerocket/aws-ecs-2/x86_64/latest/image_id" --query Parameter.Value --output text
 ```
 
-If you have `jq` and would like a bit more information, try this:
-```
+If you have `jq` installed and would like a bit more information, try this:
+
+```shell
 aws ssm get-parameters --region us-west-2 \
-   --names "/aws/service/bottlerocket/aws-ecs-1/x86_64/latest/image_id" \
-           "/aws/service/bottlerocket/aws-ecs-1/x86_64/latest/image_version" \
+   --names "/aws/service/bottlerocket/aws-ecs-2/x86_64/latest/image_id" \
+           "/aws/service/bottlerocket/aws-ecs-2/x86_64/latest/image_version" \
    --output json | jq -r '.Parameters | .[] | "\(.Name): \(.Value) (updated \(.LastModifiedDate | gmtime | strftime("%c")) UTC)"'
 ```
 
@@ -104,7 +80,7 @@ in your account.
 To find your default VPC, run this command.
 (If you use an AWS region other than "us-west-2", make sure to change that.)
 
-```
+```shell
 aws ec2 describe-vpcs \
    --region us-west-2 \
    --filters=Name=isDefault,Values=true \
@@ -115,7 +91,7 @@ If you want to use a different VPC you created, run this to get the ID for your 
 Make sure to change VPC_NAME to the name of the VPC you created.
 (If you use an EC2 region other than "us-west-2", make sure to change that too.)
 
-```
+```shell
 aws ec2 describe-vpcs \
    --region us-west-2 \
    --filters=Name=tag:Name,Values=VPC_NAME \
@@ -127,7 +103,7 @@ It will give you a list of the subnets and tell you whether each is public or pr
 Make sure to change VPC_ID to the value you received from the previous command.
 (If you use an EC2 region other than "us-west-2", make sure to change that too.)
 
-```
+```shell
 aws ec2 describe-subnets \
    --region us-west-2 \
    --filter=Name=vpc-id,Values=VPC_ID \
@@ -167,7 +143,7 @@ If you add SSM permissions, you can use Bottlerocket's default SSM agent to get 
 
 To attach the role policy for SSM permissions, run the following (replacing INSTANCE_ROLE_NAME with the name of your instance role):
 
-```
+```shell
 aws iam attach-role-policy \
    --role-name INSTANCE_ROLE_NAME \
    --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
@@ -175,7 +151,7 @@ aws iam attach-role-policy \
 
 Next, to retrieve the instance profile name used to launch instances, run this:
 
-```
+```shell
 aws iam list-instance-profiles-for-role --role-name INSTANCE_ROLE_NAME --query "InstanceProfiles[*].InstanceProfileName" --output text
 ```
 
@@ -185,9 +161,9 @@ Note this down as the INSTANCE_PROFILE_NAME for the final launch command.
 
 For the instance to be able to communicate with ECS, we need to make sure to configure the instance with the name of the cluster.
 
-Create a file called `userdata.toml` with the following contents, where CLUSTER_NAME is the name of the cluster you created above (for example, "bottlerocket").
+Create a file called `user-data.toml` with the following contents, where CLUSTER_NAME is the name of the cluster you created above (for example, "bottlerocket").
 
-```
+```toml
 [settings.ecs]
 cluster = "CLUSTER_NAME"
 ```
@@ -199,24 +175,78 @@ If you want to customize the behavior of your instance further, you can find the
 Now we can launch a Bottlerocket instance in our cluster!
 
 There are a few values to make sure you change in this command:
-* YOUR_KEY_NAME: your SSH keypair name, as registered with EC2
+* YOUR_KEY_NAME: your SSH key pair name, as registered with EC2
 * SUBNET_ID: the subnet you selected earlier
   * If you chose a public subnet, either add `--associate-public-ip-address` to the command, or attach an Elastic IP afterward.
 * BOTTLEROCKET_AMI_ID: the Amazon-provided AMI ID you found above, or the ID of an AMI you registered
-* userdata.toml: the path to the user data file you created earlier
+* user-data.toml: the path to the user data file you created earlier
 * INSTANCE_PROFILE_NAME: the IAM instance profile you created, e.g. `ecsInstanceRole`
 
-```
+```shell
 aws ec2 run-instances --key-name YOUR_KEY_NAME \
    --subnet-id SUBNET_ID \
    --image-id BOTTLEROCKET_AMI_ID \
-   --instance-type c3.large \
+   --instance-type c7.large \
    --region us-west-2 \
    --tag-specifications 'ResourceType=instance,Tags=[{Key=bottlerocket,Value=quickstart}]' \
-   --user-data file://userdata.toml \
+   --user-data file://user-data.toml \
    --iam-instance-profile Name=INSTANCE_PROFILE_NAME
 ```
 
 And remember, if you used a public subnet, add `--associate-public-ip-address` or attach an Elastic IP after launch.
 
 Once it launches, you should be able to run tasks on your Bottlerocket instance using the ECS API and console.
+
+
+### aws-ecs-*-nvidia variants
+
+The `aws-ecs-*-nvidia` variants include the required packages and configurations to leverage NVIDIA GPUs.
+They come with the [NVIDIA Tesla driver](https://docs.nvidia.com/datacenter/tesla/drivers/index.html) along with the libraries required by the [NVIDIA container runtime](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit).
+In hosts with multiple GPUs (ex. EC2 `g4dn` instances) you can assign one or multiple GPUs per container by specifying the resource requirements in your container definitions as described in the [official ECS documentation](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-gpu.html):
+
+```json
+{
+  "containerDefinitions": [
+     {
+        "resourceRequirements" : [
+            {
+               "type" : "GPU",
+               "value" : "2"
+            }
+        ]
+     }
+  ]
+}
+```
+
+### Neuron Support
+
+Bottlerocket `v1.30.0+` supports Neuron Instance Types such as: `inf1`, `inf2`, `trn1`, and `trn2`. You can assign one or multiple Neuron devices per container by specifying the `linuxParameter` in the task definitions as described in the [official ECS documentation](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-inference.html):
+
+```json
+{
+  "containerDefinitions": [
+      {
+         "linuxParameters": 
+            {
+                     "devices": [
+                        {
+                              "containerPath": "/dev/neuron0",
+                              "hostPath": "/dev/neuron0",
+                              "permissions": [
+                                 "read",
+                                 "write"
+                              ]
+                        }
+                     ],
+                     "capabilities": {
+                        "add": [
+                           "IPC_LOCK"
+                              
+                        ]
+                     }
+            },
+      }
+   ]
+}
+```

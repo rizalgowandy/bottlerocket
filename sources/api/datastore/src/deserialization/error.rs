@@ -5,7 +5,7 @@ use crate::{Error as DataStoreError, ScalarError};
 
 /// Potential errors from deserialization.
 #[derive(Debug, Snafu)]
-#[snafu(visibility = "pub")]
+#[snafu(visibility(pub))]
 pub enum Error {
     // This error variant is required to implement ser::Error for serde.
     #[snafu(display("Error during deserialization: {}", msg))]
@@ -28,13 +28,15 @@ pub enum Error {
     StripPrefix {
         prefix: String,
         name: String,
-        source: DataStoreError,
+        #[snafu(source(from(DataStoreError, Box::new)))]
+        source: Box<DataStoreError>,
     },
 
     #[snafu(display("Prefix '{}' is not a valid key: {}", prefix, source))]
     InvalidPrefix {
         prefix: String,
-        source: DataStoreError,
+        #[snafu(source(from(DataStoreError, Box::new)))]
+        source: Box<DataStoreError>,
     },
 }
 
@@ -42,7 +44,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 impl de::Error for Error {
     fn custom<T: std::fmt::Display>(msg: T) -> Self {
-        Message {
+        MessageSnafu {
             msg: msg.to_string(),
         }
         .into_error(NoSource)

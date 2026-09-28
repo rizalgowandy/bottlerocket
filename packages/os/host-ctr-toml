@@ -1,6 +1,0 @@
-{{#if settings.container-registry.mirrors}}
-{{#each settings.container-registry.mirrors}}
-[mirrors."{{registry}}"]
-endpoints = [{{join_array ", " endpoint }}]
-{{/each}}
-{{/if}}

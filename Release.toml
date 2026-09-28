@@ -1,4 +1,4 @@
-version = "1.5.2"
+version = "1.66.0"
 
 [migrations]
 "(0.3.1, 0.3.2)" = ["migrate_v0.3.2_admin-container-v0-5-0.lz4"]
@@ -90,3 +90,398 @@ version = "1.5.2"
     "migrate_v1.5.1_control-container-v0-5-4.lz4",
 ]
 "(1.5.1, 1.5.2)" = []
+"(1.5.2, 1.5.3)" = [
+    "migrate_v1.5.3_vmware-host-containers.lz4",
+]
+"(1.5.3, 1.6.0)" = [
+    "migrate_v1.6.0_node-taints-representation.lz4",
+    "migrate_v1.6.0_aws-admin-container-v0-7-4.lz4",
+    "migrate_v1.6.0_aws-control-container-v0-5-5.lz4",
+    "migrate_v1.6.0_public-admin-container-v0-7-4.lz4",
+    "migrate_v1.6.0_public-control-container-v0-5-5.lz4",
+]
+"(1.6.0, 1.6.1)" = []
+"(1.6.1, 1.6.2)" = [
+    "migrate_v1.6.2_add-cfsignal.lz4",
+    "migrate_v1.6.2_container-registry-credentials.lz4",
+    "migrate_v1.6.2_container-registry-credentials-metadata.lz4",
+]
+"(1.6.2, 1.7.0)" = [
+    "migrate_v1.7.0_aws-admin-container-v0-8-0.lz4",
+    "migrate_v1.7.0_aws-control-container-v0-6-0.lz4",
+    "migrate_v1.7.0_public-admin-container-v0-8-0.lz4",
+    "migrate_v1.7.0_public-control-container-v0-6-0.lz4",
+]
+"(1.7.0, 1.7.1)" = []
+"(1.7.1, 1.7.2)" = []
+"(1.7.2, 1.8.0)" = [
+    "migrate_v1.8.0_boot-setting.lz4",
+    "migrate_v1.8.0_boot-setting-metadata.lz4",
+    "migrate_v1.8.0_kubelet-pod-pids-limit.lz4",
+    "migrate_v1.8.0_add-pull-behavior.lz4",
+    "migrate_v1.8.0_add-autoscaling.lz4",
+    "migrate_v1.8.0_etc-hosts.lz4",
+    "migrate_v1.8.0_etc-hosts-metadata.lz4",
+    "migrate_v1.8.0_cluster-dns-ip-list.lz4",
+    "migrate_v1.8.0_pki-affected-services.lz4",
+    "migrate_v1.8.0_kubelet-provider-id.lz4",
+    "migrate_v1.8.0_aws-admin-container-v0-9-0.lz4",
+    "migrate_v1.8.0_aws-control-container-v0-6-1.lz4",
+    "migrate_v1.8.0_public-admin-container-v0-9-0.lz4",
+    "migrate_v1.8.0_public-control-container-v0-6-1.lz4",
+]
+"(1.8.0, 1.9.0)" = [
+    "migrate_v1.9.0_ntp-affected-services.lz4",
+    "migrate_v1.9.0_shibaken-admin-userdata-semantics.lz4",
+    "migrate_v1.9.0_shibaken-send-metrics.lz4",
+    "migrate_v1.9.0_image-gc-thresholds.lz4",
+    "migrate_v1.9.0_kernel-modules-setting.lz4",
+    "migrate_v1.9.0_kernel-modules-setting-metadata.lz4",
+    "migrate_v1.9.0_kubelet-no-daemon-reload.lz4",
+    "migrate_v1.9.0_updates-targets-base-url.lz4",
+]
+"(1.9.0, 1.9.1)" = []
+"(1.9.1, 1.9.2)" = []
+"(1.9.2, 1.10.0)" = [
+    "migrate_v1.10.0_dns-settings.lz4",
+    "migrate_v1.10.0_dns-settings-metadata.lz4",
+    "migrate_v1.10.0_reboot-to-reconcile-setting.lz4",
+    "migrate_v1.10.0_kubelet-log-level.lz4",
+    "migrate_v1.10.0_aws-admin-container-v0-9-2.lz4",
+    "migrate_v1.10.0_public-admin-container-v0-9-2.lz4",
+    "migrate_v1.10.0_aws-control-container-v0-6-3.lz4",
+    "migrate_v1.10.0_public-control-container-v0-6-3.lz4"
+]
+"(1.10.0, 1.10.1)" = [
+    "migrate_v1.10.1_container-runtime.lz4",
+    "migrate_v1.10.1_container-runtime-metadata.lz4"
+]
+"(1.10.1, 1.11.0)" = [
+    "migrate_v1.11.0_aws-config-settings.lz4",
+    "migrate_v1.11.0_aws-creds.lz4",
+    "migrate_v1.11.0_aws-creds-metadata.lz4",
+    "migrate_v1.11.0_credential-providers.lz4",
+    "migrate_v1.11.0_kubelet-tls-config.lz4",
+    "migrate_v1.11.0_kubelet-tls-files.lz4",
+    "migrate_v1.11.0_kubelet-new-config-files.lz4",
+    "migrate_v1.11.0_ecs-additional-configurations.lz4",
+    "migrate_v1.11.0_aws-admin-container-v0-9-3.lz4",
+    "migrate_v1.11.0_public-admin-container-v0-9-3.lz4",
+    "migrate_v1.11.0_aws-control-container-v0-6-4.lz4",
+    "migrate_v1.11.0_public-control-container-v0-6-4.lz4",
+]
+"(1.11.0, 1.11.1)" = []
+"(1.11.1, 1.12.0)" = [
+    "migrate_v1.12.0_k8s-private-pki-path.lz4",
+    "migrate_v1.12.0_add-k8s-autoscaling-warm-pool-setting.lz4",
+    "migrate_v1.12.0_add-k8s-autoscaling-warm-pool-setting-metadata.lz4",
+    "migrate_v1.12.0_oci-defaults-setting.lz4",
+    "migrate_v1.12.0_oci-defaults-setting-metadata.lz4",
+    "migrate_v1.12.0_aws-admin-container-v0-9-4.lz4",
+    "migrate_v1.12.0_public-admin-container-v0-9-4.lz4",
+    "migrate_v1.12.0_aws-control-container-v0-7-0.lz4",
+    "migrate_v1.12.0_public-control-container-v0-7-0.lz4",
+]
+"(1.12.0, 1.13.0)" = [
+    "migrate_v1.13.0_k8s-registry.lz4",
+    "migrate_v1.13.0_aws-admin-container-v0-10-0.lz4",
+    "migrate_v1.13.0_public-admin-container-v0-10-0.lz4",
+    "migrate_v1.13.0_aws-control-container-v0-7-1.lz4",
+    "migrate_v1.13.0_public-control-container-v0-7-1.lz4",
+]
+"(1.13.0, 1.13.1)" = [
+    "migrate_v1.13.1_aws-profile-cred-provider.lz4",
+]
+"(1.13.1, 1.13.2)" = []
+"(1.13.2, 1.13.3)" = [
+    "migrate_v1.13.3_aws-k8s-provider-id-gen.lz4",
+]
+"(1.13.3, 1.13.4)" = [
+    "migrate_v1.13.4_add-hostname-override.lz4",
+    "migrate_v1.13.4_add-hostname-override-metadata.lz4",
+]
+"(1.13.4, 1.13.5)" = []
+"(1.13.5, 1.14.0)" = [
+    "migrate_v1.14.0_kubernetes-gc-percent-type-change.lz4",
+    "migrate_v1.14.0_kubelet-config-settings.lz4",
+    "migrate_v1.14.0_kubelet-prefix-config-settings.lz4",
+    "migrate_v1.14.0_k8s-services-mode.lz4",
+    "migrate_v1.14.0_aws-admin-container-v0-10-1.lz4",
+    "migrate_v1.14.0_public-admin-container-v0-10-1.lz4",
+    "migrate_v1.14.0_aws-control-container-v0-7-2.lz4",
+    "migrate_v1.14.0_public-control-container-v0-7-2.lz4",
+]
+"(1.14.0, 1.14.1)" = []
+"(1.14.1, 1.14.2)" = [
+    "migrate_v1.14.2_ecs-images-cleanup.lz4",
+]
+"(1.14.2, 1.14.3)" = [
+    "migrate_v1.14.3_aws-admin-container-v0-10-2.lz4",
+    "migrate_v1.14.3_public-admin-container-v0-10-2.lz4",
+    "migrate_v1.14.3_aws-control-container-v0-7-3.lz4",
+    "migrate_v1.14.3_public-control-container-v0-7-3.lz4",
+]
+"(1.14.3, 1.15.0)" = [
+    "migrate_v1.15.0_oci-defaults-resource-setting.lz4",
+    "migrate_v1.15.0_oci-defaults-max-open-files.lz4",
+    "migrate_v1.15.0_seccomp-default-setting.lz4",
+    "migrate_v1.15.0_oci-defaults-docker-setting.lz4",
+    "migrate_v1.15.0_oci-defaults-docker-setting-metadata.lz4",
+    "migrate_v1.15.0_aws-admin-container-v0-11-0.lz4",
+    "migrate_v1.15.0_public-admin-container-v0-11-0.lz4",
+    "migrate_v1.15.0_aws-control-container-v0-7-4.lz4",
+    "migrate_v1.15.0_public-control-container-v0-7-4.lz4",
+    "migrate_v1.15.0_log4j-hotpatch-enabled-metadata.lz4",
+    "migrate_v1.15.0_deprecate-log4j-hotpatch-enabled.lz4",
+]
+"(1.15.0, 1.15.1)" = []
+"(1.15.1, 1.16.0)" = [
+    "migrate_v1.16.0_kernel-modules-autoload-configs.lz4",
+    "migrate_v1.16.0_kernel-modules-autoload-files.lz4",
+    "migrate_v1.16.0_kernel-modules-autoload-restart.lz4",
+    "migrate_v1.16.0_kernel-modules-autoload-settings.lz4",
+    "migrate_v1.16.0_aws-admin-container-v0-11-1.lz4",
+    "migrate_v1.16.0_public-admin-container-v0-11-1.lz4",
+    "migrate_v1.16.0_aws-control-container-v0-7-5.lz4",
+    "migrate_v1.16.0_public-control-container-v0-7-5.lz4",
+    "migrate_v1.16.0_schnauzer-v2-generators.lz4",
+]
+"(1.16.0, 1.16.1)" = [
+    "migrate_v1.16.1_updog-network-affected.lz4",
+]
+"(1.16.1, 1.17.0)" = [
+    "migrate_v1.17.0_aws-admin-container-v0-11-2.lz4",
+    "migrate_v1.17.0_public-admin-container-v0-11-2.lz4",
+    "migrate_v1.17.0_aws-control-container-v0-7-6.lz4",
+    "migrate_v1.17.0_public-control-container-v0-7-6.lz4",
+]
+"(1.17.0, 1.18.0)" = [
+    "migrate_v1.18.0_aws-admin-container-v0-11-3.lz4",
+    "migrate_v1.18.0_public-admin-container-v0-11-3.lz4",
+    "migrate_v1.18.0_aws-control-container-v0-7-7.lz4",
+    "migrate_v1.18.0_public-control-container-v0-7-7.lz4",
+]
+"(1.18.0, 1.19.0)" = [
+    "migrate_v1.19.0_add-additional-ecs-settings.lz4",
+]
+"(1.19.0, 1.19.1)" = [
+    "migrate_v1.19.1_aws-admin-container-v0-11-4.lz4",
+    "migrate_v1.19.1_public-admin-container-v0-11-4.lz4",
+    "migrate_v1.19.1_aws-control-container-v0-7-8.lz4",
+    "migrate_v1.19.1_public-control-container-v0-7-8.lz4",
+]
+"(1.19.1, 1.19.2)" = [
+    "migrate_v1.19.2_certdog-config-file-v0-1-0.lz4",
+    "migrate_v1.19.2_certdog-service-cfg-v0-1-0.lz4",
+    "migrate_v1.19.2_add-ecs-enable-container-metadata.lz4",
+]
+"(1.19.2, 1.19.3)" = [
+    "migrate_v1.19.3_aws-admin-container-v0-11-6.lz4",
+    "migrate_v1.19.3_public-admin-container-v0-11-6.lz4",
+    "migrate_v1.19.3_aws-control-container-v0-7-10.lz4",
+    "migrate_v1.19.3_public-control-container-v0-7-10.lz4",
+]
+"(1.19.3, 1.19.4)" = []
+"(1.19.4, 1.19.5)" = [
+    "migrate_v1.19.5_aws-admin-container-v0-11-7.lz4",
+    "migrate_v1.19.5_public-admin-container-v0-11-7.lz4",
+    "migrate_v1.19.5_aws-control-container-v0-7-11.lz4",
+    "migrate_v1.19.5_public-control-container-v0-7-11.lz4",
+]
+"(1.19.5, 1.20.0)" = [
+    "migrate_v1.20.0_prairiedog-config-file-v0-1-0.lz4",
+    "migrate_v1.20.0_prairiedog-services-cfg-v0-1-0.lz4",
+    "migrate_v1.20.0_thar-be-updates-config-file-v0-1-0.lz4",
+    "migrate_v1.20.0_thar-be-updates-affected-services-v0-1-0.lz4",
+    "migrate_v1.20.0_host-containers-config-file-v0-1-0.lz4",
+    "migrate_v1.20.0_host-containers-config-list-v0-1-0.lz4",
+    "migrate_v1.20.0_corndog-config-file-v0-1-0.lz4",
+    "migrate_v1.20.0_corndog-services-cfg-v0-1-0.lz4",
+    "migrate_v1.20.0_bootstrap-containers-config-file-v0-1-0.lz4",
+    "migrate_v1.20.0_bootstrap-containers-services-cfg-v0-1-0.lz4",
+    "migrate_v1.20.0_remove-ecs-settings-applier.lz4",
+    "migrate_v1.20.0_update-ecs-config-path.lz4",
+    "migrate_v1.20.0_update-ecs-config-template-path.lz4",
+    "migrate_v1.20.0_add-ntp-default-options-v0-1-0.lz4",
+    "migrate_v1.20.0_static-pods-add-prefix-v0-1-0.lz4",
+    "migrate_v1.20.0_static-pods-services-cfg-v0-1-0.lz4",
+    "migrate_v1.20.0_container-runtime-nvidia.lz4",
+    "migrate_v1.20.0_container-runtime-metadata-nvidia.lz4",
+    "migrate_v1.20.0_aws-admin-container-v0-11-8.lz4",
+    "migrate_v1.20.0_public-admin-container-v0-11-8.lz4",
+    "migrate_v1.20.0_aws-control-container-v0-7-12.lz4",
+    "migrate_v1.20.0_public-control-container-v0-7-12.lz4",
+]
+"(1.20.0, 1.20.1)" = []
+"(1.20.1, 1.20.2)" = []
+"(1.20.2, 1.20.3)" = []
+"(1.20.3, 1.20.4)" = []
+"(1.20.4, 1.20.5)" = [
+    "migrate_v1.20.5_aws-admin-container-v0-11-9.lz4",
+    "migrate_v1.20.5_public-admin-container-v0-11-9.lz4",
+    "migrate_v1.20.5_aws-control-container-v0-7-13.lz4",
+    "migrate_v1.20.5_public-control-container-v0-7-13.lz4",
+]
+"(1.20.5, 1.21.0)" = [
+    "migrate_v1.21.0_pluto-remove-generators-v0-1-0.lz4",
+    "migrate_v1.21.0_pod-infra-container-image-remove-settings-generator.lz4",
+    "migrate_v1.21.0_pod-infra-container-image-affected-services.lz4",
+    "migrate_v1.21.0_pod-infra-container-image-services.lz4",
+    "migrate_v1.21.0_k8s-reserved-cpus-v0-1-0.lz4",
+    "migrate_v1.21.0_add-hostname-override-source.lz4",
+]
+"(1.21.0, 1.21.1)" = [
+    "migrate_v1.21.1_aws-admin-container-v0-11-10.lz4",
+    "migrate_v1.21.1_public-admin-container-v0-11-10.lz4",
+    "migrate_v1.21.1_aws-control-container-v0-7-14.lz4",
+    "migrate_v1.21.1_public-control-container-v0-7-14.lz4",
+]
+"(1.21.1, 1.22.0)" = [
+    "migrate_v1.22.0_aws-admin-container-v0-11-11.lz4",
+    "migrate_v1.22.0_public-admin-container-v0-11-11.lz4",
+    "migrate_v1.22.0_aws-control-container-v0-7-15.lz4",
+    "migrate_v1.22.0_public-control-container-v0-7-15.lz4",
+    "migrate_v1.22.0_bootstrap-commands-settings.lz4",
+    "migrate_v1.22.0_bootstrap-commands-metadata.lz4",
+]
+"(1.22.0, 1.23.0)" = [
+    "migrate_v1.23.0_kubelet-device-plugins-metadata.lz4",
+    "migrate_v1.23.0_kubelet-device-plugins-settings.lz4",
+    "migrate_v1.23.0_nvidia-container-runtime-metadata.lz4",
+    "migrate_v1.23.0_nvidia-container-runtime-settings.lz4",
+]
+"(1.23.0, 1.24.0)" = []
+"(1.24.0, 1.24.1)" = [
+    "migrate_v1.24.1_aws-admin-container-v0-11-12.lz4",
+    "migrate_v1.24.1_public-admin-container-v0-11-12.lz4",
+    "migrate_v1.24.1_aws-control-container-v0-7-16.lz4",
+    "migrate_v1.24.1_public-control-container-v0-7-16.lz4",
+]
+"(1.24.1, 1.25.0)" = [
+    "migrate_v1.25.0_kubernetes-service-config.lz4",
+    "migrate_v1.25.0_kubelet-device-plugins-time-slicing-settings.lz4",
+    "migrate_v1.25.0_aws-admin-container-v0-11-13.lz4",
+    "migrate_v1.25.0_public-admin-container-v0-11-13.lz4",
+    "migrate_v1.25.0_aws-control-container-v0-7-17.lz4",
+    "migrate_v1.25.0_public-control-container-v0-7-17.lz4",
+]
+"(1.25.0, 1.26.0)" = []
+"(1.26.0, 1.26.1)" = []
+"(1.26.1, 1.26.2)" = []
+"(1.26.2, 1.27.0)" = [
+    "migrate_v1.27.0_aws-config.lz4",
+]
+"(1.27.0, 1.27.1)" = []
+"(1.27.1, 1.28.0)" = [
+    "migrate_v1.28.0_kernel-sysctl-hugepages.lz4",
+    "migrate_v1.28.0_aws-admin-container-v0-11-14.lz4",
+    "migrate_v1.28.0_public-admin-container-v0-11-14.lz4",
+    "migrate_v1.28.0_aws-control-container-v0-7-18.lz4",
+    "migrate_v1.28.0_public-control-container-v0-7-18.lz4",
+]
+"(1.28.0, 1.29.0)" = []
+"(1.29.0, 1.30.0)" = [
+    "migrate_v1.30.0_kubernetes-device-ownership-metadata.lz4",
+    "migrate_v1.30.0_kubernetes-device-ownership-settings.lz4",
+    "migrate_v1.30.0_aws-admin-container-v0-11-15.lz4",
+    "migrate_v1.30.0_public-admin-container-v0-11-15.lz4",
+    "migrate_v1.30.0_aws-control-container-v0-7-19.lz4",
+    "migrate_v1.30.0_public-control-container-v0-7-19.lz4",
+]
+"(1.30.0, 1.31.0)" = [
+    "migrate_v1.31.0_aws-admin-container-v0-11-16.lz4",
+    "migrate_v1.31.0_public-admin-container-v0-11-16.lz4",
+    "migrate_v1.31.0_aws-control-container-v0-7-20.lz4",
+    "migrate_v1.31.0_public-control-container-v0-7-20.lz4",
+]
+"(1.31.0, 1.32.0)" = []
+"(1.32.0, 1.33.0)" = [
+    "migrate_v1.33.0_public-control-container-v0-7-19-update.lz4",
+    "migrate_v1.33.0_public-control-container-v0-7-20-update.lz4",
+    "migrate_v1.33.0_aws-remove-schnauzer-admin.lz4",
+    "migrate_v1.33.0_aws-remove-schnauzer-control.lz4",
+    "migrate_v1.33.0_public-remove-source-admin.lz4",
+    "migrate_v1.33.0_public-remove-source-control.lz4",
+    "migrate_v1.33.0_remove-metadata-and-weak-settings-migration.lz4",
+]
+"(1.33.0, 1.34.0)" = [
+    "migrate_v1.34.0_kubelet-device-plugins-mig-settings.lz4",
+]
+"(1.34.0, 1.35.0)" = []
+"(1.35.0, 1.36.0)" = [
+    "migrate_v1.36.0_kubernetes-ecr-credential-providers-expansion.lz4",
+]
+"(1.36.0, 1.37.0)" = [
+    "migrate_v1.37.0_delete-configs-and-services-on-downgrade.lz4",
+]
+"(1.37.0, 1.38.0)" = []
+"(1.38.0, 1.39.0)" = [
+    "migrate_v1.39.0_kubelet-setting-container-log-single-process-oom-kill.lz4"
+]
+"(1.39.0, 1.39.1)" = []
+"(1.39.1, 1.40.0)" = [
+    "migrate_v1.40.0_kubelet-device-plugins-cdi-settings.lz4"
+]
+"(1.40.0, 1.41.0)" = [
+    "migrate_v1.41.0_kubernetes-ecr-credential-providers-correction.lz4",
+]
+"(1.41.0, 1.42.0)" = [
+    "migrate_v1.42.0_kubernetes-memory-swap-behavior-setting.lz4",
+]
+"(1.42.0, 1.43.0)" = []
+"(1.43.0, 1.44.0)" = [
+    "migrate_v1.44.0_container-runtime-plugins-settings.lz4",
+    "migrate_v1.44.0_container-runtime-snapshotter-setting.lz4",
+]
+"(1.44.0, 1.45.0)" = []
+"(1.45.0, 1.46.0)" = [
+    "migrate_v1.46.0_kubernetes-static-pods-enabled-setting.lz4",
+]
+"(1.46.0, 1.47.0)" = [
+    "migrate_v1.47.0_container-runtime-concurrent-download-chunk-size.lz4",
+    "migrate_v1.47.0_host-bootstrap-containers-command-setting.lz4"
+]
+"(1.47.0, 1.48.0)" = []
+"(1.48.0, 1.49.0)" = []
+"(1.49.0, 1.50.0)" = [
+    "migrate_v1.50.0_kubernetes-reserved-pid-settings.lz4",
+]
+"(1.50.0, 1.51.0)" = [
+    "migrate_v1.51.0_kubernetes-ecr-credential-provider-patterns.lz4",
+    "migrate_v1.51.0_kubernetes-additional-settings.lz4",
+    "migrate_v1.51.0_kubernetes-beta-cpu-manager-policy-options.lz4",
+]
+"(1.51.0, 1.52.0)" = []
+"(1.52.0, 1.53.0)" = []
+"(1.53.0, 1.54.0)" = [
+    "migrate_v1.54.0_kubelet-device-plugins-mps-settings.lz4",
+    "migrate_v1.54.0_kubelet-device-plugins-mps-prefix-settings.lz4"
+]
+"(1.54.0, 1.55.0)" = []
+"(1.55.0, 1.56.0)" = [
+    "migrate_v1.56.0_image-verifier-plugins-extensible.lz4"
+]
+"(1.56.0, 1.57.0)" = []
+"(1.57.0, 1.58.0)" = []
+"(1.58.0, 1.59.0)" = []
+"(1.59.0, 1.60.0)" = [
+    "migrate_v1.60.0_kubernetes-topology-manager-policy-options.lz4",
+    "migrate_v1.60.0_container-runtime-max-concurrent-unpacks.lz4",
+]
+"(1.60.0, 1.61.0)" = []
+"(1.61.0, 1.62.0)" = []
+"(1.62.0, 1.62.1)" = []
+"(1.62.1, 1.63.0)" = [
+    "migrate_v1.63.0_image-verifier-plugins-settings.lz4",
+    "migrate_v1.63.0_nvidia-k8s-device-plugin-enabled.lz4",
+]
+"(1.63.0, 1.64.0)" = [
+    "migrate_v1.64.0_kubernetes-container-runtime-endpoint.lz4",
+    "migrate_v1.64.0_hugepages-settings.lz4"
+]
+"(1.64.0, 1.65.0)" = []
+"(1.65.0, 1.66.0)" = [
+    "migrate_v1.66.0_kubernetes-memory-qos-settings.lz4",
+    "migrate_v1.66.0_nvidia-driver-branch-setting.lz4",
+    "migrate_v1.66.0_kubelet-dra-drivers-nvidia-enabled.lz4"
+]

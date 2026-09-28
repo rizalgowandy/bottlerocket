@@ -5,13 +5,14 @@ kind: ClusterConfig
 metadata:
   name: bottlerocket
   region: us-west-2
-  version: '1.21'
+  version: '1.24'
 
 nodeGroups:
   - name: ng-bottlerocket
     instanceType: m5.large
     desiredCapacity: 4
     amiFamily: Bottlerocket
+    disableIMDSv1: true
     iam:
        attachPolicyARNs:
           - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy

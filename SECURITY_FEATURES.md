@@ -10,18 +10,19 @@ They are listed in priority order.
 3. Protect containers from other containers.
 
 We will add and enhance security features over time based on these goals.
-Please see our [security roadmap](https://github.com/orgs/bottlerocket-os/projects/1?card_filter_query=label%3Asecurity) for more details.
 
 ## Overview
 
-| Feature                                                                           | Version |
-| :-------------------------------------------------------------------------------- | :-----: |
-| [Automated security updates](#automated-security-updates)                         |  0.3.0  |
-| [Immutable rootfs backed by dm-verity](#immutable-rootfs-backed-by-dm-verity)     |  0.3.0  |
-| [Stateless tmpfs for /etc](#stateless-tmpfs-for-etc)                              |  0.3.0  |
-| [No shell or interpreters installed](#no-shell-or-interpreters-installed)         |  0.3.0  |
-| [Executables built with hardening flags](#executables-built-with-hardening-flags) |  0.3.0  |
-| [SELinux enabled in enforcing mode](#selinux-enabled-in-enforcing-mode)           |  0.3.0  |
+| Feature                                                                           | Version  |
+| :-------------------------------------------------------------------------------- | :------: |
+| [Automated security updates](#automated-security-updates)                         |  0.3.0   |
+| [Immutable rootfs backed by dm-verity](#immutable-rootfs-backed-by-dm-verity)     |  0.3.0   |
+| [Stateless tmpfs for /etc](#stateless-tmpfs-for-etc)                              |  0.3.0   |
+| [No shell or interpreters installed](#no-shell-or-interpreters-installed)         |  0.3.0   |
+| [Executables built with hardening flags](#executables-built-with-hardening-flags) |  0.3.0   |
+| [SELinux enabled in enforcing mode](#selinux-enabled-in-enforcing-mode)           |  0.3.0   |
+| [Kernel lockdown in integrity mode](#kernel-lockdown-in-integrity-mode)           |  1.1.0   |
+| [Secure Boot enabled](#secure-boot-enabled)                                       |  1.15.0  |
 
 The version listed indicates the first release of Bottlerocket that included the feature.
 Features may evolve or improve over time.
@@ -40,25 +41,29 @@ This is achieved through the following mechanisms:
 Using partition sets and modeled settings removes the dependency on correct local state for reliable updates.
 There is no package manager database or shared filesystem tree that can become corrupted and make the process non-deterministic.
 
+#### Update Policy
+
 Our philosophy for variants is that the right time for an unexpected major version update to the kernel or orchestrator agent is "never".
+New variants can introduce newer LTS kernels or GPU drivers.
+On release, variants peg to a kernel and GPU driver version and relevant security patches are applied.
+However, in a situation where security patches are no longer available for the kernel or GPU driver, an existing variant may adopt a new version to address security vulnerabilities.
 
-#### Kubernetes variants
+##### Kubernetes variants
 
-Each Kubernetes variant will be supported for approximately one year after it is first released.
-This follows the [Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html) support policy.
-Newer LTS releases of the kernel may be introduced in newer variants, but not in older ones.
+Bottlerocket provides updates for each Kubernetes variant for approximately 14 months after the first release of each variant.
+For `aws-k8s-*` variants, Bottlerocket follows the [Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html) support policy, including extended support beyond the typical 12 months support period.
 
 We provide [a Kubernetes operator](https://github.com/bottlerocket-os/bottlerocket-update-operator) for automated updates to Bottlerocket.
 We recommend deploying it on your Kubernetes clusters.
 
-#### ECS variant
+##### ECS variant
 
-We currently have a single variant for Amazon ECS.
-Newer LTS releases of the kernel may be introduced in newer variants, but not in the current one.
+Bottlerocket provides updates for each ECS variant for at least one year after the first release of each variant.
+Because the ECS agent is backwards compatible, there is no need to create new variants on a regular cadence.
+ECS variants will be added as necessary to introduce newer LTS kernels or potentially breaking changes.
 
 We provide [an updater](https://github.com/bottlerocket-os/bottlerocket-ecs-updater) for automated updates to Bottlerocket.
 We recommend deploying it on your ECS clusters.
-
 
 ### Immutable rootfs backed by dm-verity
 
@@ -69,14 +74,15 @@ The root filesystem is marked as read-only and cannot be directly modified by us
 This protects against some container escape vulnerabilities such as [CVE-2019-5736](https://www.openwall.com/lists/oss-security/2019/02/11/2).
 
 The kernel is configured to restart if corruption is detected.
-That allows the system to fail closed if the underlying block device is unexpectedly modified.
+That allows the system to fail closed if the underlying block device is unexpectedly modified and the node is in an unknown state.
+The uncontrolled reboot will disrupt running containers, which can trigger alarms and prompt administrators to investigate.
 
-Although this provides a powerful layer of protection, it is **incomplete**.
-An attacker with full access to the block device could alter both the verity metadata and the contents of the root filesystem.
+Although this provides a powerful layer of protection, it is incomplete unless [Secure Boot is enabled](#secure-boot-enabled).
+Otherwise, an attacker with full access to the block device could alter both the verity metadata and the contents of the root filesystem.
 
 ### Stateless tmpfs for /etc
 
-Bottlerocket uses [tmpfs](https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt), a memory-backed filesystem, for /etc.
+Bottlerocket uses [tmpfs](https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt), a memory-backed filesystem, for `/etc`.
 
 Direct modification of system configuration files such as `/etc/resolv.conf` or `/etc/containerd/config.toml` is not supported.
 This makes OS updates more reliable, as it is not necessary to account for local edits that might have changed the behavior of system services.
@@ -134,6 +140,8 @@ All binaries are linked with the following options:
 
 Together these enable [full RELRO support](https://www.redhat.com/en/blog/hardening-elf-binaries-using-relocation-read-only-relro) which makes [ROP](https://en.wikipedia.org/wiki/Return-oriented_programming) attacks more difficult to execute.
 
+**Note:** Certain variants, such as the ones for NVIDIA, include precompiled binaries that may not have been built with these hardening flags.
+
 ### SELinux enabled in enforcing mode
 
 Bottlerocket enables SELinux by default, sets it to enforcing mode, and loads the policy during boot.
@@ -141,8 +149,6 @@ There is no way to disable it.
 
 SELinux is a Linux Security Module (LSM) that provides a mechanism for mandatory access control (MAC).
 Processes that run as root with full capabilities are still subject to the mandatory policy restrictions.
-Host containers with the `superpowered = true` flag set are an exception, and will run in the permissive `super_t` domain.
-Permissive means that actions that are not allowed by policy will be logged but not blocked.
 
 The policy in Bottlerocket has the following objectives:
 1) Prevent most components from directly modifying the API settings.
@@ -151,3 +157,30 @@ The policy in Bottlerocket has the following objectives:
 
 The policy is currently aimed at hardening the OS against persistent threats.
 Future enhancements to the policy will focus on mitigating the impact of OS vulnerabilities, and protecting containers from other containers.
+
+### Kernel lockdown in integrity mode
+
+Bottlerocket enables Lockdown in "integrity" mode by default on most variants.
+
+Lockdown is a Linux Security Module (LSM) that blocks certain actions which could compromise the Linux kernel.
+As with SELinux, even processes that run as root with full capabilities are subject to these restrictions.
+
+Certain variants such as `*-nvidia` need to load unsigned kernel modules at runtime.
+This is prohibited by the "integrity" mode, but required for the hardware to work as expected.
+On these variants, Lockdown is set to "none" instead.
+
+### Secure Boot enabled
+
+Bottlerocket enables Secure Boot for all new variants on platforms that support UEFI boot.
+
+The goal is to prevent unsigned, untrusted code from running at any point until containers are started.
+This is achieved by establishing the following chain of trust:
+1) The trusted platform firmware verifies that shim is signed correctly, then loads it.
+2) shim verifies that grub is signed correctly, then loads it.
+3) grub verifies that its grub.cfg is signed correctly, then loads it.
+4) grub verifies that the Linux kernel is signed correctly, then loads it.
+5) The Linux kernel verifies that the [immutable root filesystem](#immutable-rootfs-backed-by-dm-verity) has not been altered.
+
+Secure Boot only applies to platforms using UEFI firmware, and it is only enforced when the feature is enabled in the firmware.
+Therefore, systems using the legacy BIOS boot mode cannot benefit from Secure Boot.
+This includes Xen-based EC2 instance types, and bare metal machines configured to emulate the legacy BIOS boot mode.

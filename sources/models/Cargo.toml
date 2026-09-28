@@ -3,34 +3,29 @@ name = "models"
 version = "0.1.0"
 authors = ["Tom Kirchner <tjk@amazon.com>"]
 license = "Apache-2.0 OR MIT"
-edition = "2018"
+edition = "2021"
 publish = false
 build = "build.rs"
 # Don't rebuild crate just because of changes to README.
 exclude = ["README.md"]
 
 [dependencies]
-base64 = "0.13"
-bottlerocket-release = { path = "../bottlerocket-release", version = "0.1.0" }
-lazy_static = "1.2"
-libc = "0.2"
-model-derive = { path = "model-derive", version = "0.1.0" }
-regex = "1.1"
-semver = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-serde_plain = "1.0"
-snafu = "0.6"
-toml = "0.5"
-x509-parser = "0.11.0"
-url = "2.1"
+bottlerocket-release.workspace = true
+libc.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+serde_plain.workspace = true
+toml.workspace = true
+
+# settings plugins
+bottlerocket-settings-models.workspace = true
+bottlerocket-settings-plugin.workspace = true
 
 [build-dependencies]
-cargo-readme = "3.1"
-filetime = "0.2"
-rand = "0.8"
+generate-readme.workspace = true
 
 [lib]
-# We're picking the current *model* with build.rs, so users shouldn't think
-# about importing *models* (plural), just the one current model.
+# We're loading the correct *model* at runtime, so users shouldn't think about
+# importing *models* (plural), just the one current model.
 name = "model"
 path = "src/lib.rs"

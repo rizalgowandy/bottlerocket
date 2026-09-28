@@ -6,20 +6,22 @@ Bottlerocket adheres to the [Shared Responsibility Model](https://aws.amazon.com
 
 We provide these recommendations, along with [details](#details) and [examples](#examples), to help you create a configuration that meets your security and compliance requirements.
 
-| Recommendation                                                                                      | Priority  |
-| :-------------------------------------------------------------------------------------------------- | :-------- |
-| [Enable automatic updates](#enable-automatic-updates)                                               | Critical  |
-| [Avoid containers with elevated privileges](#avoid-containers-with-elevated-privileges)             | Critical  |
-| [Restrict access to the host API socket](#restrict-access-to-the-host-api-socket)                   | Critical  |
-| [Restrict access to the container runtime socket](#restrict-access-to-the-container-runtime-socket) | Critical  |
-| [Design for host replacement](#design-for-host-replacement)                                         | Important |
-| [Enable kernel lockdown](#enable-kernel-lockdown)                                                   | Important |
-| [Limit use of host containers](#limit-use-of-host-containers)                                       | Important |
-| [Limit use of privileged SELinux labels](#limit-use-of-privileged-selinux-labels)                   | Important |
-| [Limit access to system mounts](#limit-access-to-system-mounts)                                     | Important |
-| [Limit access to host namespaces](#limit-access-to-host-namespaces)                                 | Important |
-| [Limit access to block devices](#limit-access-to-block-devices)                                     | Important |
-| [Do not run containers as UID 0](#do-not-run-containers-as-uid-0)                                   | Moderate  |
+| Recommendation                                                                                                                        | Priority  |
+| :--------------------------------------------------------------------------------------------------                                   | :-------- |
+| [Enable automatic updates](#enable-automatic-updates)                                                                                 | Critical  |
+| [Avoid containers with elevated privileges](#avoid-containers-with-elevated-privileges)                                               | Critical  |
+| [Restrict access to the host API socket](#restrict-access-to-the-host-api-socket)                                                     | Critical  |
+| [Restrict access to the container runtime socket](#restrict-access-to-the-container-runtime-socket)                                   | Critical  |
+| [Design for host replacement](#design-for-host-replacement)                                                                           | Important |
+| [Enable kernel lockdown](#enable-kernel-lockdown)                                                                                     | Important |
+| [Limit use of host containers](#limit-use-of-host-containers)                                                                         | Important |
+| [Limit use of privileged SELinux labels](#limit-use-of-privileged-selinux-labels)                                                     | Important |
+| [Limit access to system mounts](#limit-access-to-system-mounts)                                                                       | Important |
+| [Limit access to host namespaces](#limit-access-to-host-namespaces)                                                                   | Important |
+| [Limit access to block devices](#limit-access-to-block-devices)                                                                       | Important |
+| [Enforce requested NVIDIA GPU limits for unprivileged containers](#enforce-requested-nvidia-gpu-limits-for-unprivileged-containers)   | Important |
+| [Limit use of NVIDIA GPU Time-Slicing](#limit-use-of-nvidia-gpu-time-slicing)                                                         | Important |
+| [Do not run containers as UID 0](#do-not-run-containers-as-uid-0)                                                                     | Moderate  |
 
 ## Details
 
@@ -118,10 +120,8 @@ Modifications to the running kernel could bypass or subvert these mechanisms.
 Bottlerocket enables the Lockdown security module and offers settings to choose from one of three modes.
 
 The first mode, "none", effectively disables the protection.
-This is the default in older [variants](variants/) of Bottlerocket up through aws-k8s-1.19, for compatibility with existing deployments.
 
 The second mode, "integrity", blocks most ways to overwrite the kernel's memory and modify its code.
-This is the default in newer variants.
 Enabling this mode will prevent unsigned kernel modules from being loaded.
 
 The third mode, "confidentiality", stops most ways of reading the kernel's memory from userspace.
@@ -230,6 +230,46 @@ This could compromise the integrity of the host.
 
 We recommend limiting access to block devices.
 
+### Enforce requested NVIDIA GPU limits for unprivileged containers
+
+When launching a container that has requested NVIDIA GPUs, the host software responsible for adding the devices to the container - the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/index.html) - will use one of these sources to determine which devices should be added:
+
+* The `NVIDIA_VISIBLE_DEVICES` environment variable
+* Mounts configured by the [NVIDIA Kubernetes Device Plugin](https://github.com/NVIDIA/k8s-device-plugin)
+
+If `NVIDIA_VISIBLE_DEVICES="all"` is set in a container’s environment, it can gain access to all NVIDIA GPUs on the system regardless of the NVIDIA GPU limits requested through Kubernetes directives.
+Because most popular container base images are configured this way, respecting this value by default would grant unprivileged containers access to all NVIDIA GPUs, ignoring the requested limits.
+
+To prevent this, Bottlerocket configures the host software so that `NVIDIA_VISIBLE_DEVICES="all"` is only respected for privileged containers.
+
+If you need to grant unprivileged containers access to all NVIDIA GPUs using this environment variable - bypassing any requested GPU limits - you can apply these settings:
+
+
+```toml
+[settings.kubelet-device-plugins.nvidia]
+# Configures NVIDIA_VISIBLE_DEVICES with the list of devices
+device-list-strategy = "envvar"
+
+[settings.nvidia-container-runtime]
+# Allows reading the devices from NVIDIA_VISIBLE_DEVICES
+visible-devices-as-volume-mounts = false
+
+# Allows granting access to all unprivileged
+# containers with NVIDIA_VISIBLE_DEVICES=all
+visible-devices-envvar-when-unprivileged = true
+```
+
+We recommend leaving these settings at the default values, which will enforce the requested NVIDIA GPU limits for unprivileged containers.
+
+### Limit use of NVIDIA GPU Time-Slicing
+Bottlerocket supports NVIDIA GPU time-slicing, enabling system administrators to allocate a set of replicas for a GPU, which can be assigned to individual pods for running various workloads.
+
+Internally, GPU time-slicing is used to multiplex workloads from multiple replicas of the same underlying GPU, providing each process with an equal share of time across all pods. However, while time-slicing allows sharing of GPUs among multiple workloads, it does not provide memory or fault isolation between replicas.
+
+Without memory isolation, all workloads share the same memory space, which can lead to contention, and possible interference between processes. This can affect the predictability and performance of each workload, as one process may consume more resources than anticipated, leaving less available for others. Moreover, without fault isolation, if one process fails, it has the potential to affect all other processes running on the GPU. These impacts can happen to processes running in different containers with different privilege levels.
+
+We recommend keeping the NVIDIA GPU time-slicing feature in a disabled state and only enabling it when necessary.
+
 ### Do not run containers as UID 0
 
 Bottlerocket does not currently support user namespaces.
@@ -252,7 +292,7 @@ We recommend that you do not run containers as UID 0.
 These settings can passed as [user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) on EC2 instance launch.
 They apply to any Bottlerocket variant.
 
-```
+```toml
 # Enable kernel lockdown in "integrity" mode.
 # This prevents modifications to the running kernel, even by privileged users.
 [settings.kernel]
@@ -273,9 +313,9 @@ enabled = false
 ### Amazon ECS
 
 These settings can passed as [user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) on EC2 instance launch.
-They are specific to the `aws-ecs-1` variant.
+They are specific to the `aws-ecs-2` variant.
 
-```
+```toml
 # By default, this variant does not allow launching privileged containers.
 # The feature can also be disabled explicitly.
 [settings.ecs]
@@ -287,7 +327,7 @@ allow-privileged-containers = false
 The following [Pod Security Policy](https://kubernetes.io/docs/concepts/policy/pod-security-policy/) is based on our recommendations.
 It can be used as a starting point for your own policy.
 
-```
+```yaml
 ---
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy

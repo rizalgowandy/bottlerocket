@@ -9,8 +9,6 @@
 // locked, and also because migration authors are given an interface for ordering via migration
 // name, and running in parallel would violate that.
 
-#![deny(rust_2018_idioms)]
-
 mod args;
 pub mod common_migrations;
 mod datastore_helper;
@@ -60,7 +58,7 @@ pub type Metadata = HashMap<String, Value>;
 /// MigrationData holds all data that can be migrated in a migration, and serves as the input and
 /// output format of migrations.  A serde Value type is used to hold the arbitrary data of each
 /// key because we can't represent types when they could change in the migration.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MigrationData {
     /// Mapping of data key names to their arbitrary values.
     pub data: HashMap<String, Value>,
@@ -94,7 +92,7 @@ pub fn run_migration(mut migration: impl Migration, args: &Args) -> Result<()> {
     let mut committeds = vec![Committed::Live];
     let transactions = source
         .list_transactions()
-        .context(error::ListTransactions)?;
+        .context(error::ListTransactionsSnafu)?;
     committeds.extend(transactions.into_iter().map(|tx| Committed::Pending { tx }));
 
     for committed in committeds {

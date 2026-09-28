@@ -19,43 +19,204 @@ We want to keep the footprint of Bottlerocket as small as possible for security 
 Instead, we make different variants available for use, each with its own set of software and API settings.
 
 A variant is essentially a list of packages to install, plus a model that defines the API.
-The documentation for [packages](../packages/) covers how to create a package.
+The documentation for [packages](https://github.com/bottlerocket-os/bottlerocket-core-kit/tree/develop/packages) covers how to create a package.
 Information about API settings for variants can be found in the [models](../sources/models/) documentation.
+
+### User data
+Bottlerocket variants ingest TOML-formatted [user data](../README.md#using-user-data) from various sources in a predefined order.
+All variants first attempt to read user data from `/var/lib/bottlerocket/user-data.toml`.
+AWS variants then retrieve user data from IMDS.
+VMware variants will attempt to read user data from a mounted CD-ROM (from a file named "user-data" or from an OVF file), and then from VMware's guestinfo interface.
+
+If a setting is defined in more than one source, the value in later sources will override earlier values.
+For example, in a VMware variant, settings read from the guestinfo interface will override settings from CD-ROM, and settings from CD-ROM will override settings from the file.
 
 ## Variants
 
-### aws-k8s-1.18: Kubernetes 1.18 node
+See [_Update Policy_ in the Security Features document](../SECURITY_FEATURES.md#update-policy) for information on when and how Bottlerocket applies security patches to variants.
 
-The [aws-k8s-1.18](aws-k8s-1.18/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+### aws-k8s-1.31: Kubernetes 1.31 node
+
+The [aws-k8s-1.31](aws-k8s-1.31/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
 It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
 
-This variant is compatible with Kubernetes 1.18, 1.19, and 1.20 clusters.
+This variant is compatible with Kubernetes 1.31, 1.32, 1.33, and 1.34 clusters.
 
-### aws-k8s-1.19: Kubernetes 1.19 node
+### aws-k8s-1.31-nvidia: Kubernetes 1.31 NVIDIA node
 
-The [aws-k8s-1.19](aws-k8s-1.19/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+The [aws-k8s-1.31-nvidia](aws-k8s-1.31-nvidia/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
 It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
 
-This variant is compatible with Kubernetes 1.19, 1.20, and 1.21 clusters.
+This variant is compatible with Kubernetes 1.31, 1.32, 1.33, and 1.34 clusters.
 
-### aws-k8s-1.20: Kubernetes 1.20 node
+### aws-k8s-1.31-nvidia-fips: Kubernetes 1.31 NVIDIA FIPS node
 
-The [aws-k8s-1.20](aws-k8s-1.20/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+The [aws-k8s-1.31-nvidia-fips](aws-k8s-1.31-nvidia-fips/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
 It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
 
-This variant is compatible with Kubernetes 1.20, 1.21, and 1.22 clusters.
+This variant is compatible with Kubernetes 1.31, 1.32, 1.33, and 1.34 clusters.
 
-### aws-k8s-1.21: Kubernetes 1.21 node
+### aws-k8s-1.32: Kubernetes 1.32 node
 
-The [aws-k8s-1.21](aws-k8s-1.21/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+The [aws-k8s-1.32](aws-k8s-1.32/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
 It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
 
-This variant is compatible with Kubernetes 1.21, 1.22, and 1.23 clusters.
+This variant is compatible with Kubernetes 1.32, 1.33, 1.34 and 1.35 clusters.
 
-### aws-ecs-1: Amazon ECS container instance
+### aws-k8s-1.32-nvidia: Kubernetes 1.32 NVIDIA node
 
-The [aws-ecs-1](aws-ecs-1/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+The [aws-k8s-1.32-nvidia](aws-k8s-1.32-nvidia/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.32, 1.33, 1.34 and 1.35 clusters.
+
+### aws-k8s-1.32-nvidia-fips: Kubernetes 1.32 NVIDIA FIPS node
+
+The [aws-k8s-1.32-nvidia-fips](aws-k8s-1.32-nvidia-fips/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.32, 1.33, 1.34 and 1.35 clusters.
+
+### aws-k8s-1.33: Kubernetes 1.33 node
+
+The [aws-k8s-1.33](aws-k8s-1.33/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.33, 1.34, 1.35 and 1.36 clusters.
+
+### aws-k8s-1.33-nvidia: Kubernetes 1.33 NVIDIA node
+
+The [aws-k8s-1.33-nvidia](aws-k8s-1.33-nvidia/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.33, 1.34, 1.35 and 1.36 clusters.
+
+### aws-k8s-1.33-nvidia-fips: Kubernetes 1.33 NVIDIA FIPS node
+
+The [aws-k8s-1.33-nvidia-fips](aws-k8s-1.33-nvidia-fips/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.33, 1.34, 1.35 and 1.36 clusters.
+
+### aws-k8s-1.34: Kubernetes 1.34 node
+
+The [aws-k8s-1.34](aws-k8s-1.34/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.34, 1.35, 1.36 and 1.37 clusters.
+
+### aws-k8s-1.34-nvidia: Kubernetes 1.34 NVIDIA node
+
+The [aws-k8s-1.34-nvidia](aws-k8s-1.34-nvidia/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.34, 1.35, 1.36 and 1.37 clusters.
+
+### aws-k8s-1.34-nvidia-fips: Kubernetes 1.34 NVIDIA FIPS node
+
+The [aws-k8s-1.34-nvidia-fips](aws-k8s-1.34-nvidia-fips/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.34, 1.35, 1.36 and 1.37 clusters.
+
+### aws-k8s-1.35: Kubernetes 1.35 node
+
+The [aws-k8s-1.35](aws-k8s-1.35/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.35, 1.36, 1.37 and 1.38 clusters.
+
+### aws-k8s-1.35-nvidia: Kubernetes 1.35 NVIDIA node
+
+The [aws-k8s-1.35-nvidia](aws-k8s-1.35-nvidia/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.35, 1.36, 1.37 and 1.38 clusters.
+
+### aws-k8s-1.35-nvidia-fips: Kubernetes 1.35 NVIDIA FIPS node
+
+The [aws-k8s-1.35-nvidia-fips](aws-k8s-1.35-nvidia-fips/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.35, 1.36, 1.37 and 1.38 clusters.
+
+### aws-ecs-2: Amazon ECS container instance
+
+The [aws-ecs-2](aws-ecs-2/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
 container instance in AWS.
+
+### aws-ecs-2-nvidia: Amazon ECS container instance
+
+The [aws-ecs-2-nvidia](aws-ecs-2-nvidia/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+
+### aws-ecs-2-nvidia-fips: Amazon ECS container instance
+
+The [aws-ecs-2-nvidia-fips](aws-ecs-2-nvidia-fips/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+
+### aws-ecs-3: Amazon ECS container instance
+
+The [aws-ecs-3](aws-ecs-3/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+
+### aws-ecs-3-fips: Amazon ECS container instance with FIPS
+
+The [aws-ecs-3-fips](aws-ecs-3-fips/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+It also is FIPS-enabled.
+
+### aws-ecs-3-nvidia: Amazon ECS container instance with NVIDIA
+
+The [aws-ecs-3-nvidia](aws-ecs-3-nvidia/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+
+### aws-ecs-3-nvidia-fips: Amazon ECS container instance with NVIDIA and FIPS
+
+The [aws-ecs-3-nvidia-fips](aws-ecs-3-nvidia-fips/Cargo.toml) variant includes the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+
+### aws-mantle-1: limited support
+
+The [aws-mantle-1](aws-mantle-1/Cargo.toml) variant is a minimal Bottlerocket build. Unlike other AWS variants, it does not run a container orchestrator agent.
+
+This variant is intended for use by AWS Bedrock's Mantle API and may make breaking changes without warning. If you need a fully supported variant, use one of the Kubernetes or Amazon ECS variants instead.
+
+### aws-mantle-1-fips: limited support
+
+The [aws-mantle-1-fips](aws-mantle-1-fips/Cargo.toml) variant is a minimal Bottlerocket build. Unlike other AWS variants, it does not run a container orchestrator agent. It is FIPS enabled.
+
+This variant is intended for use by AWS Bedrock's Mantle API and may make breaking changes without warning. If you need a fully supported variant, use one of the Kubernetes or Amazon ECS variants instead.
+
+### aws-mantle-1-nvidia: limited support
+
+The [aws-mantle-1-nvidia](aws-mantle-1-nvidia/Cargo.toml) variant is a minimal Bottlerocket build. Unlike other AWS variants, it does not run a container orchestrator agent.
+
+This variant is intended for use by AWS Bedrock's Mantle API and may make breaking changes without warning. If you need a fully supported variant, use one of the Kubernetes or Amazon ECS variants instead.
+
+It also includes the required packages to configure containers to leverage NVIDIA GPUs.
+
+### aws-mantle-1-nvidia-fips: limited support
+
+The [aws-mantle-1-nvidia-fips](aws-mantle-1-nvidia-fips/Cargo.toml) variant is a minimal Bottlerocket build. Unlike other AWS variants, it does not run a container orchestrator agent.
+
+This variant is intended for use by AWS Bedrock's Mantle API and may make breaking changes without warning. If you need a fully supported variant, use one of the Kubernetes or Amazon ECS variants instead.
+
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
 
 ### aws-dev: AWS development build
 
@@ -67,26 +228,47 @@ User data will be read from IMDS.
 
 The [vmware-dev](vmware-dev/Cargo.toml) variant has useful packages for local development of the OS, and is intended to run as a VMware guest.
 It includes tools for troubleshooting as well as Docker for running containers.
-User data will be read from a mounted CD-ROM (from a file named "user-data" or from an OVF file), and from VMware's guestinfo interface.
-If user data exists at both places, settings read from guestinfo will override identical settings from CD-ROM.
 
-### vmware-k8s-1.20: VMware Kubernetes 1.20 node
+## vmware-k8s-1.31: VMware Kubernetes 1.31 node
 
-The [vmware-k8s-1.20](vmware-k8s-1.20/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
+The [vmware-k8s-1.31](vmware-k8s-1.31/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
 It supports self-hosted clusters.
-User data will be read from a mounted CD-ROM (from a file named "user-data" or from an OVF file), and from VMware's guestinfo interface.
-If user data exists at both places, settings read from guestinfo will override identical settings from CD-ROM.
 
-This variant is compatible with Kubernetes 1.20, 1.21, and 1.22 clusters.
+This variant is compatible with Kubernetes 1.31, 1.32, 1.33, and 1.34 clusters.
 
-### vmware-k8s-1.21: VMware Kubernetes 1.21 node
+## vmware-k8s-1.32: VMware Kubernetes 1.32 node
 
-The [vmware-k8s-1.21](vmware-k8s-1.21/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
+The [vmware-k8s-1.32](vmware-k8s-1.32/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
 It supports self-hosted clusters.
-User data will be read from a mounted CD-ROM (from a file named "user-data" or from an OVF file), and from VMware's guestinfo interface.
-If user data exists at both places, settings read from guestinfo will override identical settings from CD-ROM.
 
-This variant is compatible with Kubernetes 1.21, 1.22, and 1.23 clusters.
+This variant is compatible with Kubernetes 1.32, 1.33, 1.34, and 1.35 clusters.
+
+## vmware-k8s-1.33: VMware Kubernetes 1.33 node
+
+The [vmware-k8s-1.33](vmware-k8s-1.33/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
+It supports self-hosted clusters.
+
+This variant is compatible with Kubernetes 1.33, 1.34, 1.35, and 1.36 clusters.
+
+## vmware-k8s-1.34: VMware Kubernetes 1.34 node
+
+The [vmware-k8s-1.34](vmware-k8s-1.34/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
+It supports self-hosted clusters.
+
+This variant is compatible with Kubernetes 1.34, 1.35, 1.36, and 1.37 clusters.
+
+## vmware-k8s-1.35: VMware Kubernetes 1.35 node
+
+The [vmware-k8s-1.35](vmware-k8s-1.35/Cargo.toml) variant includes the packages needed to run a Kubernetes worker node as a VMware guest.
+It supports self-hosted clusters.
+
+This variant is compatible with Kubernetes 1.35, 1.36, 1.37, and 1.38 clusters.
+
+### metal-dev: Metal development build
+
+The [metal-dev](metal-dev/Cargo.toml) variant has useful packages for local development of the OS and is intended to run bare metal.
+It includes tools for troubleshooting as well as Docker for running containers.
+
 
 ### Deprecated variants
 
@@ -120,6 +302,352 @@ It reached end-of-life on November 2, 2021.
 
 Upstream support for Kubernetes 1.17 has ended and this variant will no longer be supported in Bottlerocket releases.
 
+### aws-k8s-1.18: Kubernetes 1.18 node
+
+The aws-k8s-1.18 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.18, 1.19, and 1.20 clusters.
+It reached end-of-life on March 31st, 2022.
+
+Upstream support for Kubernetes 1.18 has ended and this variant will no longer be supported in Bottlerocket releases.
+
+### aws-k8s-1.19: Kubernetes 1.19 node
+
+The aws-k8s-1.19 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.19, 1.20, and 1.21 clusters.
+It reached end-of-life on August 1st, 2022.
+
+Upstream support for Kubernetes 1.19 has ended and this variant will no longer be supported in Bottlerocket releases.
+
+### aws-k8s-1.20: Kubernetes 1.20 node
+
+The aws-k8s-1.20 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.20, 1.21, and 1.22 clusters.
+It reached end-of-life on November 1st, 2022.
+
+Upstream support for Kubernetes 1.20 has ended and this variant will no longer be supported in Bottlerocket releases.
+
+### vmware-k8s-1.20: VMware Kubernetes 1.20 node
+
+The vmware-k8s-1.20 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.20, 1.21, and 1.22 clusters.
+
+### aws-k8s-1.21: Kubernetes 1.21 node
+
+The aws-k8s-1.21 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.21, 1.22, and 1.23 clusters.
+
+### aws-k8s-1.21-nvidia: Kubernetes 1.21 NVIDIA node
+
+The aws-k8s-1.21-nvidia variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+This variant was compatible with Kubernetes 1.21, 1.22, and 1.23 clusters.
+
+### metal-k8s-1.21: Metal Kubernetes 1.21 node
+
+The metal-k8s-1.21 variant included the packages needed to run a Kubernetes node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.21, 1.22, and 1.23 clusters.
+
+### vmware-k8s-1.21: VMware Kubernetes 1.21 node
+
+The vmware-k8s-1.21 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.21, 1.22, and 1.23 clusters.
+
+### aws-k8s-1.22: Kubernetes 1.22 node
+
+The aws-k8s-1.22 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.22, 1.23, and 1.24 clusters.
+
+### aws-k8s-1.22-nvidia: Kubernetes 1.22 NVIDIA node
+
+The aws-k8s-1.22-nvidia variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.22, 1.23, and 1.24 clusters.
+
+### metal-k8s-1.22: Metal Kubernetes 1.22 node
+
+The metal-k8s-1.22 variant included the packages needed to run a Kubernetes node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.22, 1.23, and 1.24 clusters.
+
+### vmware-k8s-1.22: VMware Kubernetes 1.22 node
+
+The vmware-k8s-1.22 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.22, 1.23, and 1.24 clusters.
+
+### aws-k8s-1.23: Kubernetes 1.23 node
+
+The [aws-k8s-1.23](aws-k8s-1.23/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.23, 1.24, and 1.25 clusters.
+
+### aws-k8s-1.23-nvidia: Kubernetes 1.23 NVIDIA node
+
+The [aws-k8s-1.23-nvidia](aws-k8s-1.23-nvidia/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.23, 1.24, and 1.25 clusters.
+
+### metal-k8s-1.23: Metal Kubernetes 1.23 node
+
+The metal-k8s-1.23 variant included the packages needed to run a Kubernetes worker node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.23, 1.24, and 1.25 clusters.
+
+### vmware-k8s-1.23: VMware Kubernetes 1.23 node
+
+The vmware-k8s-1.23 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.23, 1.24, and 1.25 clusters.
+
+### vmware-k8s-1.24: VMware Kubernetes 1.24 node
+
+The vmware-k8s-1.24 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.24, 1.25, and 1.26 clusters.
+
+### aws-k8s-1.24: Kubernetes 1.24 node
+
+The [aws-k8s-1.24](aws-k8s-1.24/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.24, 1.25, and 1.26 clusters.
+
+### aws-k8s-1.24-nvidia: Kubernetes 1.24 NVIDIA node
+
+The [aws-k8s-1.24-nvidia](aws-k8s-1.24-nvidia/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.24, 1.25, and 1.26 clusters.
+
+### metal-k8s-1.24: Metal Kubernetes 1.24 node
+
+The metal-k8s-1.24 variant included the packages needed to run a Kubernetes node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.24, 1.25, and 1.26 clusters.
+
+### vmware-k8s-1.25: VMware Kubernetes 1.25 node
+
+The [vmware-k8s-1.25](vmware-k8s-1.25/Cargo.toml) variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.25, 1.26, 1.27, and 1.28 clusters.
+
+### aws-k8s-1.25: Kubernetes 1.25 node
+
+The [aws-k8s-1.25](aws-k8s-1.25/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.25, 1.26, 1.27, and 1.28 clusters.
+
+### aws-k8s-1.25-nvidia: Kubernetes 1.25 NVIDIA node
+
+The [aws-k8s-1.25-nvidia](aws-k8s-1.25-nvidia/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.25, 1.26, 1.27, and 1.28 clusters.
+
+### metal-k8s-1.25: Metal Kubernetes 1.25 node
+
+The [metal-k8s-1.25](metal-k8s-1.25/Cargo.toml) variant included the packages needed to run a Kubernetes node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.25, 1.26, 1.27, and 1.28 clusters.
+
+### vmware-k8s-1.26: VMware Kubernetes 1.26 node
+
+The vmware-k8s-1.26 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.26, 1.27, 1.28, and 1.29 clusters.
+
+### aws-k8s-1.26: Kubernetes 1.26 node
+
+The [aws-k8s-1.26](aws-k8s-1.26/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.26, 1.27, 1.28, and 1.29 clusters.
+
+### aws-k8s-1.26-nvidia: Kubernetes 1.26 NVIDIA node
+
+The [aws-k8s-1.26-nvidia](aws-k8s-1.26-nvidia/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.26, 1.27, 1.28, and 1.29 clusters.
+
+### metal-k8s-1.26: Metal Kubernetes 1.26 node
+
+The metal-k8s-1.26 variant included the packages needed to run a Kubernetes node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.26, 1.27, 1.28, and 1.29 clusters.
+
+## vmware-k8s-1.27: VMware Kubernetes 1.27 node
+
+The [vmware-k8s-1.27](vmware-k8s-1.27/Cargo.toml) variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.27, 1.28, 1.29, and 1.30 clusters.
+
+### aws-k8s-1.27: Kubernetes 1.27 node
+
+The [aws-k8s-1.27](aws-k8s-1.27/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.27, 1.28, 1.29, and 1.30 clusters.
+
+### aws-k8s-1.27-nvidia: Kubernetes 1.27 NVIDIA node
+
+The [aws-k8s-1.27-nvidia](aws-k8s-1.27-nvidia/Cargo.toml) variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.27, 1.28, 1.29, and 1.30 clusters.
+
+### metal-k8s-1.27: Metal Kubernetes 1.27 node
+
+The [metal-k8s-1.27](metal-k8s-1.27/Cargo.toml) variant included the packages needed to run a Kubernetes node on bare metal.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.27, 1.28, 1.29, and 1.30 clusters.
+
+### metal-k8s-1.28: Metal Kubernetes 1.28 node
+
+The [metal-k8s-1.28](metal-k8s-1.28/Cargo.toml) variant included the packages needed to run a Kubernetes node on bare metal.
+It supports self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.28, 1.29, 1.30, and 1.31 clusters.
+
+### metal-k8s-1.29: Metal Kubernetes 1.29 node
+
+The [metal-k8s-1.29](metal-k8s-1.29/Cargo.toml) variant included the packages needed to run a Kubernetes node on bare metal.
+It supports self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.29, 1.30, 1.31, and 1.32 clusters.
+
+### aws-k8s-1.29: Kubernetes 1.29 node
+
+The aws-k8s-1.29 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.29, 1.30, 1.31, and 1.32 clusters.
+
+### aws-k8s-1.29-nvidia: Kubernetes 1.29 NVIDIA node
+
+The aws-k8s-1.29-nvidia variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.29, 1.30, 1.31, and 1.32 clusters.
+
+### aws-k8s-1.29-nvidia-fips: Kubernetes 1.29 NVIDIA FIPS node
+
+The [aws-k8s-1.29-nvidia-fips](aws-k8s-1.29-nvidia-fips/Cargo.toml) variant includes the packages needed to run a Kubernetes node in AWS.
+It also includes the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+It supports self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant is compatible with Kubernetes 1.29, 1.30, 1.31 and 1.32 clusters.
+
+## vmware-k8s-1.29: VMware Kubernetes 1.29 node
+
+The vmware-k8s-1.29 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.29, 1.30, 1.31, and 1.32 clusters.
+
+### aws-k8s-1.30: Kubernetes 1.30 node
+
+The aws-k8s-1.30 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.30, 1.31, 1.32, and 1.33 clusters.
+
+### aws-k8s-1.30-nvidia: Kubernetes 1.30 NVIDIA node
+
+The aws-k8s-1.30-nvidia variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.30, 1.31, 1.32, and 1.33 clusters.
+
+### aws-k8s-1.30-nvidia-fips: Kubernetes 1.30 NVIDIA FIPS node
+
+The aws-k8s-1.30-nvidia-fips variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs and is FIPS-enabled.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.30, 1.31, 1.32, and 1.33 clusters.
+
+## vmware-k8s-1.30: VMware Kubernetes 1.30 node
+
+The vmware-k8s-1.30 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.30, 1.31, 1.32, and 1.33 clusters.
+
+### aws-ecs-1: Amazon ECS container instance
+
+The [aws-ecs-1](aws-ecs-1/Cargo.toml) variant included the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+
+### aws-ecs-1-nvidia: Amazon ECS container instance
+
+The [aws-ecs-1-nvidia](aws-ecs-1-nvidia/Cargo.toml) variant included the packages needed to run an [Amazon ECS](https://ecs.aws)
+container instance in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+
+### aws-k8s-1.28: Kubernetes 1.28 node
+
+The aws-k8s-1.28 variant included the packages needed to run a Kubernetes node in AWS.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.28, 1.29, 1.30, and 1.31 clusters.
+
+### aws-k8s-1.28-nvidia: Kubernetes 1.28 NVIDIA node
+
+The aws-k8s-1.28-nvidia variant included the packages needed to run a Kubernetes node in AWS.
+It also included the required packages to configure containers to leverage NVIDIA GPUs.
+It supported self-hosted clusters and clusters managed by [EKS](https://aws.amazon.com/eks/).
+
+This variant was compatible with Kubernetes 1.28, 1.29, 1.30, and 1.31 clusters.
+
+## vmware-k8s-1.28: VMware Kubernetes 1.28 node
+
+The vmware-k8s-1.28 variant included the packages needed to run a Kubernetes worker node as a VMware guest.
+It supported self-hosted clusters.
+
+This variant was compatible with Kubernetes 1.28, 1.29, 1.30, and 1.31 clusters.
+
 ## Development
 
 Say we want to create `my-variant`, a custom build of Bottlerocket that runs `my-agent`.
@@ -129,29 +657,27 @@ This listing shows the directory structure of our sample variant.
 
 ```
 variants/my-variant
-├── Cargo.toml
-├── build.rs
-└── lib.rs
+└── Cargo.toml
 ```
 
 Each variant has a `Cargo.toml` file that lists the packages to install.
 
-It also includes a `build.rs` [build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html) which tells Cargo to invoke our [buildsys](../tools/buildsys/) tool.
+It also refers to a `build.rs` [build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html) which tells Cargo to invoke our [buildsys](../tools/buildsys/) tool.
 Artifacts for the variant are built as a side effect of Cargo running the script.
 
-It has an empty `lib.rs` for the actual crate, since Cargo expects some Rust code to build.
+It points to `/dev/null` for the actual crate, since Cargo expects some Rust code to build, and is happy with an empty file.
 
 ### Cargo.toml
 
 Our sample variant has the following manifest.
 
-```
+```toml
 [package]
 name = "my-variant"
 version = "0.1.0"
 edition = "2018"
 publish = false
-build = "build.rs"
+build = "../build.rs"
 
 [package.metadata.build-variant]
 included-packages = [
@@ -159,8 +685,13 @@ included-packages = [
     "my-agent",
 ]
 
+[package.metadata.build-variant.image-layout]
+os-image-size-gib = 8
+data-image-size-gib = 20
+partition-plan = "unified"
+
 [lib]
-path = "lib.rs"
+path = "../variants.rs"
 
 [build-dependencies]
 "my-agent" = { path = "../../packages/my-agent" }
@@ -175,13 +706,21 @@ This populates the Cargo build graph with all of the RPM packages that need to b
 Variants should almost always include the `release` package.
 This pulls in the other core packages and includes essential configuration and services.
 
+This variant includes the (optional) `image-layout` section, which allows the user to customize the layout of the image they are building.
+`os-image-size-gib` is the size of the "OS" disk image in GiB.
+`data-image-size-gib` is the size of the "data" disk image in GiB.
+Though we've done so here for sake of demonstration, resizing the "data" disk image isn't necessary as it expands to fill the disk on boot.
+`partition-plan` is the strategy used for image partitioning, with the options being "split" (the default) or "unified".
+The "split" partition strategy has separate volumes for "OS" and "data", while "unified" has "OS" and "data" on a single volume.
+See [the documentation](../tools/buildsys/src/manifest.rs) for the defaults and additional details.
+
 Be sure to include `publish = false` for all packages, as these are not standard crates and should never appear on [crates.io](https://crates.io/).
 
 ### build.rs
 
-We use the same build script for all variants.
+We reuse the same build script for all variants.
 
-```
+```rust
 use std::process::{exit, Command};
 
 fn main() -> Result<(), std::io::Error> {
@@ -196,18 +735,10 @@ fn main() -> Result<(), std::io::Error> {
 If you need a build script with different behavior, the recommended approach is to modify the `buildsys` tool.
 The `package.metadata` table can be extended with declarative elements that enable the new feature.
 
-### lib.rs
-
-We use the same Rust code for all variants.
-
-```
-// not used
-```
-
 ### Next Steps
 
 To build your variant, run the following command in the top-level Bottlerocket directory.
-```
+```shell
 cargo make -e BUILDSYS_VARIANT=my-variant
 ```
 
